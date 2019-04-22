@@ -1,0 +1,217 @@
+const ENTIDADES = {
+    empresa_email: {
+        ATRIBUTOS: {
+            email: {TIPO:"TP_EMAIL",MAXLENGTH:150,VISIBILIDAD:"TP_VISIBLE"}
+        },
+        FORM: [
+            {
+                email: '<div class="col-12">/email/</div>'
+            }
+        ]
+    },
+    empresa_telefono: {
+        ATRIBUTOS: {
+            telefono: {TIPO:"TP_PHONE",MAXLENGTH:30,VISIBILIDAD:"TP_VISIBLE"},
+            tipo: {TIPO:"TP_ENUM",ENUM:{tel:"Teléfono",cel:"Celular",wha:"Whatsapp"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"Tipo"}
+        },
+        FORM: [
+            {
+                tipo: '<div class="col-5">/tipo/</div>',
+                telefono: '<div class="col-7">/telefono/</div>',
+            }
+        ]
+    },
+    empresa_domicilio: {
+        ATRIBUTOS: {
+            calle: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE"},
+            altura: {TIPO:"TP_ENTERO",VISIBILIDAD:"TP_VISIBLE"},
+            barrio: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE"}
+        },
+        FORM: [
+            {
+                calle: '<div class="col-12 col-md-8">/calle/</div>',
+                altura: '<div class="col-4">/altura/</div>',
+            },
+            {
+                barrio: '<div class="col-12 col-md-6">/barrio/</div>'
+            }
+        ]
+    },
+    empresa_images: {
+        ATRIBUTOS: {
+            logo: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Logotipo OK",INVALID:"Logotipo - 205x100",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"250px"},
+            logoFooter: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Logotipo Footer OK",INVALID:"Logotipo Footer - 503x223",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"250px"},
+            favicon: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Favicon OK",INVALID:"Favicon",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/x-icon,image/png",NOMBRE:"imagen",WIDTH:"250px"},
+        },
+        FORM: [
+            {
+                logo: '<div class="col-7 col-md-4">/logo/</div>',
+                logoFooter: '<div class="col-5 col-md-5">/logoFooter/</div>',
+                favicon: '<div class="col-3 col-md-3">/favicon/</div>'
+            }
+        ],
+        FUNCIONES: {
+            logo: {onchange:{F:"readURL(this,'/id/')",C:"id"}},
+            logoFooter: {onchange:{F:"readURL(this,'/id/')",C:"id"}},
+            favicon: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    home: {
+        ATRIBUTOS: {
+            page: {TIPO:"TP_ENUM",ENUM:{slider:"Slider",marcas:"Marcas",familias:"Familias",buscador: "Buscador", ofertas: "Ofertas", entrega: "Entrega"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"secciones",MULTIPLE: 1},
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo OK",INVALID:"Archivo - 120x76",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"250px"},
+            texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"}
+        },
+        JSON: {
+            texto: {
+                es: "español"
+            },
+        },
+        FORM: [
+            {
+                page: '<div class="col-7 col-md-6">/page/</div>',
+                BTN: '<div class="d-flex col-3 col-md-2">/BTN/</div>'
+            },
+            {
+                texto: '<div class="col-12 col-md-9">/texto/</div>',
+                image: '<div class="col-12 col-md-3">/image/</div>',
+            }
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    empresa: {
+        ATRIBUTOS: {
+            page: {TIPO:"TP_ENUM",ENUM:{slider:"Slider"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"secciones",MULTIPLE: 1},
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo OK",INVALID:"Archivo - 396x290",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"250px"},
+            titulo_empresa: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título empresa"},
+            texto_empresa: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto empresa"},
+            titulo_filosofia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título filosofía"},
+            texto_filosofia: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto filosofía"}
+        },
+        JSON: {
+            texto_empresa: {
+                es: "español"
+            },
+            texto_filosofia: {
+                es: "español"
+            },
+            titulo_empresa: {
+                es: "español"
+            },
+            titulo_filosofia: {
+                es: "español"
+            },
+        },
+        FORM: [
+            {
+                BTN: '<div class="d-flex col-3 col-md-2">/BTN/</div>'
+            },
+            {
+                page: '<div class="col-7 col-md-6">/page/</div>',
+                image: '<div class="col-12 col-md-4">/image/</div>',
+            },
+            {
+                titulo_empresa: '<div class="col-12">/titulo_empresa/</div>',
+                texto_empresa: '<div class="col-12 mt-2">/texto_empresa/</div>',
+            },
+            {
+                titulo_filosofia: '<div class="col-12">/titulo_filosofia/</div>',
+                texto_filosofia: '<div class="col-12 mt-2">/texto_filosofia/</div>',
+            }
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    pagos: {
+        ATRIBUTOS: {
+            page: {TIPO:"TP_ENUM",ENUM:{slider:"Slider"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"secciones",MULTIPLE: 1},
+            titulo: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"}
+        },
+        JSON: {
+            texto: {
+                es: "español"
+            },
+            titulo: {
+                es: "español"
+            },
+        },
+        FORM: [
+            {
+                page: '<div class="col-7 col-md-6">/page/</div>',
+                BTN: '<div class="d-flex col-3 col-md-2">/BTN/</div>'
+            },
+            {
+                titulo: '<div class="col-12">/titulo/</div>',
+                texto: '<div class="col-12 mt-2">/texto/</div>'
+            }
+        ]
+    },
+    usuario: {
+        ATRIBUTOS: {
+            username: {TIPO:"TP_STRING",MAXLENGTH:30,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"usuario"},
+            name: {TIPO:"TP_STRING",MAXLENGTH:100,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase",NOMBRE:"nombre"},
+            password: {TIPO:"TP_PASSWORD",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"contraseña"},
+            is_admin: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",ENUM:{1:"Administrador",0:"Usuario"},NOMBRE:"Tipo",CLASS:"text-uppercase"},
+        },
+        FORM: [
+            {
+                name: '<div class="col-7 col-md-6">/name/</div>',
+                is_admin: '<div class="col-5 col-md-4">/is_admin/</div>',
+                BTN: '<div class="d-flex col-3 col-md-2">/BTN/</div>'
+            },
+            {
+                username: '<div class="col-6">/username/</div>',
+                password: '<div class="col-6">/password/</div>',
+            }
+        ],
+    },
+    slider: {
+        ATRIBUTOS: {
+            orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 1400x450",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"250px"},
+            seccion: {TIPO:"TP_ENUM",ENUM:{home:"Home",empresa:"Empresa",ofertas:"Ofertas",pagos: "Pagos y envios"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"sección"},
+            texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"}
+        },
+        JSON: {
+            texto: {
+                es: "español"
+            },
+        },
+        FORM: [
+            {
+                orden: '<div class="col-5 col-md-3">/orden/</div>',
+                BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
+            },
+            {
+                image: '<div class="col-12 col-md-6">/image/</div>',
+            },
+            {
+                texto: '<div class="col-12">/texto/</div>'
+            }
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    metadatos: {
+        ATRIBUTOS: {
+            seccion: {TIPO:"TP_ENUM",ENUM:{home:"Home",empresa:"Empresa",ofertas:"Ofertas",contacto: "Contacto"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_TABLE",CLASS:"text-uppercase",NOMBRE:"sección",WIDTH:"150px"},
+            metas: {TIPO:"TP_TEXT",VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"metadatos (,)"},
+            descripcion: {TIPO:"TP_TEXT",VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"descripción"}
+        },
+        FORM: [
+            {
+                seccion: '/seccion/',
+                BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
+            },
+            {
+                descripcion: '<div class="col-12">/descripcion/</div>',
+                metas: '<div class="col-12 mt-2">/metas/</div>'
+            }
+        ]
+    }
+};

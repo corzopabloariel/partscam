@@ -1,0 +1,212 @@
+/* ---------------------------------------------------
+    GENERAL
+----------------------------------------------------- */
+/*/ <COLORES> /*/
+/* 1°: #2D3E75 */
+/* 2°: #384D92 */
+/* 3°: #4352BA */
+/*/ </COLORES> /*/
+body {
+    background-color: #e9ebee;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: #333;
+    font-size: 17px;
+}
+.form-control:focus,
+.custom-file-input:focus~.custom-file-label,
+.custom-select:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #2D3E75;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(67,82,186,.2);
+}
+/**/
+.btn-general {
+    color:#fff;
+    background-color:#384D92;
+    border-color:#384D92
+}
+.btn-general:hover {
+    color:#fff;
+    background-color:#4352BA;
+    border-color:#2D3E75
+}
+a.btn-general:hover {
+    color:#fff;
+    background-color:#4352BA !important;
+    border-color:#2D3E75 !important;
+}
+.btn-general.focus,
+.btn-general:focus {
+    box-shadow:0 0 0 .2rem rgba(67,82,186,.2);
+}
+.btn-general.disabled,
+.btn-general:disabled {
+    color:#fff;
+    background-color:#384D92;
+    border-color:#384D92
+}
+.btn-general:not(:disabled):not(.disabled).active,
+.btn-general:not(:disabled):not(.disabled):active,
+.show > .btn-general.dropdown-toggle {
+    color:#fff;
+    background-color:#2D3E75;
+    border-color:#384D92
+}
+.btn-general:not(:disabled):not(.disabled).active:focus,
+.btn-general:not(:disabled):not(.disabled):active:focus,
+.show > .btn-general.dropdown-toggle:focus {
+    box-shadow:0 0 0 .2rem rgba(67,82,186,.5)
+}
+
+.btn-general.focus,
+.btn-general:focus {
+    box-shadow:0 0 0 .2rem rgba(67,82,186,.5)
+}
+.btn-general.disabled,
+.btn-general:disabled {
+    color:#fff;
+    background-color:#384D92;
+    border-color:#384D92
+}
+.btn-general:not(:disabled):not(.disabled).active,
+.btn-general:not(:disabled):not(.disabled):active,
+.show > .btn-general.dropdown-toggle {
+    color:#fff;
+    background-color:#2D3E75;
+    border-color:#384D92
+}
+.btn-general:not(:disabled):not(.disabled).active:focus,
+.btn-general:not(:disabled):not(.disabled):active:focus,
+.show > .btn-general.dropdown-toggle:focus {
+    box-shadow:0 0 0 .2rem rgba(67,82,186,.5)
+}
+/**/
+.btn-general-reverse {
+    color:#384D92;
+    background-color:transparent;
+    border-color:#384D92
+}
+.btn-gds-reverse:hover {
+    color:#fff;
+    background-color:#4352BA;
+    border-color:#2D3E75
+}
+a.btn-gds-reverse:hover {
+    color:#fff;
+    background-color:#4352BA !important;
+    border-color:#2D3E75 !important;
+}
+.btn-gds-reverse.focus,
+.btn-gds-reverse:focus {
+    box-shadow:0 0 0 .2rem rgba(67,82,186,.5)
+}
+.btn-gds-reverse.disabled,
+.btn-gds-reverse:disabled {
+    color:#fff;
+    background-color:#384D92;
+    border-color:#384D92
+}
+.btn-gds-reverse:not(:disabled):not(.disabled).active,
+.btn-gds-reverse:not(:disabled):not(.disabled):active,
+.show > .btn-gds-reverse.dropdown-toggle {
+    color:#fff;
+    background-color:#2D3E75;
+    border-color:#384D92;
+}
+.btn-gds-reverse:not(:disabled):not(.disabled).active:focus,
+.btn-gds-reverse:not(:disabled):not(.disabled):active:focus,
+.show > .btn-gds-reverse.dropdown-toggle:focus {
+    box-shadow:0 0 0 .2rem rgba(67,82,186,.5)
+}
+
+.btn-gds-reverse.focus,
+.btn-gds-reverse:focus {
+    box-shadow:0 0 0 .2rem rgba(67,82,186,.5)
+}
+.btn-gds-reverse.disabled,
+.btn-gds-reverse:disabled {
+    color:#fff;
+    background-color:#384D92;
+    border-color:#384D92;
+}
+.btn-gds-reverse:not(:disabled):not(.disabled).active,
+.btn-gds-reverse:not(:disabled):not(.disabled):active,
+.show > .btn-gds-reverse.dropdown-toggle {
+    color:#fff;
+    background-color:#2D3E75;
+    border-color:#384D92;
+}
+.btn-gds-reverse:not(:disabled):not(.disabled).active:focus,
+.btn-gds-reverse:not(:disabled):not(.disabled):active:focus,
+.show > .btn-gds-reverse.dropdown-toggle:focus {
+    box-shadow:0 0 0 .2rem rgba(67,82,186,.5)
+}
+
+a,
+a:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* ---------------------------------------------------
+    IMAGES / FILE
+----------------------------------------------------- */
+input.custom-file-input,
+input.custom-file-input + label {
+    cursor: pointer;
+}
+input.custom-file-input:invalid + label:before {
+    content: attr(data-invalid);
+}
+input.custom-file-input:valid + label:before {
+    content: attr(data-valid);
+}
+input.custom-file-input:valid + label {
+    border-color: #1e7e34;
+    background-color: #218838;
+    color: #ffffff;
+}
+
+/* ---------------------------------------------------
+    ROW
+----------------------------------------------------- */
+
+/* ---------------------------------------------------
+    ROW
+----------------------------------------------------- */
+.row + .row {
+    margin-top: 2em;
+}
+
+/* ---------------------------------------------------
+    FIELDSET
+----------------------------------------------------- */
+fieldset {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+fieldset + * {
+    margin-top: 1em;
+}
+fieldset legend {
+    width: auto;
+    padding: 2px 5px;
+    margin: 0;
+    border: 1px solid #ddd;
+    line-height: initial;
+    text-transform: uppercase;
+    background-color: #efefef;
+    font-size: 80%;
+}
+fieldset legend.legend-btn {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+fieldset > p:last-child {
+    margin-bottom: 0;
+}
