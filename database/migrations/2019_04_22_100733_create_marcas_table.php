@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProductoprecioTable extends Migration
+class CreateMarcasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateProductoprecioTable extends Migration
      */
     public function up()
     {
-        Schema::create('productoprecio', function (Blueprint $table) {
+        Schema::create('marcas', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->double('precio', 8, 2)->default(NULL);
-            $table->unsignedBigInteger('producto_id')->default(0);
+            $table->string('image',100)->nullable()->default(NULL);
+            $table->string('nombre',100)->nullable()->default(NULL);
+            $table->string('orden',3)->nullable()->default(NULL);
 
-            $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateProductoprecioTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('productoprecio');
+        Schema::dropIfExists('marcas');
     }
 }

@@ -16,7 +16,7 @@ class CreateProductostockTable extends Migration
         Schema::create('productostocks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('cantidad')->default(0);
-            $table->unsignedBigInteger('producto_id');
+            $table->unsignedBigInteger('producto_id')->default(0);
 
             $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
             $table->timestamps();

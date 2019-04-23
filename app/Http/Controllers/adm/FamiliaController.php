@@ -4,21 +4,31 @@ namespace App\Http\Controllers\adm;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Marca;
-class AdmController extends Controller
+use App\Familia;
+class FamiliaController extends Controller
 {
-    public function index() {
-        $title = "Administración";
-        $view = "adm.parts.index";
-        return view('adm.distribuidor',compact('title', 'view'));
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $title = "Familia de productos";
+        $view = "adm.parts.familia.index";
+        $familias = Familia::orderBy('orden')->get();
+        
+        return view('adm.distribuidor',compact('title','view','familias'));
     }
-    public function marcas() {
-        $title = "Marcas";
-        $view = "adm.parts.marca.index";
-        $marcas = Marca::orderBy('orden')->get();
-        return view('adm.distribuidor',compact('title', 'view','marcas'));
-    }
-    public function store(Request $request, $data = null) {
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request, $data = null)
+    {
         $dataRequest = $request->all();
         $ARR_data = [];
         $ARR_data["orden"] = $dataRequest["orden"];
@@ -45,34 +55,53 @@ class AdmController extends Controller
             }
         }
         if(is_null($data))
-            Marca::create($ARR_data);
+            Familia::create($ARR_data);
         else {
             $data->fill($ARR_data);
             $data->save();
         }
         return back();
     }
-    public function edit($id) {
-        return Marca::find($id);
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        return Familia::find($id);
     }
-    public function update(Request $request, $id) {
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
         $data = self::edit($id);
         self::store($request,$data);
         return back();
     }
 
-    public function destroy($id) {
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
         $data = self::edit($id);
         $filename = public_path() . "/{$data["image"]}";
         if (file_exists($filename))
             unlink($filename);
 
-        Marca::destroy($id);
+        Familia::destroy($id);
         return 1;
-    }
-    /** */
-    public function logout() {
-        Auth::logout();
-    	return redirect()->to('/adm');
     }
 }

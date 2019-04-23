@@ -17,7 +17,7 @@ class CreateProductoimagesTable extends Migration
             $table->bigIncrements('id');
             $table->string('image',100)->nullable()->default(NULL);
             $table->string('orden',3)->nullable()->default(NULL);
-            $table->unsignedBigInteger('producto_id');
+            $table->unsignedBigInteger('producto_id')->default(0);
 
             $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
             $table->timestamps();

@@ -17,7 +17,7 @@ class CreateProductoofertaTable extends Migration
             $table->bigIncrements('id');
             $table->float('porcentaje', 8, 2)->default(NULL);
             $table->double('precio', 8, 2)->default(NULL);
-            $table->unsignedBigInteger('producto_id');
+            $table->unsignedBigInteger('producto_id')->default(0);
 
             $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
             $table->timestamps();

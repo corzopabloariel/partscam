@@ -26,16 +26,11 @@
     </div>
 </section>
 @push('scripts_distribuidor')
-<script src="//cdn.ckeditor.com/4.7.3/full/ckeditor.js"></script>
 <script>
-    $(document).on("ready",function() {
-        $(".ckeditor").each(function () {
-            CKEDITOR.replace( $(this).attr("name") );
-        });
-    });
+    
     const src = "{{ asset('images/general/no-img.png') }}";
-    window.pyrus = new Pyrus("slider", null, src);
-    window.sliders = @json($sliders);
+    window.pyrus = new Pyrus("marca", null, src);
+    window.marcas = @json($marcas);
     /** ------------------------------------- */
     readURL = function(input, target) {
         if (input.files && input.files[0]) {
@@ -61,7 +56,7 @@
         if(id != 0)
             action = `{{ url('/adm/${window.pyrus.entidad}/update/${id}') }}`;
         else
-            action = `{{ url('/adm/${window.pyrus.entidad}/' . strtolower($seccion) . '/store') }}`;
+            action = `{{ url('/adm/${window.pyrus.entidad}/store') }}`;
         if(data !== null) {
             for(let x in window.pyrus.especificacion) {
                 if(window.pyrus.especificacion[x].EDITOR !== undefined) {
@@ -154,7 +149,7 @@
         });
         table.find("thead").append(`<th class="text-uppercase text-center" style="width:150px">acción</th>`);
 
-        window.sliders.forEach(function(data) {
+        window.marcas.forEach(function(data) {
             let tr = "";
             if(!table.find("tbody").length) 
                 table.append("<tbody></tbody>");

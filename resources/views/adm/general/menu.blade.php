@@ -52,13 +52,19 @@
                 </a>
                 <ul class="collapse list-unstyled" id="productoSubmenu">
                     <li>
-                        <a data-link="u" href="{{-- route('contenido.edit', ['seccion' => 'calidad']) --}}">
+                        <a data-link="u" href="{{ route('familias.index') }}">
                             <i class="fas fa-tasks"></i>
                             <span class="nav-label">Familia de productos</span>
                         </a>
                     </li>
                     <li>
-                        <a data-link="u" href="{{-- route('archivo.index', ['seccion' => 'calidad']) --}}">
+                        <a data-link="u" href="{{ route('familias.categorias.index') }}">
+                            <i class="fas fa-columns"></i>
+                            <span class="nav-label">Categorías</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a data-link="u" href="{{ route('familias.categorias.productos.index') }}">
                             <i class="fas fa-clipboard-list"></i>
                             <span class="nav-label">Todos los productos</span>
                         </a>
@@ -133,12 +139,18 @@
                     @else
                     <li>
                         <a data-link="u" href="{{-- route('empresa.mis_datos') --}}">
-                            <i class="fas fa-user-cog"></i>
+                            <i class="fab fa-bandcamp"></i>
                             <span class="nav-label">Mis datos</span>
                         </a>
                     </li>
                     @endif
                 </ul>
+            </li>
+            <li>
+                <a data-link="a" href="{{ route('marca.index') }}">
+                    <i class="fab fa-bandcamp"></i>
+                    <span class="nav-label">Marcas</span>
+                </a>
             </li>
             <li><hr/></li>
             <li>

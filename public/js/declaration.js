@@ -58,7 +58,7 @@ const ENTIDADES = {
     },
     home: {
         ATRIBUTOS: {
-            page: {TIPO:"TP_ENUM",ENUM:{slider:"Slider",marcas:"Marcas",familias:"Familias",buscador: "Buscador", ofertas: "Ofertas", entrega: "Entrega"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"secciones",MULTIPLE: 1},
+            page: {TIPO:"TP_ENUM",ENUM:{slider:"Slider",marcas:"Marcas",familias:"Familias",buscador: "Buscador", ofertas: "Ofertas", entrega: "Entrega",mercadopago:"Mercadopago"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"secciones",MULTIPLE: 1},
             image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo OK",INVALID:"Archivo - 120x76",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"250px"},
             texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"}
         },
@@ -83,7 +83,7 @@ const ENTIDADES = {
     },
     empresa: {
         ATRIBUTOS: {
-            page: {TIPO:"TP_ENUM",ENUM:{slider:"Slider"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"secciones",MULTIPLE: 1},
+            page: {TIPO:"TP_ENUM",ENUM:{slider:"Slider",mercadopago:"Mercadopago"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"secciones",MULTIPLE: 1},
             image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo OK",INVALID:"Archivo - 396x290",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"250px"},
             titulo_empresa: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título empresa"},
             texto_empresa: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto empresa"},
@@ -195,6 +195,80 @@ const ENTIDADES = {
         ],
         FUNCIONES: {
             image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    marca: {
+        ATRIBUTOS: {
+            orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 151x64",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"151px"},
+            nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"}
+        },
+        FORM: [
+            {
+                orden: '<div class="col-5 col-md-3">/orden/</div>',
+                BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
+            },
+            {
+                nombre: '<div class="col-12 col-md-6">/nombre/</div>'
+            },
+            {
+                image: '<div class="col-12 col-md-6 col-lg-4">/image/</div>',
+            },
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    familias: {
+        ATRIBUTOS: {
+            orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 400x393",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"151px"},
+            nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"}
+        },
+        FORM: [
+            {
+                orden: '<div class="col-5 col-md-3">/orden/</div>',
+                BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
+            },
+            {
+                nombre: '<div class="col-12 col-md-6">/nombre/</div>'
+            },
+            {
+                image: '<div class="col-12 col-md-6 col-lg-4">/image/</div>',
+            },
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    categorias: {
+        ATRIBUTOS: {
+            orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 400x393",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"151px"},
+            nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
+            familia_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
+            padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Categoría padre"},
+            familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"}
+        },
+        FORM: [
+            {
+                orden: '<div class="col-5 col-md-3">/orden/</div>',
+                BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
+            },
+            {
+                familia_id: '<div class="col-12 col-md-3">/familia_id/</div>',
+                nombre: '<div class="col-12 col-md-3">/nombre/</div>'
+            },
+            {
+                padre_id: '<div class="col-12 col-md-6">/padre_id/</div>'
+            },
+            {
+                image: '<div class="col-12 col-md-6 col-lg-4">/image/</div>',
+            },
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}},
+            familia_id: {onchange: "changeFamilia(this)"}
         }
     },
     metadatos: {

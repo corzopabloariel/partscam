@@ -71,7 +71,7 @@ class ContenidoController extends Controller
         switch($seccion) {
             case "home":
                 $ARR_data["data"]["CONTENIDO"]["texto"] = [];
-                $ARR_data["data"]["CONTENIDO"]["image"] = null;
+                $ARR_data["data"]["CONTENIDO"]["image"] = $contenido["data"]["CONTENIDO"]["image"];
                 $ARR_data["data"]["CONTENIDO"]["texto"][$this->idioma] = $datosRequest["texto_{$this->idioma}"];
                 $ARR_data["data"]["PAGE"] = $datosRequest["page"];
                 
@@ -103,7 +103,7 @@ class ContenidoController extends Controller
                 $ARR_data["data"]["CONTENIDO"]["filosofia"]["titulo"][$this->idioma] = $datosRequest["titulo_filosofia_{$this->idioma}"];
                 $ARR_data["data"]["CONTENIDO"]["filosofia"]["texto"] = [];
                 $ARR_data["data"]["CONTENIDO"]["filosofia"]["texto"][$this->idioma] = $datosRequest["texto_filosofia_{$this->idioma}"];
-                $ARR_data["data"]["CONTENIDO"]["image"] = null;
+                $ARR_data["data"]["CONTENIDO"]["image"] = $contenido["data"]["CONTENIDO"]["image"];
                 $ARR_data["data"]["PAGE"] = $datosRequest["page"];
 
                 $file = $request->file("image");

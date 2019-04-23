@@ -11,7 +11,7 @@
                     <button onclick="remove(this)" type="button" class="close position-absolute" aria-label="Close">
                         <span aria-hidden="true"><i class="fas fa-times"></i></span>
                     </button>
-                    <form id="form" novalidate class="pt-2" action="{{ url('/adm/familia/store') }}" method="post" enctype="multipart/form-data">
+                    <form id="form" novalidate class="pt-2" action="" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                         <div class="container-form"></div>
                     </form>
@@ -26,16 +26,13 @@
     </div>
 </section>
 @push('scripts_distribuidor')
-<script src="//cdn.ckeditor.com/4.7.3/full/ckeditor.js"></script>
 <script>
-    $(document).on("ready",function() {
-        $(".ckeditor").each(function () {
-            CKEDITOR.replace( $(this).attr("name") );
-        });
-    });
+    
     const src = "{{ asset('images/general/no-img.png') }}";
-    window.pyrus = new Pyrus("slider", null, src);
-    window.sliders = @json($sliders);
+    window.familias = @json($familias);
+    window.OP_categorias = @json($OP_categorias);
+    window.pyrus = new Pyrus("categorias", {familia_id: {TIPO:"OP",DATA: window.familias}, padre_id: {TIPO:"OP",DATA:window.OP_categorias}}, src);
+    window.categorias = @json($categorias);
     /** ------------------------------------- */
     readURL = function(input, target) {
         if (input.files && input.files[0]) {
@@ -59,9 +56,9 @@
         $("#wrapper-tabla").toggle("fast");
 
         if(id != 0)
-            action = `{{ url('/adm/${window.pyrus.entidad}/update/${id}') }}`;
+            action = `{{ url('/adm/familias/${window.pyrus.entidad}/update/${id}') }}`;
         else
-            action = `{{ url('/adm/${window.pyrus.entidad}/' . strtolower($seccion) . '/store') }}`;
+            action = `{{ url('/adm/familias/${window.pyrus.entidad}/store') }}`;
         if(data !== null) {
             for(let x in window.pyrus.especificacion) {
                 if(window.pyrus.especificacion[x].EDITOR !== undefined) {
@@ -116,6 +113,29 @@
         }
     };
     /** ------------------------------------- */
+    changeFamilia = function(t) {
+        id = $(t).val();
+        $(t).attr("disabled",true);
+        let promise = new Promise(function (resolve, reject) {
+            let url = `{{ url('/adm/familias/${window.pyrus.entidad}/familia_categoria/${id}') }}`;
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.responseType = 'json';
+            xmlHttp.open( "GET", url, true );
+            xmlHttp.onload = function() {
+                resolve(xmlHttp.response);
+            }
+            xmlHttp.send( null );
+        });
+
+        promiseFunction = () => {
+            promise
+                .then(function(data) {
+                    console.log(data)
+                })
+        };
+        promiseFunction();
+    };
+    /** ------------------------------------- */
     edit = function(t, id) {
         $(t).attr("disabled",true);
         let promise = new Promise(function (resolve, reject) {
@@ -153,8 +173,8 @@
             table.find("thead").append(`<th class="${e.CLASS}" style="width:${e.WIDTH}">${e.NAME}</th>`);
         });
         table.find("thead").append(`<th class="text-uppercase text-center" style="width:150px">acción</th>`);
-
-        window.sliders.forEach(function(data) {
+        
+        /*window.familias.forEach(function(data) {
             let tr = "";
             if(!table.find("tbody").length) 
                 table.append("<tbody></tbody>");
@@ -169,7 +189,7 @@
             });
             tr += `<td class="text-center"><button onclick="edit(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button><button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></td>`;
             table.find("tbody").append(`<tr data-id="${data.id}">${tr}</tr>`);
-        });
+        });*/
     }
     /** */
     init();

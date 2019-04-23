@@ -1,0 +1,215 @@
+/* ---------------------------------------------------
+    GENERAL
+----------------------------------------------------- */
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 17px;
+    background: #FFF;
+    color: #9FA3A5;
+}
+
+body::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color: #CCCCCC; }
+body::-webkit-scrollbar { width: 8px; background-color: #CCCCCC; }
+body::-webkit-scrollbar-thumb { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color: #1D294E; }
+
+.title {
+    font-family: 'Exo 2', sans-serif;
+}
+
+.mercadopago {
+    background-color: #ECECEC;
+}
+.mercadopago img {
+    display: block;
+    margin: auto;
+    width: 100%;
+}
+/* ---------------------------------------------------
+    NAV
+----------------------------------------------------- */
+nav {
+    min-height: 150px;
+}
+nav .menu li + li {
+    margin-left: 20px;
+}
+nav .menu a {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+nav .menu a.btn,
+nav .menu a.btn:hover {
+    background-color: #2DC5EE;
+    color: #FFF;
+}
+nav .info {
+    font-family: 'Exo 2', sans-serif;
+    font-size: 16px;
+}
+nav .info i {
+    color: #2D3E75;
+    margin-right: 5px;
+}
+nav .info li + li {
+    border-left: 2px solid #2CC5ED;
+    margin-left: 10px;
+    padding-left: 10px;
+}
+nav .info li form input {
+    border: none;
+    outline: none;
+    font-size: inherit;
+    font-family: inherit;
+}
+nav .info li form i {
+    right: 0;
+    top: calc(50% - 8px);
+}
+nav .active:not(.btn) {
+    color: #2CC5ED !important;
+}
+/* ---------------------------------------------------
+    FOOTER
+----------------------------------------------------- */
+footer {
+    background-color: #1D294E;
+    background-image: url(../images/empresa/logoFooter.png);
+    background-position: center left;
+    background-repeat: no-repeat;
+    min-height: 223px;
+    color: #DDDDDD;
+    font-size: 16px;
+}
+footer .title {
+    color: #2CC5ED;
+}
+footer .border-top {
+    border-color: #DDDDDD;
+}
+footer .info i {
+    color: #2CC5ED;
+    width: 30px;
+}
+footer .info i + div {
+    width: calc(100% - 50px);
+}
+footer .info li + li {
+    margin-top: 10px;
+}
+
+/* ---------------------------------------------------
+    ENTREGA
+----------------------------------------------------- */
+.wrapper-entrega {
+    background-color: #2CC5EC;
+    color: #2C3E74;
+    font-size: 30px;
+    font-family: 'Exo 2', sans-serif;
+    padding: 1em 0;
+}
+.wrapper-entrega p {
+    margin-bottom: 0;
+}
+/* ---------------------------------------------------
+    CAROUSEL
+----------------------------------------------------- */
+.carousel .texto {
+    top: 10%;
+    left: 0;
+}
+.carousel .texto p {
+    margin-bottom: 0;
+    text-align: left;
+}
+.carousel .texto p:first-child {
+    font-size: 55px;
+    font-family: 'Exo 2', sans-serif;
+    color: #FFF;
+    font-weight: bold;
+    line-height: 55px;
+    text-shadow: 0 0 2px #333;
+}
+.carousel .texto p:last-child {
+    color: #2DC5EE;
+    font-size: 28px;
+    font-weight: 500;
+    text-shadow: 0 0 2px #333;
+}
+/* ---------------------------------------------------
+    MARCAS
+----------------------------------------------------- */
+.wrapper-marcas {
+    padding: 2em 0;
+}
+.wrapper-marcas img {
+    max-height: 72px;
+    max-width: 100%;
+    display: block;
+    margin: auto;
+}
+.wrapper-marcas .slick-next {
+    background-image: url(../images/general/arrow-right.fw.png) !important;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+.wrapper-marcas .slick-prev {
+    background-image: url(../images/general/arrow-left.fw.png) !important;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+.wrapper-marcas .slick-prev, .slick-next {
+    width: 30px !important;
+    height: 55px !important;
+}
+
+/* ---------------------------------------------------
+    BUSCADOR
+----------------------------------------------------- */
+.wrapper-buscador {
+    background-image: url(../images/general/buscador.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    min-height: 239px;
+    max-height: 239px;
+}
+.wrapper-buscador p {
+    margin-bottom: 0;
+}
+.wrapper-buscador p:first-child {
+    font-size: 30px;
+    color: #2CC5EB;
+}
+.wrapper-buscador p:last-child {
+    font-size: 20px;
+    color: #FFF;
+}
+.wrapper-buscador form i {
+    right: 10px;
+    top: calc(50% - 8.5px);
+}
+
+/* ---------------------------------------------------
+    EMPRESA
+----------------------------------------------------- */
+.wrapper-empresa .title {
+    color: #2CC5EB;
+    font-size: 30px;
+}
+.wrapper-empresa p {
+    margin-bottom: 0;
+}
+
+/* ---------------------------------------------------
+    CONTACTO
+----------------------------------------------------- */
+.wrapper-contacto {
+    color: #646464;
+}
+.wrapper-contacto .info li + li {
+    margin-top: 10px;
+}
+.wrapper-contacto .info li i {
+    color: #2C3C77;
+    width: 30px;
+}
