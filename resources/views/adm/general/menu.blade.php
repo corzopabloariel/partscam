@@ -78,7 +78,7 @@
                 </a>
                 <ul class="collapse list-unstyled" id="ofertasSubmenu">
                     <li>
-                        <a data-link="u" href="{{-- route('contenido.edit', ['seccion' => 'home']) --}}">
+                        <a data-link="u" href="{{ route('familias.categorias.ofertas.index') }}">
                             <i class="fas fa-stream"></i>
                             <span class="nav-label">Todas las ofertas</span>
                         </a>

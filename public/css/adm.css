@@ -1,4 +1,7 @@
 
+.select2-container .select2-selection--single .select2-selection__clear {
+    font-family: monospace !important;
+}
 /* ---------------------------------------------------
     WRAPPER-FORM
 ----------------------------------------------------- */

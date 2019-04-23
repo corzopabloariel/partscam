@@ -61,8 +61,18 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
                 Route::get('index', ['uses' => 'adm\ProductoController@index', 'as' => '.index']);
                 Route::post('store', ['uses' => 'adm\ProductoController@store', 'as' => '.store']);
                 Route::get('edit/{id}', ['uses' => 'adm\ProductoController@edit', 'as' => '.edit']);
+                Route::get('familia_categoria/{id}', ['uses' => 'adm\ProductoController@familia_categoria', 'as' => '.familia_categoria']);
                 Route::get('delete/{id}', ['uses' => 'adm\ProductoController@destroy', 'as' => '.destroy']);
                 Route::post('update/{id}', ['uses' => 'adm\ProductoController@update', 'as' => 'update']);
+                Route::post('updateModal/{id}', ['uses' => 'adm\ProductoController@updateModal', 'as' => 'updateModal']);
+            });
+
+            Route::group(['prefix' => 'ofertas', 'as' => '.ofertas'], function() {
+                Route::get('index', ['uses' => 'adm\OfertaController@index', 'as' => '.index']);
+                Route::post('store', ['uses' => 'adm\OfertaController@store', 'as' => '.store']);
+                Route::get('edit/{id}', ['uses' => 'adm\OfertaController@edit', 'as' => '.edit']);
+                Route::get('delete/{id}', ['uses' => 'adm\OfertaController@destroy', 'as' => '.destroy']);
+                Route::post('update/{id}', ['uses' => 'adm\OfertaController@update', 'as' => 'update']);
             });
         });
     });

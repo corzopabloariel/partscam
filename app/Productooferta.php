@@ -12,4 +12,8 @@ class Productooferta extends Model
         'precio',
         'porcentaje'
     ];
+
+    public function producto() {
+        return $this->belongsTo('App\Producto');
+    }
 }

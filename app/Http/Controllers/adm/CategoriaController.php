@@ -24,26 +24,13 @@ class CategoriaController extends Controller
         $title = "Categoría de productos";
         $view = "adm.parts.familia.categoria";
         $familias = Familia::orderBy('orden')->pluck('nombre', 'id');
-        $categorias = Categoria::orderBy("padre_id");
-        $catTOTAL = $categorias->get();
-        $categorias = $categorias->simplePaginate(15);
-        foreach($catTOTAL AS $c) {
-            $c["familia"] = $c->familia;
-            $c["nombre"] = self::rec_padre($c);
-        }   
-        $OP_categorias = $catTOTAL->pluck('nombre', 'id');
+        $categorias = Categoria::orderBy("padre_id")->simplePaginate(15);
         
-        return view('adm.distribuidor',compact('title','view','familias','categorias','OP_categorias'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        foreach($categorias AS $c) {
+            $c["nombre"] = self::rec_padre($c);
+            $c["familia"] = $c->familia;
+        }
+        return view('adm.distribuidor',compact('title','view','familias','categorias'));
     }
 
     /**
@@ -52,10 +39,45 @@ class CategoriaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $data = null)
     {
-        $dataRequest = $request->all();
-        dd($dataRequest);
+        $datosRequest = $request->all();
+        $padre_id = 0;
+        if(isset($datosRequest["padre_id"]))
+            $padre_id = is_null($datosRequest["padre_id"]) ? 0 : $datosRequest["padre_id"];
+        $ARR_data = [];
+        $ARR_data["image"] = null;
+        $ARR_data["familia_id"] = $datosRequest["familia_id"];
+        $ARR_data["padre_id"] = $padre_id;
+        $ARR_data["nombre"] = $datosRequest["nombre"];
+        $ARR_data["orden"] = $datosRequest["orden"];
+        
+        $file = $request->file("image");
+        
+        if(!is_null($data))
+            $ARR_data["image"] = $data["image"];
+        if(!is_null($file)) {
+            $path = public_path('images/categorias/');
+            if (!file_exists($path))
+                mkdir($path, 0777, true);
+            $imageName = time()."_categoria.".$file->getClientOriginalExtension();
+            
+            $file->move($path, $imageName);
+            $ARR_data["image"] = "images/categorias/{$imageName}";
+            
+            if(!is_null($data)) {
+                $filename = public_path() . "/" . $data["image"];
+                if (file_exists($filename))
+                    unlink($filename);
+            }
+        }
+        if(is_null($data))
+            Categoria::create($ARR_data);
+        else {
+            $data->fill($ARR_data);
+            $data->save();
+        }
+        return back();
     }
 
     /**
@@ -67,8 +89,11 @@ class CategoriaController extends Controller
     public function familia_categoria($id)
     {
         $familia = Familia::find($id);
-
-        return $familia->categorias;
+        $catTOTAL = $familia->categorias;
+        foreach($catTOTAL AS $c)
+            $c["nombre"] = self::rec_padre($c);
+        
+        return $catTOTAL->pluck('nombre', 'id');
     }
 
     /**
@@ -79,7 +104,8 @@ class CategoriaController extends Controller
      */
     public function edit($id)
     {
-        //
+        $categoria = Categoria::find($id);
+        return $categoria;
     }
 
     /**
@@ -91,7 +117,9 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = self::edit($id);
+        self::store($request, $data);
+        return back();
     }
 
     /**
