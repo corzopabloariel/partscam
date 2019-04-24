@@ -51,6 +51,20 @@
     </div>
 </div>
 @endif
+@if(in_array('familias',$datos["contenido"]["PAGE"]))
+<div class="wrapper-producto py-2">
+    <div class="container">
+        <div class="row justify-content-center">
+            @foreach($datos["prodfamilias"] AS $f)
+            <a href="{{ URL::to('productos/familia/' . $f['id']) }}" class="col-12 col-lg-3 my-2">
+                <img onError="this.src='{{ asset('images/general/no-img.png') }}'" class="w-100" src="{{ $f['image'] }}" alt="{{ $f['nombre'] }}">
+                <p class="title nombre mb-0">{{ $f["nombre"] }}</p>
+            </a>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
 @if(in_array('buscador',$datos["contenido"]["PAGE"]))
 <div class="wrapper-buscador d-flex align-items-center">
     <div class="container d-flex w-100">
@@ -60,11 +74,35 @@
                 <p>Buscá por código, modelo o nombre del repuesto</p>
             </div>
             <div class="col-12 col-lg-5 d-flex align-items-center">
-                <form action="" class="position-relative w-100">
-                    <input type="text" placeholder="Buscar Producto" class="form-control rounded-0 border-0" name="" id="">
+                <form action="{{ url('/buscador/home') }}" class="position-relative w-100">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                    <input type="text" name="input" placeholder="Buscar Producto" class="form-control rounded-0 border-0" name="" id="">
                     <i class="fas fa-search position-absolute"></i>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+@endif
+@if(in_array('ofertas',$datos["contenido"]["PAGE"]))
+<div class="wrapper-oferta py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            @foreach($datos["ofertas"] AS $o)
+                <div class="col-lg-3 col-sm-6 col-12">
+                    <a href="{{ URL::to('productos/producto/' . $o['producto_id']) }}" class="position-relative oferta title">
+                        <img class="position-absolute oferta" src="{{ asset('images/general/ofertas.fw.png') }}" />
+                        <img class="d-block w-100" src="{{ asset($o['image']) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" alt="{{ $o['producto'] }}" srcset=""/>
+                        <div class="py-2 px-3 border">
+                            <p class="text-center w-75 mx-auto mb-0">{{ $o["producto"] }}</p>
+                            <div class="d-flex justify-content-between">
+                                <strike>$ {{ $o["precioAnterior"]}}</strike>
+                                <span>$ {{ $o["precio"] }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
         </div>
     </div>
 </div>

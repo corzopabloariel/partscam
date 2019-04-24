@@ -2,8 +2,12 @@
 
 <section class="mt-3">
     <div class="container-fluid">
-        <div>
+        <div class="d-flex justify-content-between">
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
+            <form class="position-relative" action="" method="post">
+                <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Categorías"/>
+                <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
+            </form>
         </div>
         <div style="display: none;" id="wrapper-form" class="mt-2">
             <div class="card">

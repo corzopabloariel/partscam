@@ -15,11 +15,21 @@ Route::get('/', 'page\GeneralController@index');
 Route::get('empresa', ['uses' => 'page\GeneralController@empresa', 'as' => 'empresa']);
 Route::get('contacto', ['uses' => 'page\GeneralController@contacto', 'as' => 'contacto']);
 
+Route::get('buscador/{tipo}', ['uses' => 'page\GeneralController@buscador', 'as' => 'buscador']);
+
+Route::group(['prefix' => 'productos', 'as' => 'productos'], function() {
+    Route::get('/', ['uses' => 'page\GeneralController@productos', 'as' => 'productos']);
+    Route::get('ofertas', ['uses' => 'page\GeneralController@ofertas', 'as' => 'ofertas']);
+    Route::get('familia/{id}', ['uses' => 'page\GeneralController@familia', 'as' => '.familia']);
+    Route::get('categoria/{id}', ['uses' => 'page\GeneralController@categoria', 'as' => '.categoria']);
+    Route::get('producto/{id}', ['uses' => 'page\GeneralController@producto', 'as' => '.producto']);
+});
+
 Auth::routes();
 
 Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
     Route::get('/', 'adm\AdmController@index');
-
+    Route::get('logout', ['uses' => 'adm\AdmController@logout' , 'as' => 'adm.logout']);
     /**
      * CONTENIDO
      */

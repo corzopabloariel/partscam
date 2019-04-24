@@ -31,18 +31,18 @@
             </div>
             <div class="col-lg-8">
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 col-12">
                         <input placeholder="Nombre" type="text" name="" id="" class="form-control">
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 col-12">
                         <input placeholder="Apellido" type="text" name="" id="" class="form-control">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 col-12">
                         <input placeholder="Email" type="email" name="" id="" class="form-control">
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 col-12">
                         <input placeholder="Teléfono" type="phone" name="" id="" class="form-control">
                     </div>
                 </div>
@@ -52,13 +52,13 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-4 col-12">
                         <input type="text" name="" placeholder="Marca Iveco" id="" class="form-control">
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-4 col-12">
                         <input type="text" name="" placeholder="Modelo" id="" class="form-control">
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-4 col-12">
                         <input type="text" name="" placeholder="Año" id="" class="form-control">
                     </div>
                 </div>

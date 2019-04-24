@@ -18,6 +18,7 @@ class CreateCategoriaTable extends Migration
             $table->unsignedBigInteger('padre_id')->default(0);
             $table->string('nombre',100)->nullable()->default(NULL);
             $table->string('image',150)->nullable()->default(NULL);
+            $table->string('orden',3)->nullable()->default(NULL);
             $table->unsignedBigInteger('familia_id')->default(0);
 
             $table->foreign('familia_id')->references('id')->on('familias')->onDelete('cascade');

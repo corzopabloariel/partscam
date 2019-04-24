@@ -15,4 +15,8 @@ class Familia extends Model
     {
         return $this->hasMany('App\Categoria');
     }
+    public function productos() 
+    {
+        return $this->hasMany('App\Producto');
+    }
 }

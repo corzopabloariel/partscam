@@ -10,7 +10,8 @@ class Productooferta extends Model
     protected $fillable = [
         'producto_id',
         'precio',
-        'porcentaje'
+        'porcentaje',
+        'orden'
     ];
 
     public function producto() {

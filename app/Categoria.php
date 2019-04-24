@@ -18,8 +18,16 @@ class Categoria extends Model
     {
         return $this->belongsTo('App\Familia');
     }
+    public function productos()
+    {
+        return $this->hasMany('App\Producto')->orderBy('orden');
+    }
     public function padre()
     {
         return $this->belongsTo('App\Categoria');
+    }
+    public function hijos()
+    {
+        return $this->hasMany('App\Categoria','padre_id','id')->orderBy('orden');
     }
 }

@@ -160,7 +160,7 @@
                 </a>
             </li>
             <li>
-                <a class="bg-danger text-white" href="{{--route('adm.logout') --}}">
+                <a class="bg-danger text-white" href="{{ route('adm.logout') }}">
                     <i class="fas fa-power-off text-white"></i>
                     <span class="nav-label">Salir</span>
                 </a>

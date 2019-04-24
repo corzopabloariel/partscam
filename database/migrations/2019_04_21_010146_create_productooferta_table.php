@@ -15,6 +15,7 @@ class CreateProductoofertaTable extends Migration
     {
         Schema::create('productooferta', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('orden',10)->nullable()->default(NULL);
             $table->float('porcentaje', 8, 2)->default(NULL);
             $table->double('precio', 8, 2)->default(NULL);
             $table->unsignedBigInteger('producto_id')->default(0);

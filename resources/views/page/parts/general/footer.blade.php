@@ -1,15 +1,15 @@
 <footer>
     <div class="container">
         <div class="row justify-content-end pt-3">
-            <div class="col-12 col-lg-8">
+            <div class="col-12 col-md-10 col-lg-9">
                 <div class="row">
                     <div class="col-12 col-lg-3">
                         <h5 class="title text-uppercase">categorías</h5>
                         <ul class="list-unstyled mb-0">
                             <li><a href="/">Home</a></li>
                             <li><a href="{{ route('empresa') }}">Empresa</a></li>
-                            <li>Productos</li>
-                            <li>Ofertas</li>
+                            <li><a href="{{ URL::to('productos') }}">Productos</a></li>
+                            <li><a href="{{ URL::to('productos/ofertas') }}">Ofertas</a></li>
                             <li><a href="{{ route('contacto') }}">Contacto</a></li>
                         </ul>
                     </div>

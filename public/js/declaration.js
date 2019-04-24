@@ -273,12 +273,15 @@ const ENTIDADES = {
     },
     ofertas: {
         ATRIBUTOS: {
-            porcentaje: {TIPO:"TP_STRING",MAXLENGTH:4,VISIBILIDAD:"TP_VISIBLE",READONLY:1,CLASS:"text-uppercase text-right",WIDTH:"180px"},
-            precio: {TIPO:"TP_STRING",MAXLENGTH:10,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-right",WIDTH:"150px"},
-            producto: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE"},
+            orden: {TIPO:"TP_STRING",MAXLENGTH:10,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            porcentaje: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",READONLY:1,CLASS:"text-uppercase text-right",WIDTH:"180px"},
+            precio: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",DISABLED:1,CLASS:"text-uppercase text-right",WIDTH:"150px"},
+            nombre: {TIPO:"TP_STRING",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"producto"},
+            producto: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM"},
         },
         FORM: [
             {
+                orden: '<div class="d-flex col-3 col-md-3">/orden/</div>',
                 BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
             },
             {
@@ -290,7 +293,8 @@ const ENTIDADES = {
             },
         ],
         FUNCIONES: {
-            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+            producto: {onchange: "activarCalculo(this)"},
+            precio: {onblur:"calcular(this);"}
         }
     },
     productos: {
@@ -303,6 +307,7 @@ const ENTIDADES = {
             mercadolibre: {TIPO:"TP_STRING",MAXLENGTH: 150,VISIBILIDAD:"TP_VISIBLE_FORM"},
             familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
             categoria_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"},
+            relaciones: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"productos relacionados",MULTIPLE:1},
             //familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"},
             categoria: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"categoría"}
         },
@@ -323,6 +328,9 @@ const ENTIDADES = {
             {
                 familia_id: '<div class="col-12 col-md-6">/familia_id/</div>',
                 categoria_id: '<div class="col-12 col-md-6">/categoria_id/</div>',
+            },
+            {
+                relaciones: '<div class="col-12 col-md-6">/relaciones/</div>',
             },
         ],
         FUNCIONES: {

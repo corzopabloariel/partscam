@@ -38,8 +38,9 @@
 <script>
     const src = "{{ asset('images/general/no-img.png') }}";
     window.familias = @json($familias);
+    window.prod = @json($prod);console.log(window.prod)
     window.productoimages = new Pyrus("productoimages", null, src);
-    window.pyrus = new Pyrus("productos", {familia_id: {TIPO:"OP",DATA: window.familias}}, src);
+    window.pyrus = new Pyrus("productos", {familia_id: {TIPO:"OP",DATA: window.familias},relaciones: {TIPO:"OP",DATA: window.prod}}, src);
     window.productos = @json($productos);
     /** ------------------------------------- */
     imageAdd = function(data = null) {
@@ -293,6 +294,11 @@
         /** */
         $("#form .container-form").html(window.pyrus.formulario());
         if($("#form .container-form .select__2").length) {
+            
+            $("#form .container-form #relaciones.select__2").select2({
+                theme: "bootstrap",
+                tags: "true",
+            });
             $("#form .container-form #familia_id.select__2").select2({
                 theme: "bootstrap",
                 tags: "true",

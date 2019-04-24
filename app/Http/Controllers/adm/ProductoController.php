@@ -29,7 +29,8 @@ class ProductoController extends Controller
         $view = "adm.parts.familia.producto";
         $familias = Familia::orderBy('orden')->pluck('nombre', 'id');
         $productos = Producto::orderBy("orden")->simplePaginate(15);
-
+        $prod = Producto::orderBy('orden')->pluck('nombre', 'id');
+        
         foreach($productos AS $p) {
             $c = Categoria::find($p["categoria_id"]);
             $p["categoria"] = self::rec_padre($c);
@@ -37,7 +38,7 @@ class ProductoController extends Controller
             $p["precio"] = $p->precio;
             $p["stock"] = $p->stock;
         }
-        return view('adm.distribuidor',compact('title','view','familias','productos'));
+        return view('adm.distribuidor',compact('title','view','familias','productos','prod'));
     }
 
     public function familia_categoria($id)
@@ -79,6 +80,7 @@ class ProductoController extends Controller
         $ARR_data["categoria_id"] = $categoria_id;
         $ARR_data["mercadolibre"] = $datosRequest["mercadolibre"];
         $ARR_data["orden"] = $datosRequest["orden"];
+        $ARR_data["familia_id"] = $datosRequest["familia_id"];
         //dd($ARR_data);
         $precio = $datosRequest["precio"];
         $stock = $datosRequest["stock"];
@@ -88,7 +90,7 @@ class ProductoController extends Controller
             Productostock::create(["producto_id" => $data["id"], "cantidad" => $stock]);
         } else {
             $ARR_imagenes = $data["imagenes"];
-            unset($data["familia_id"]);
+            //unset($data["familia_id"]);
             unset($data["imagenes"]);
             unset($data["precio"]);
             unset($data["stock"]);
@@ -176,7 +178,7 @@ class ProductoController extends Controller
     public function edit($id)
     {
         $p = Producto::find($id);
-        $p["familia_id"] = Categoria::find($p["categoria_id"])["familia_id"];
+        //$p["familia_id"] = Categoria::find($p["categoria_id"])["familia_id"];
 
         $p["imagenes"] = $p->imagenes;
         $p["precio"] = $p->precio;

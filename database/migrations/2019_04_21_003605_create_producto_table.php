@@ -20,8 +20,10 @@ class CreateProductoTable extends Migration
             $table->string('mercadolibre',150)->nullable()->default(NULL);
             $table->string('orden',10)->nullable()->default(NULL);
             $table->unsignedBigInteger('categoria_id')->default(0);
+            $table->unsignedBigInteger('familia_id')->default(0);
 
             $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('cascade');
+            $table->foreign('familia_id')->references('id')->on('familias')->onDelete('cascade');
             $table->timestamps();
         });
     }

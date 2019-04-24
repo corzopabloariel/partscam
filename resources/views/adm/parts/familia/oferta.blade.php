@@ -35,6 +35,8 @@
     window.productos = @json($productos);
     window.pyrus = new Pyrus("ofertas", {producto: {TIPO:"OP",DATA: window.productos}});
     window.ofertas = @json($ofertas);
+    window.precios = @json($precios);
+    window.ofertasActivas = @json($ofertasActivas);
     
     /** ------------------------------------- */
     add = function(t, id = 0, data = null) {
@@ -52,44 +54,90 @@
         else
             action = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/store') }}`;
         if(data !== null) {
-            for(let x in window.pyrus.especificacion) {
-                if(!$(`[name="${x}"]`).length) continue;
-                if(x == "familia_id") {
-                    $(`[name="${x}"]`).val(data[x]).trigger("change");
-                    continue;
-                }
-                if(x == "categoria_id") {
-                    window.categoriaID = data[x];
-                    continue;
-                }
-                if(x == "precio") {
-                    $(`[name="${x}"]`).val(data[x].precio);
-                    continue;
-                }
-                if(x == "stock") {
-                    $(`[name="${x}"]`).val(data[x].cantidad);
-                    continue;
-                }
-                if(window.pyrus.especificacion[x].EDITOR !== undefined) {
-                    CKEDITOR.instances[`${x}_es`].setData(data[x]);
-                    continue;
-                }
-                if(window.pyrus.especificacion[x].TIPO == "TP_FILE") {
-                    date = new Date();
-                    img = `{{ asset('${data[x]}') }}?t=${date.getTime()}`;
-                    $(`#src-${x}`).attr("src",img);
-                    continue;
-                }
-                if(window.pyrus.especificacion[x].TIPO == "TP_ENUM") {
-                    $(`[name="${x}"]`).val(data[x]).trigger("change");
-                    continue;
-                }
-                $(`[name="${x}"]`).val(data[x]);
-            }
+            console.log(data)
+            $(`#producto option:disabled`).removeAttr("disabled");
+            $(`[name="producto"]`).val(data.producto_id).trigger("change");
+            pr = data.precio + "";
+            $(`[name="orden"]`).val(data.orden);
+            $(`[name="precio"]`).val(pr.replace(".",","));
+            $(`#precio`).focus();
+            $(`#porcentaje`).focus();
+        } else {
+            for(let x in window.ofertasActivas)
+                $(`#producto option[value="${x}"]`).attr("disabled",true);
         }
         elmnt = document.getElementById("form");
         elmnt.scrollIntoView();
         $("#form").attr("action",action);
+    };
+    /** ------------------------------------- */
+    edit = function(t, id) {
+        $(t).attr("disabled",true);
+        let promise = new Promise(function (resolve, reject) {
+            let url = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/edit/${id}') }}`;
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.responseType = 'json';
+            xmlHttp.open( "GET", url, true );
+            xmlHttp.onload = function() {
+                resolve(xmlHttp.response);
+            }
+            xmlHttp.send( null );
+        });
+
+        promiseFunction = () => {
+            promise
+                .then(function(data) {
+                    $(t).removeAttr("disabled");
+                    add($("#btnADD"),parseInt(id),data);
+                })
+        };
+        promiseFunction();
+    };
+    /** ------------------------------------- */
+    erase = function(t, id) {
+        $(t).attr("disabled",true);
+        let promise = new Promise(function (resolve, reject) {
+            let url = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/delete/${id}') }}`;
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", url, true );
+            
+            xmlHttp.send( null );
+            resolve(xmlHttp.responseText);
+        });
+
+        promiseFunction = () => {
+            promise
+                .then(function(msg) {
+                    delete window.ofertasActivas[id];
+                    $("#tabla").find(`tr[data-id="${id}"]`).remove();
+                })
+        };
+        promiseFunction();
+    };
+    /** */
+    activarCalculo = function(t) {
+        let value = $(t).val();
+        if(value == "" || value === null) {
+            $("#precio").val("");
+            $("#precio,#form button").attr("disabled",true);
+            $("#porcentaje").val("");
+        } else {
+            $("#precio,#form button").removeAttr("disabled");
+        }
+    }
+    calcular = function(t) {
+        let valorPrecio = $(t).val();
+        let producto = $("#producto").val();
+        $("#porcentaje").val("");
+        if(valorPrecio != "") {
+            valorPrecio = valorPrecio.replace("$ ","").replace(/\./g,"").replace(",",".");
+            valorPrecio = parseFloat(valorPrecio);
+            console.log(valorPrecio)
+            calculo = ((valorPrecio * 100) / window.precios[producto]).toFixed(2);
+            calculo = calculo.replace(".",",");
+            $("#porcentaje").val(calculo);
+            $("#porcentaje").focus();
+        }
     };
     /** ------------------------------------- */
     remove = function(t) {
@@ -114,6 +162,10 @@
         console.log("CONSTRUYENDO FORMULARIO Y TABLA");
         /** */
         $("#form .container-form").html(window.pyrus.formulario());
+        $("#form button").attr("disabled",true);
+        $("#precio").maskMoney({thousands:'.', decimal:',', allowZero:true, prefix: '$ '});
+        $("#porcentaje").maskMoney({thousands:'.', decimal:',', allowZero:true, suffix: ' %'});
+
         if($("#form .container-form .select__2").length) {
             $("#form .container-form #producto.select__2").select2({
                 theme: "bootstrap",
@@ -159,9 +211,6 @@
             tr += `<td class="text-center">`;
                 tr += `<button onclick="edit(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
                 tr += `<button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
-                tr += `<hr/>`;
-                tr += `<button onclick="precio(this,${data.id})" class="btn btn-info" title="Cambiar PRECIO"><i class="fas fa-hand-holding-usd"></i></button>`;
-                tr += `<button onclick="stock(this,${data.id})" class="btn btn-success" title="Agregar/Cambiar STOCK"><i class="fas fa-box-open"></i></button>`;
             tr += `</td>`;
             table.find("tbody").append(`<tr data-id="${data.id}">${tr}</tr>`);
         });
