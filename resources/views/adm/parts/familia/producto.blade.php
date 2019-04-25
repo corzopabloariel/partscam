@@ -100,8 +100,11 @@
         else
             action = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/store') }}`;
         if(data !== null) {
+            console.log(data)
+            $(`#relaciones option[value="${id}"]`).attr("disabled",true);
             for(let x in window.pyrus.especificacion) {
                 if(!$(`[name="${x}"]`).length) continue;
+                if(x == "relaciones") continue;
                 if(x == "familia_id") {
                     $(`[name="${x}"]`).val(data[x]).trigger("change");
                     continue;
@@ -137,7 +140,14 @@
             data.imagenes.forEach(function(i) {
                 imageAdd(i);
             });
-        }
+            
+            Arr = [];
+            data.productos.forEach(function(p) {
+                Arr.push(p.id);
+            });
+            $("#relaciones").val(Arr).trigger("change");
+        } else 
+            $(`#relaciones option:disabled`).removeAttr("disabled");
         elmnt = document.getElementById("form");
         elmnt.scrollIntoView();
         $("#form").attr("action",action);

@@ -97,6 +97,29 @@ nav .active:not(.btn) {
 nav .info form input {
     width: 150px;
 }
+nav .btn.active {
+    background: #B11E16 !important;
+}
+#menuNav .modal-dialog {
+    margin: 0;
+}
+#menuNav .modal-dialog .modal-content {
+    border-radius: 0;
+    height: 100vh;
+}
+#menuNav .modal-footer {
+    align-items: initial;
+    justify-content: initial;
+}
+#menuNav .activeImportat,
+#menuNav .activeIdioma {
+    color: #D7BE89 !important;
+}
+#menuNav .idiomas li + li {
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid #8C8C99;
+}
 /* ---------------------------------------------------
     FOOTER
 ----------------------------------------------------- */
@@ -191,6 +214,20 @@ footer .info li + li {
     height: 55px !important;
 }
 
+/* ---------------------------------------------------
+    CARRITO
+----------------------------------------------------- */
+.wrapper-carrito .title {
+    color:#2CC5EC;
+    font-size: 30px;
+}
+.wrapper-carrito .table {
+    font-size: 15px;
+}
+.wrapper-carrito table td,
+.wrapper-carrito table th {
+    vertical-align: middle;
+}
 /* ---------------------------------------------------
     BUSCADOR
 ----------------------------------------------------- */
@@ -451,6 +488,11 @@ footer .info li + li {
 .ui-spinner html .ui-button.ui-state-disabled:active {
     background: #DDDDDD;
 }
+
+
+.ui-spinner .form-control {
+    width: 80px;
+}
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
@@ -465,6 +507,13 @@ footer .info li + li {
         position: static !important;
         margin: 10px auto;
     }
+    nav .menuBTN {
+        margin-left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-around!important;
+        align-items: center!important;
+    }
     nav .info {
         flex-direction: column!important;
     }
@@ -473,12 +522,14 @@ footer .info li + li {
         width: 100%;
         border: none;
         margin-top: 15px;
+        padding: 0;
+        margin-left: 0;
     }
     nav .info form input {
         width: 100%;
     }
 
-    .carousel {
+    .carousel:not(.carouselProducto) {
         display: none;
     }
     .slick-prev {
@@ -510,6 +561,26 @@ footer .info li + li {
 
     .wrapper-contacto .col-12 + .col-12 {
         margin-top: 1em;
+    }
+
+    .price + div {
+        justify-content: center!important;
+        flex-direction: column!important;
+    }
+    .price + div .cantidad {
+        justify-content: center!important;
+    }
+    .price + div .cantidad,
+    .price + div .cantidad + div {
+        width: 100%;
+    }
+    .price + div .cantidad + div {
+        margin-top: 1em;
+    }
+}
+@media (max-width: 991px) {
+    .hidden-tablet {
+        display: none !important;
     }
 }
 @media (max-width: 1024px) {

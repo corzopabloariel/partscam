@@ -31,8 +31,17 @@ class Producto extends Model
     {
         return $this->hasOne('App\Productostock');
     }
+    public function oferta()
+    {
+        return $this->hasOne('App\Productooferta');
+    }
     public function familia()
     {
         return $this->belongsTo('App\Familia')->orderBy('orden');
+    }
+    /** RELACION */
+    public function productos()
+    {
+        return $this->belongsToMany('App\Producto', 'productorelaciones', 'producto_id', 'producto_relacion')->orderBy('orden');
     }
 }

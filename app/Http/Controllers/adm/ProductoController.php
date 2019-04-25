@@ -12,11 +12,11 @@ use App\Productoprecio;
 use App\Productostock;
 class ProductoController extends Controller
 {
-    public function rec_padre($data) {
+    public function rec_padre($data, $tipo = 0) {
         if(empty($data->padre))
-            return $data["nombre"];
+            return ($tipo ? "{$data["nombre"]}---" : $data["nombre"]);
         else
-            return self::rec_padre($data->padre) . ", {$data["nombre"]}";
+            return self::rec_padre($data->padre, $tipo) . ", {$data["nombre"]}";
     }
     /**
      * Display a listing of the resource.
@@ -86,16 +86,18 @@ class ProductoController extends Controller
         $stock = $datosRequest["stock"];
         if(is_null($data)) {
             $data = Producto::create($ARR_data);
+            $data->productos()->sync($request->get('relaciones'));
             Productoprecio::create(["producto_id" => $data["id"], "precio" => $precio]);
             Productostock::create(["producto_id" => $data["id"], "cantidad" => $stock]);
         } else {
             $ARR_imagenes = $data["imagenes"];
-            //unset($data["familia_id"]);
+            unset($data["productos"]);
             unset($data["imagenes"]);
             unset($data["precio"]);
             unset($data["stock"]);
             $data->fill($ARR_data);
             $data->save();
+            $data->productos()->sync($request->get('relaciones'));
         }
         /** */
         $imagenes = $request->file('image_image');
@@ -166,7 +168,12 @@ class ProductoController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = self::edit($id);
+        $data["oferta"] = $data->oferta;
+        $data["familia"] = $data->familia;
+        $data["categoria"] = self::rec_padre($data->categoria,1);
+        
+        return $data;
     }
 
     /**
@@ -183,6 +190,7 @@ class ProductoController extends Controller
         $p["imagenes"] = $p->imagenes;
         $p["precio"] = $p->precio;
         $p["stock"] = $p->stock;
+        $p["productos"] = $p->productos->pluck('nombre','id');
         return $p;
     }
 

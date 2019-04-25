@@ -174,10 +174,12 @@ class GeneralController extends Controller
         $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
         $datos["producto"] = Producto::find($id);
         $datos["imagenes"] = $datos["producto"]->imagenes;
+        $datos["oferta"] = empty($datos["producto"]->oferta) ? null : number_format($datos["producto"]->oferta["precio"],2,",",".");
         $datos["precio"] = number_format($datos["producto"]->precio["precio"],2,",",".");
         $datos["stock"] = $datos["producto"]->stock;
         $datos["categoria"] = $datos["producto"]->categoria;
         $datos["familia"] = $datos["producto"]->familia;
+        $datos["productos"] = $datos["producto"]->productos;
 
         $aux = $datos["categoria"];
         $idsCategorias = [];
@@ -246,6 +248,17 @@ class GeneralController extends Controller
                 //->orWhere('familias.nombre','like',"%{$buscar}%")
             ->get();
         dd($results);
+    }
+
+    public function carrito() {
+        $title = "CARRITO";
+        $view = "page.parts.carrito";
+        $datos = [];
+        $datos["empresa"] = self::datos();
+        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        
+
+        return view('page.distribuidor',compact('title','view','datos'));
     }
 
     public function datos() {

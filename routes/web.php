@@ -16,6 +16,7 @@ Route::get('empresa', ['uses' => 'page\GeneralController@empresa', 'as' => 'empr
 Route::get('contacto', ['uses' => 'page\GeneralController@contacto', 'as' => 'contacto']);
 
 Route::get('buscador/{tipo}', ['uses' => 'page\GeneralController@buscador', 'as' => 'buscador']);
+Route::get('carrito', ['uses' => 'page\GeneralController@carrito', 'as' => 'carrito']);
 
 Route::group(['prefix' => 'productos', 'as' => 'productos'], function() {
     Route::get('/', ['uses' => 'page\GeneralController@productos', 'as' => 'productos']);
@@ -74,6 +75,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
                 Route::get('familia_categoria/{id}', ['uses' => 'adm\ProductoController@familia_categoria', 'as' => '.familia_categoria']);
                 Route::get('delete/{id}', ['uses' => 'adm\ProductoController@destroy', 'as' => '.destroy']);
                 Route::post('update/{id}', ['uses' => 'adm\ProductoController@update', 'as' => 'update']);
+                Route::get('show/{id}', ['uses' => 'adm\ProductoController@show', 'as' => 'show']);
                 Route::post('updateModal/{id}', ['uses' => 'adm\ProductoController@updateModal', 'as' => 'updateModal']);
             });
 
