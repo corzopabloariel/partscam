@@ -13,7 +13,7 @@ class Familia extends Model
     ];
     public function categorias() 
     {
-        return $this->hasMany('App\Categoria');
+        return $this->hasMany('App\Categoria')->orderBy('orden');
     }
     public function productos() 
     {

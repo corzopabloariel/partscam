@@ -28,6 +28,7 @@ class ModelosController extends Controller
                         ->where('c.padre_id',0)
                         ->where('c.tipo',1)
                             ->select('c.*', 'f.nombre AS familia')
+                            ->orderBy('f.orden')
                             ->orderBy('c.orden')
                         ->simplePaginate(15);
         return view('adm.distribuidor',compact('title','view','familias','categorias'));

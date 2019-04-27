@@ -12,7 +12,8 @@ class Categoria extends Model
         'tipo',
         'nombre',
         'image',
-        'orden'
+        'orden',
+        'tipo'
     ];
 
     public function familia()

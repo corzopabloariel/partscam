@@ -4,10 +4,9 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between">
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
-            <form id="formBusqueda" class="position-relative d-flex input-group input-group-lg w-50" action="" method="post">
-                <select id="modelos" class="form-control input-lg select2-multiple select2-hidden-accessible" style="width: 150px"></select>
-                <input style="width: 150px;" type="text" name="" class="form-control" placeholder="Buscador: Categorías"/>
-                <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
+            <form id="formBusqueda" class="position-relative d-flex input-group input-group-lg" action="" method="post" style="width: auto">
+                <select id="modelos" class="form-control input-lg select2-multiple select2-hidden-accessible" style="width: 200px"></select>
+                <select id="categorias" class="form-control input-lg select2-multiple select2-hidden-accessible" style="width: 260px"></select>
             </form>
         </div>
         <div style="display: none;" id="wrapper-form" class="mt-2">
@@ -25,7 +24,7 @@
         </div>
         <div class="card mt-2" id="wrapper-tabla">
             <div class="card-body">
-                <table class="table mb-0" id="tabla"></table>
+                <table class="table mb-0 table-striped table-hover" id="tabla"></table>
                 {{ $categorias->links() }}
             </div>
         </div>
@@ -36,28 +35,41 @@
     
     const src = "{{ asset('images/general/no-img.png') }}";
     window.familias = @json($familias);
-    window.familiasSelect2 = @json($familiasSelect2);
+    window.select2 = @json($select2);
     window.pyrus = new Pyrus("categorias", {familia_id: {TIPO:"OP",DATA: window.familias}}, src);
     window.categorias = @json($categorias);
     /** */
     $("#modelos").select2({
         theme: "bootstrap",
         tags: "true",
-        allowClear: true,
         placeholder: "FAMILIA",
-        data: window.familiasSelect2.results,
+        data: window.select2.familias,
+        width: "resolve"
+    });
+    $("#categorias").select2({
+        theme: "bootstrap",
+        tags: "true",
+        placeholder: "CATEGORÍA",
+        data: window.select2.categorias,
         width: "resolve"
     });
     /** ------------------------------------- */
     readURL = function(input, target) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-
             reader.onload = function (e) {
+                console.log(input.id)
                 $(`#${target}`).attr(`src`,`${e.target.result}`);
             };
             reader.readAsDataURL(input.files[0]);
         }
+    };
+    /** */
+    habilitar = function(t) {
+        if($(t).val() == "") 
+            $("#form").find("button").attr("disabled",true);
+        else
+            $("#form").find("button").removeAttr("disabled");
     };
     /** ------------------------------------- */
     add = function(t, id = 0, data = null) {
@@ -78,11 +90,21 @@
         else
             action = `{{ url('/adm/familias/${window.pyrus.entidad}/store') }}`;
         if(data !== null) {
-            window.categoriaID = data.id;
+            //window.categoriaID = data.id;
+            if(data.tipo == 1)
+                $("#padre_id,#modelo_id").closest(".row").addClass("d-none");
+            if(data.tipo == 2) 
+                $("#padre_id").closest(".row").addClass("d-none");
+            
             for(let x in window.pyrus.especificacion) {
                 if(!$(`[name="${x}"]`).length) continue;
                 if(x == "padre_id") {//MODELO
-                    window.padreID = data.modelo;
+                    if(data.tipo == 2)
+                        window.padreID = data.modelo;
+                    else if(data.tipo == 3) {
+                        window.padreID = data.padre.padre.id
+                        window.categoriaID = data.padre_id;
+                    }
                     continue;
                 }
                 if(x == "familia_id") {//FAMILIA
@@ -153,6 +175,7 @@
         }
         $("#familia_id").val("").trigger("change");
         $("#padre_id,#modelo_id").attr("disabled",true);
+        $("#padre_id,#modelo_id").closest(".row").removeClass("d-none");
     };
     /** ------------------------------------- */
     changeFamilia = function(t, tipo) {
@@ -197,7 +220,8 @@
                                 tags: "true",
                                 allowClear: true,
                                 placeholder: "Seleccione: MODELO",
-                                data: data.results
+                                data: data.results,
+                                width: 'resolve'
                             });
                             if(window.padreID !== undefined) {
                                 if(window.padreID != 0)
@@ -211,7 +235,8 @@
                                 tags: "true",
                                 allowClear: true,
                                 placeholder: "Seleccione: CATEGORÍA",
-                                data: data.results
+                                data: data.results,
+                                width: 'resolve'
                             });
                             if(window.categoriaID !== undefined) {
                                 if(window.categoriaID != 0)
@@ -261,23 +286,27 @@
         console.log("CONSTRUYENDO FORMULARIO Y TABLA");
         /** */
         $("#form .container-form").html(window.pyrus.formulario());
+        $("#form").find("button").attr("disabled",true);
         $("#form .container-form #modelo_id.select__2").select2({
             theme: "bootstrap",
             tags: "true",
             allowClear: true,
             placeholder: "Seleccione: MODELO",
+            width: 'resolve'
         });
         $("#form .container-form #padre_id.select__2").select2({
             theme: "bootstrap",
             tags: "true",
             allowClear: true,
             placeholder: "Seleccione: CATEGORÍA",
+            width: 'resolve'
         });
         $("#form .container-form #familia_id.select__2").select2({
             theme: "bootstrap",
             tags: "true",
             allowClear: true,
             placeholder: "Seleccione: FAMILIA",
+            width: 'resolve'
         });
         let columnas = window.pyrus.columnas();
         let table = $("#tabla");
@@ -304,7 +333,7 @@
                 tr += `<td class="${c.CLASS}">${td}</td>`;
             });
             tr += `<td class="text-center"><button onclick="edit(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button><button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></td>`;
-            table.find("tbody").append(`<tr data-id="${data.id}">${tr}</tr>`);
+            table.find("tbody").append(`<tr ${data.tipo == 3 ? 'class="table-info"' : ""} data-id="${data.id}">${tr}</tr>`);
         });
     }
     /** */

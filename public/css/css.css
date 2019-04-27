@@ -159,13 +159,16 @@ input.custom-file-input,
 input.custom-file-input + label {
     cursor: pointer;
 }
-input.custom-file-input:invalid + label:before {
+input.custom-file-input:invalid + label:before
+/*input.custom-file-input.invalid + label:before,*/ {
     content: attr(data-invalid);
 }
-input.custom-file-input:valid + label:before {
+input.custom-file-input:valid + label:before
+/*input.custom-file-input.valid + label:before,*/ {
     content: attr(data-valid);
 }
-input.custom-file-input:valid + label {
+input.custom-file-input:valid + label
+/*input.custom-file-input.valid + label,*/ {
     border-color: #1e7e34;
     background-color: #218838;
     color: #ffffff;

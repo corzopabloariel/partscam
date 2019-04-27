@@ -243,13 +243,14 @@ const ENTIDADES = {
     },
     categorias: {
         ATRIBUTOS: {
-            orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"100px"},
             image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 400x393",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"151px"},
+            familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"},
+            padre: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"MODELO / CATEGORÍA",WIDTH:"220px"},
             nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
             familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
             modelo_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Modelo"},
-            padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"},
-            familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"}
+            padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"}
         },
         FORM: [
             {
@@ -274,7 +275,7 @@ const ENTIDADES = {
         ],
         FUNCIONES: {
             image: {onchange:{F:"readURL(this,'/id/')",C:"id"}},
-            familia_id: {onchange: "changeFamilia(this, 1)"},
+            familia_id: {onchange: "changeFamilia(this, 1); habilitar(this)"},
             modelo_id: {onchange: "changeFamilia(this, 2)"},
         }
     },
@@ -397,5 +398,20 @@ const ENTIDADES = {
                 metas: '<div class="col-12 mt-2">/metas/</div>'
             }
         ]
+    },
+    transacciones: {
+        ATRIBUTOS: {
+            tipopago: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",ENUM:{"MP":"MercadoPago","TB":"Transferencia Bancaría","PL":"Pago en el Local"}},
+            estado: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",ENUM:{1:"Activo",2:"En proceso", 3:"Cancelado"}},
+            codigo: {TIPO:"TP_STRING",MAXLENGTH: 25, VISIBILIDAD:"TP_VISIBLE"},
+            total: {TIPO: "TP_FLOAT",VISIBILIDAD:"TP_VISIBLE_TABLE"}
+        }
+    },
+    transcaccionesprod: {
+        ATRIBUTOS: {
+            tipopago: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",ENUM:{"MP":"MercadoPago","TB":"Transferencia Bancaría","PL":"Pago en el Local"}},
+            estado: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",ENUM:{1:"Activo",2:"En proceso", 3:"Cancelado"}},
+            codigo: {TIPO:"TP_STRING",MAXLENGTH: 25, VISIBILIDAD:"TP_VISIBLE"}
+        }
     }
 };
