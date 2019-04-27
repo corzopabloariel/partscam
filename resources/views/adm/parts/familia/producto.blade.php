@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-between">
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
             <form class="position-relative" action="" method="post">
-                <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Nombre, Categoría y Código"/>
+                <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Nombre, Categor铆a y C贸digo"/>
                 <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
             </form>
         </div>
@@ -114,11 +114,16 @@
                     continue;
                 }
                 if(x == "precio") {
+                    if(data[x] !== null)
                     $(`[name="${x}"]`).val(data[x].precio);
                     continue;
                 }
                 if(x == "stock") {
-                    $(`[name="${x}"]`).val(data[x].cantidad);
+                    if(data[x] !== null) {
+                        if(data[x].cantidad !== null)
+                            $(`[name="${x}"]`).val(data[x].cantidad);
+                        
+                    }
                     continue;
                 }
                 if(window.pyrus.especificacion[x].EDITOR !== undefined) {
@@ -250,7 +255,10 @@
         promiseFunction = () => {
             promise
                 .then(function(data) {
-                    $("#stock,#precio").attr("readonly",true);
+                    if(data.precio !== null)
+                        $("#precio").attr("readonly",true);
+                    if(data.stock !== null)
+                        $("#stock").attr("readonly",true);
                     $(t).removeAttr("disabled");
                     if(modal === null)
                         add($("#btnADD"),parseInt(id),data);
@@ -319,7 +327,7 @@
                 theme: "bootstrap",
                 tags: "true",
                 allowClear: true,
-                placeholder: "Seleccione: CATEGORÍA",
+                placeholder: "Seleccione: CATEGOR脥A",
             });
         }
         let columnas = window.pyrus.columnas();
@@ -329,7 +337,7 @@
                 table.append('<thead class="thead-dark"></thead>');
             table.find("thead").append(`<th class="${e.CLASS}" style="width:${e.WIDTH}">${e.NAME}</th>`);
         });
-        table.find("thead").append(`<th class="text-uppercase text-center" style="width:150px">acción</th>`);
+        table.find("thead").append(`<th class="text-uppercase text-center" style="width:150px">acci贸n</th>`);
         
         window.productos.data.forEach(function(data) {
             let tr = "";

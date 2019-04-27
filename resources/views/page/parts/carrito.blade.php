@@ -1,21 +1,85 @@
 <div class="wrapper-carrito py-5">
     <div class="container">
-        <h3 class="title text-uppercase">compra online</h3>
-        <table class="table">
-            <thead class="thead-light">
-                <th class="text-uppercase" style="width:150px;"></th>
-                <th class="text-uppercase">familia</th>
-                <th class="text-uppercase">modelo</th>
-                <th class="text-uppercase">categoría</th>
-                <th class="text-uppercase">producto</th>
-                <th class="text-uppercase">precio unitario</th>
-                <th class="text-uppercase">cantidad</th>
-                <th class="text-uppercase">subtotal</th>
-                <th class="text-uppercase">eliminar</th>
-            </thead>
-            <tbody></tbody>
-        </table>
-        
+        <form action="{{ route('order') }}" method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+            <h3 class="title text-uppercase">compra online</h3>
+            <table class="table">
+                <thead class="thead-light">
+                    <th class="text-uppercase" style="width:150px;"></th>
+                    <th class="text-uppercase">familia</th>
+                    <th class="text-uppercase">modelo</th>
+                    <th class="text-uppercase">categoría</th>
+                    <th class="text-uppercase">producto</th>
+                    <th class="text-uppercase">precio unitario</th>
+                    <th class="text-uppercase">cantidad</th>
+                    <th class="text-uppercase">subtotal</th>
+                    <th class="text-uppercase">eliminar</th>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div class="row justify-content-end mt-4 custom">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <h5 class="title border-bottom">Forma de envío</h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="retiro" id="retiroLocal" value="local" checked>
+                        <label class="form-check-label" for="retiroLocal">
+                            Retiro en el local (sin cargo)
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="retiro" id="aConvenir" value="aconvenir">
+                        <label class="form-check-label" for="aConvenir">
+                            A convenir
+                        </label>
+                    </div>
+                    <p>Acuerdas la forma de entrega del producto después de la compra.</p>
+                    
+                    <div class="box-additions mt-3">
+                        <h5 class="title border-bottom text-uppercase">Sistema de pago</h5>
+                        <div class="box-additions-subtitle">SELECCIONE UN MÉTODO DE PAGO</div>
+                        <div>
+                            <label>
+                                <input class="with-gap" name="payment_method" type="radio" value="1" checked="">
+                                <span>Mercado Pago</span>
+                            </label>
+                        </div>
+                        <div id="payment_method_mercado_pago" class="pdl35 mgt5 color-scorpion">
+                            <p>Usted podrá retirar su compra a las 24hs hábiles posteriores a recibir vía email el cobro por el pago del pedido.</p>
+                        </div>
+                        <div>
+                            <label>
+                                <input class="with-gap" name="payment_method" type="radio" value="2">
+                                <span>Transferencia Bancaria</span>
+                            </label>
+                        </div>
+                        <div id="payment_method_bank" class="d-none pdl35 mgt5 color-scorpion">
+                            <p><strong>BANCO:</strong><br>
+                            <strong>TIPO:</strong><br>
+                            <strong>NRO.</strong><br>
+                            <strong>SUC.:</strong><br>
+                            <strong>NOMBRE DE LA CUENTA:</strong><br>
+                            <strong>CBU.:</strong><br>
+                            <strong>CUIT:</strong><br>
+                            Enviar comprobante a</p>
+                        </div>
+                        <div id="payment_method_pago_local" class="">
+                            <label>
+                                <input class="with-gap" name="payment_method" type="radio" value="3">
+                                <span>Pago en local</span>
+                            </label>
+                            <div id="payment_method_pago_local_info" class="d-none pdl35 mgt5 color-scorpion">
+                                <p>En caso que abone el pedido directamente en nuestro local, usted podrá acercarse a pagar y retirar su pedido a las 24hs hábiles posteriores a recibir vía email la solicitud de pedido.</p>
+                                <p>El pago lo podrá hacer en efectivo, con tarjeta de débito o con tarjeta de crédito.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="title">Total a pagar<big class="float-right" id="total">$ 0,00</big></h4>
+
+                    <a onclick="return confirm('¿Está seguro que desea procesar la compra?')" class="btn btn-success mt-3 text-white" type="button">PROCESAR COMPRA</a>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 <div class="mercadopago">
@@ -32,7 +96,6 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://jqueryui.com/resources/demos/external/jquery-mousewheel/jquery.mousewheel.js"></script>
 <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
-
 
 <script>
     tokenHandler = {
@@ -60,10 +123,20 @@
         "name": "name"
     }
 }
-    Mercadopago.setPublishableKey("TEST-b3d5b663-664a-4e8f-b759-de5d7c12ef8f");
-    Mercadopago.createToken(form, tokenHandler);
+    //Mercadopago.setPublishableKey("TEST-b3d5b663-664a-4e8f-b759-de5d7c12ef8f");
+    //Mercadopago.createToken(form, tokenHandler);
 
     const src = "{{ asset('images/general/no-img.png') }}";
+    $(document).ready(function() {
+        $("[name='payment_method']").on("change", function() {
+            op = $(this).val();
+            op = parseInt(op);
+            Arr = ["payment_method_mercado_pago","payment_method_bank","payment_method_pago_local_info"];
+            $(".pdl35").addClass("d-none");
+            $(`#${Arr[op - 1]}`).removeClass("d-none");
+        });
+    })
+
     recursivaCategoria = function(categoria) {
         if(categoria.padre === null)
             return `${categoria.nombre}--`;
@@ -75,6 +148,10 @@
         $(t).closest("tr").remove();
         delete window.session[id];
         sessionStorage.carrito = JSON.stringify(window.session);
+        
+        window.sumTotal.TOTAL -= parseFloat(window.sumTotal[id]);
+        delete window.sumTotal[id]
+        $("#total").text(`${formatter.format(window.sumTotal.TOTAL)}`);
     }
     formatter = new Intl.NumberFormat('es-AR', {
         style: 'currency',
@@ -84,13 +161,18 @@
         cantidad = $(t).val();
         precio = $(t).closest("td").find(".precio").val();
         id = $(t).closest("td").find(".id").val();
+        console.log(id)
+        window.sumTotal.TOTAL -= parseFloat(window.sumTotal[id]);
+        window.sumTotal[id] = parseFloat(cantidad * precio);
+        window.sumTotal.TOTAL += window.sumTotal[id];
+        $("#total").text(`${formatter.format(window.sumTotal.TOTAL)}`);
+        
         window.session[id] = cantidad;
         sessionStorage.carrito = JSON.stringify(window.session);
         $(t).closest("tr").find("td.recalcular").text(formatter.format(cantidad * precio));
     }
     /** ------------------------------------- */
     addRow = function(data) {
-        console.log(data)
         let aux = recursivaCategoria(data.categoria);//data.padre
         aux = aux.split("--, ");
         let ARR = [
@@ -104,6 +186,16 @@
             null
         ]
         ARR[7] = ARR[5] * ARR[6];
+        if(window.sumTotal === undefined) {
+            window.sumTotal = {};
+            window.sumTotal["TOTAL"] = 0;
+        }
+        if(window.sumTotal[data.id] === undefined)
+            window.sumTotal[data.id] = 0
+        window.sumTotal[data.id] = parseFloat(ARR[7]);
+        window.sumTotal.TOTAL += parseFloat(ARR[7]);
+
+        $("#total").text(`${formatter.format(window.sumTotal.TOTAL)}`);
         tr = `<tr data-id="${data.id}">`;
         ARR.forEach(function(e, index) {
             if(index == 0) {
@@ -124,12 +216,14 @@
         tr += `<td class="text-center"><i onclick="del(this)" style="cursor: pointer" class="far fa-times-circle"></i></td>`;
         tr += `</tr>`;
         $("table").find("tbody").append(tr);
-        $("table").find("tbody").find("> tr:last-child .cantidad").spinner();
+        $("table").find("tbody").find(".cantidad").spinner();
+        
     }
     /** ------------------------------------- */
     edit = function(id) {
+        console.log(id)
         let promise = new Promise(function (resolve, reject) {
-            let url = `{{ url('/adm/familias/categorias/productos/show/${id}') }}`;
+            let url = `{{ url('/productos/show/${id}') }}`;
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.responseType = 'json';
             xmlHttp.open( "GET", url, true );

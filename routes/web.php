@@ -17,13 +17,15 @@ Route::get('contacto', ['uses' => 'page\GeneralController@contacto', 'as' => 'co
 
 Route::get('buscador/{tipo}', ['uses' => 'page\GeneralController@buscador', 'as' => 'buscador']);
 Route::get('carrito', ['uses' => 'page\GeneralController@carrito', 'as' => 'carrito']);
-
+Route::post('order',['uses' => 'page\GeneralController@order', 'as' => 'order']);
 Route::group(['prefix' => 'productos', 'as' => 'productos'], function() {
     Route::get('/', ['uses' => 'page\GeneralController@productos', 'as' => 'productos']);
     Route::get('ofertas', ['uses' => 'page\GeneralController@ofertas', 'as' => 'ofertas']);
     Route::get('familia/{id}', ['uses' => 'page\GeneralController@familia', 'as' => '.familia']);
     Route::get('categoria/{id}', ['uses' => 'page\GeneralController@categoria', 'as' => '.categoria']);
     Route::get('producto/{id}', ['uses' => 'page\GeneralController@producto', 'as' => '.producto']);
+    Route::get('show/{id}', ['uses' => 'adm\ProductoController@show', 'as' => 'show']);
+
 });
 
 Auth::routes();
@@ -60,13 +62,21 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
         Route::get('delete/{id}', ['uses' => 'adm\FamiliaController@destroy', 'as' => '.destroy']);
         Route::post('update/{id}', ['uses' => 'adm\FamiliaController@update', 'as' => 'update']);
 
+        Route::group(['prefix' => 'modelos', 'as' => '.modelos'], function() {
+            Route::get('index', ['uses' => 'adm\ModelosController@index', 'as' => '.index']);
+            Route::post('store', ['uses' => 'adm\ModelosController@store', 'as' => '.store']);
+            Route::get('edit/{id}', ['uses' => 'adm\ModelosController@edit', 'as' => '.edit']);
+            Route::get('delete/{id}', ['uses' => 'adm\ModelosController@destroy', 'as' => '.destroy']);
+            Route::post('update/{id}', ['uses' => 'adm\ModelosController@update', 'as' => 'update']);
+        });
+
         Route::group(['prefix' => 'categorias', 'as' => '.categorias'], function() {
             Route::get('index', ['uses' => 'adm\CategoriaController@index', 'as' => '.index']);
             Route::post('store', ['uses' => 'adm\CategoriaController@store', 'as' => '.store']);
             Route::get('edit/{id}', ['uses' => 'adm\CategoriaController@edit', 'as' => '.edit']);
             Route::get('delete/{id}', ['uses' => 'adm\CategoriaController@destroy', 'as' => '.destroy']);
             Route::post('update/{id}', ['uses' => 'adm\CategoriaController@update', 'as' => 'update']);
-            Route::get('familia_categoria/{id}', ['uses' => 'adm\CategoriaController@familia_categoria', 'as' => '.familia_categoria']);
+            Route::get('familia_categoria/{id}/{tipo}', ['uses' => 'adm\CategoriaController@familia_categoria', 'as' => '.familia_categoria']);
             
             Route::group(['prefix' => 'productos', 'as' => '.productos'], function() {
                 Route::get('index', ['uses' => 'adm\ProductoController@index', 'as' => '.index']);
@@ -75,7 +85,6 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
                 Route::get('familia_categoria/{id}', ['uses' => 'adm\ProductoController@familia_categoria', 'as' => '.familia_categoria']);
                 Route::get('delete/{id}', ['uses' => 'adm\ProductoController@destroy', 'as' => '.destroy']);
                 Route::post('update/{id}', ['uses' => 'adm\ProductoController@update', 'as' => 'update']);
-                Route::get('show/{id}', ['uses' => 'adm\ProductoController@show', 'as' => 'show']);
                 Route::post('updateModal/{id}', ['uses' => 'adm\ProductoController@updateModal', 'as' => 'updateModal']);
             });
 

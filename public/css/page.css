@@ -24,6 +24,10 @@ body::-webkit-scrollbar-thumb { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3)
     margin: auto;
     width: 100%;
 }
+.slick-prev:before,
+.slick-next:before {
+    content: "" !important;
+}
 /* ---------------------------------------------------
     NAV
 ----------------------------------------------------- */
@@ -219,6 +223,8 @@ footer .info li + li {
 ----------------------------------------------------- */
 .wrapper-carrito .title {
     color:#2CC5EC;
+}
+.wrapper-carrito h3.title {
     font-size: 30px;
 }
 .wrapper-carrito .table {
@@ -227,6 +233,9 @@ footer .info li + li {
 .wrapper-carrito table td,
 .wrapper-carrito table th {
     vertical-align: middle;
+}
+.wrapper-carrito .custom {
+    font-size: 15px;
 }
 /* ---------------------------------------------------
     BUSCADOR
@@ -289,7 +298,7 @@ footer .info li + li {
     PRODUCTO
 ----------------------------------------------------- */
 .wrapper-producto .nombre {
-    font-size: 30px;
+    font-size: 26px;
     font-weight: 600;
     text-align: center;
 }
@@ -308,8 +317,7 @@ footer .info li + li {
     color: #2C3E74;
 }
 .wrapper-producto .sidebar .list-group > li {
-    padding-left: 0;
-    padding-right: 0;
+    padding: .55rem 0;
 }
 .wrapper-producto .sidebar .list-group-item {
     border: none;
@@ -320,7 +328,7 @@ footer .info li + li {
 }
 .wrapper-producto .list-group {
     color: #A0A3A5;
-    font-size: 20px;
+    font-size: 18px;
     font-family: 'Exo 2', sans-serif;
     display: none;
 }
@@ -341,6 +349,10 @@ footer .info li + li {
 .wrapper-producto .detalles p span {
     color: #2DC5EE;
 }
+.wrapper-producto .sidebar ul ul {
+    padding-left: 20px;
+}
+
 .wrapper-producto .sidebar .active-menu > .active-submenu {
     display: block;
 }
@@ -362,9 +374,8 @@ footer .info li + li {
 .wrapper-producto .list-group .list-group-item.active-menu > span {
     color: #2C3E73;
 }
-.wrapper-producto .active-menu .active-submenu .active-menu > span a {
+.wrapper-producto .active-menu > span + .active-submenu > .active-menu > span a {
     color: #2DC5EE;
-    font-size: 20px;
 }
 .wrapper-producto .list-group .list-group-item i {
     right:0;
@@ -373,7 +384,7 @@ footer .info li + li {
     color: #646464;
 }
 .wrapper-producto .categoria {
-    font-size: 20px;
+    font-size: 16px;
 }
 .wrapper-producto .categoria:hover {
     background-color: #2D3E75;

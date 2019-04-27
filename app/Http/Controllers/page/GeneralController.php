@@ -250,6 +250,11 @@ class GeneralController extends Controller
         dd($results);
     }
 
+    public function order(Request $request) {
+        dd($request->all());
+        
+    }
+
     public function carrito() {
         $title = "CARRITO";
         $view = "page.parts.carrito";

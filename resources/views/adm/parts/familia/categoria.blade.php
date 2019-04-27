@@ -4,8 +4,9 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between">
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
-            <form class="position-relative" action="" method="post">
-                <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Categorías"/>
+            <form id="formBusqueda" class="position-relative d-flex input-group input-group-lg w-50" action="" method="post">
+                <select id="modelos" class="form-control input-lg select2-multiple select2-hidden-accessible" style="width: 150px"></select>
+                <input style="width: 150px;" type="text" name="" class="form-control" placeholder="Buscador: Categorías"/>
                 <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
             </form>
         </div>
@@ -35,8 +36,18 @@
     
     const src = "{{ asset('images/general/no-img.png') }}";
     window.familias = @json($familias);
+    window.familiasSelect2 = @json($familiasSelect2);
     window.pyrus = new Pyrus("categorias", {familia_id: {TIPO:"OP",DATA: window.familias}}, src);
     window.categorias = @json($categorias);
+    /** */
+    $("#modelos").select2({
+        theme: "bootstrap",
+        tags: "true",
+        allowClear: true,
+        placeholder: "FAMILIA",
+        data: window.familiasSelect2.results,
+        width: "resolve"
+    });
     /** ------------------------------------- */
     readURL = function(input, target) {
         if (input.files && input.files[0]) {
@@ -51,10 +62,13 @@
     /** ------------------------------------- */
     add = function(t, id = 0, data = null) {
         let btn = $(t);
-        if(btn.is(":disabled"))
+        if(btn.is(":disabled")){
             btn.removeAttr("disabled");
-        else
+            $("#formBusqueda *").removeAttr("disabled");
+        } else {
+            $("#formBusqueda *").attr("disabled", true);
             btn.attr("disabled",true);
+        }
         $("#wrapper-form").toggle(800,"swing");
 
         $("#wrapper-tabla").toggle("fast");
@@ -64,10 +78,15 @@
         else
             action = `{{ url('/adm/familias/${window.pyrus.entidad}/store') }}`;
         if(data !== null) {
+            window.categoriaID = data.id;
             for(let x in window.pyrus.especificacion) {
                 if(!$(`[name="${x}"]`).length) continue;
-                if(x == "padre_id") {
-                    window.padreID = data[x];
+                if(x == "padre_id") {//MODELO
+                    window.padreID = data.modelo;
+                    continue;
+                }
+                if(x == "familia_id") {//FAMILIA
+                    window.familiaID = data[x];
                     continue;
                 }
                 if(window.pyrus.especificacion[x].EDITOR !== undefined) {
@@ -86,6 +105,7 @@
                 }
                 $(`[name="${x}"]`).val(data[x]);
             }
+            $("#familia_id").val(window.familiaID).trigger("change");
         }
         elmnt = document.getElementById("form");
         elmnt.scrollIntoView();
@@ -117,6 +137,10 @@
 
         if(window.padreID !== undefined)
             delete window.padreID;
+        if(window.modeloID !== undefined)
+            delete window.modeloID;
+        if(window.categoriaID !== undefined)
+            delete window.categoriaID;
 
         for(let x in window.pyrus.especificacion) {
             if(window.pyrus.especificacion[x].EDITOR !== undefined) {
@@ -127,16 +151,28 @@
                 $(`#src-${x}`).attr("src","");
             $(`[name="${x}"]`).val("");
         }
-        
-        $("#padre_id").find("option.new").remove();
-        $("#padre_id").attr("disabled",true);
+        $("#familia_id").val("").trigger("change");
+        $("#padre_id,#modelo_id").attr("disabled",true);
     };
     /** ------------------------------------- */
-    changeFamilia = function(t) {
+    changeFamilia = function(t, tipo) {
         id = $(t).val();
+        if(id == "") {
+            if(parseInt(tipo) == 1) {
+                $("#modelo_id").attr("disabled",true);
+                $("#modelo_id").val("").trigger("change");
+                $("#modelo_id").find("option").remove();
+            } else {
+                $("#padre_id").attr("disabled",true);
+                $("#padre_id").val("").trigger("change");
+                $("#padre_id").find("option").remove();
+            }
+            return false;
+        }
+        
         $(t).attr("disabled",true);
         let promise = new Promise(function (resolve, reject) {
-            let url = `{{ url('/adm/familias/${window.pyrus.entidad}/familia_categoria/${id}') }}`;
+            let url = `{{ url('/adm/familias/${window.pyrus.entidad}/familia_categoria/${id}/${tipo}') }}`;
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.responseType = 'json';
             xmlHttp.open( "GET", url, true );
@@ -151,15 +187,45 @@
                 .then(function(data) {
                     console.log(data)
                     $(t).removeAttr("disabled");
-                    $("#padre_id").find("option.new").remove();
-                    $("#padre_id").attr("disabled",true);
-                    if(Object.keys(data).length > 0) { 
-                        $("#padre_id").removeAttr("disabled");
-                        for(let x in data)
-                            $("#padre_id").append(`<option class="new" value="${x}">${data[x]}</option>`);
-                        if(window.padreID !== undefined) {
-                            if(window.padreID != 0)
-                                $("#padre_id").val(window.padreID).trigger("change");
+                    if(data !== null) {
+                        console.log(tipo)
+                        if(parseInt(tipo) == 1) {
+                            $("#modelo_id").attr("disabled",true);
+                            $("#modelo_id").removeAttr("disabled");
+                            $("#modelo_id").select2({
+                                theme: "bootstrap",
+                                tags: "true",
+                                allowClear: true,
+                                placeholder: "Seleccione: MODELO",
+                                data: data.results
+                            });
+                            if(window.padreID !== undefined) {
+                                if(window.padreID != 0)
+                                    $("#modelo_id").val(window.padreID).trigger("change");
+                            }
+                        } else {
+                            $("#padre_id").attr("disabled",true);
+                            $("#padre_id").removeAttr("disabled");
+                            $("#padre_id").select2({
+                                theme: "bootstrap",
+                                tags: "true",
+                                allowClear: true,
+                                placeholder: "Seleccione: CATEGORÍA",
+                                data: data.results
+                            });
+                            if(window.categoriaID !== undefined) {
+                                if(window.categoriaID != 0)
+                                    $("#padre_id").val(window.categoriaID).trigger("change");
+                            }
+                        }
+                    } else {
+                        if(parseInt(tipo) == 1) {
+                            //$("#modelo_id").attr("disabled",true);
+                            $("#modelo_id").val("").trigger("change");
+                        } else {
+                            $("#padre_id").attr("disabled",true);
+                            $("#modelo_id").attr("disabled",true);
+                            $("#padre_id").val("").trigger("change");
                         }
                     }
                 })
@@ -195,7 +261,24 @@
         console.log("CONSTRUYENDO FORMULARIO Y TABLA");
         /** */
         $("#form .container-form").html(window.pyrus.formulario());
-
+        $("#form .container-form #modelo_id.select__2").select2({
+            theme: "bootstrap",
+            tags: "true",
+            allowClear: true,
+            placeholder: "Seleccione: MODELO",
+        });
+        $("#form .container-form #padre_id.select__2").select2({
+            theme: "bootstrap",
+            tags: "true",
+            allowClear: true,
+            placeholder: "Seleccione: CATEGORÍA",
+        });
+        $("#form .container-form #familia_id.select__2").select2({
+            theme: "bootstrap",
+            tags: "true",
+            allowClear: true,
+            placeholder: "Seleccione: FAMILIA",
+        });
         let columnas = window.pyrus.columnas();
         let table = $("#tabla");
         columnas.forEach(function(e) {

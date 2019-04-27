@@ -9,6 +9,7 @@ class Categoria extends Model
     protected $fillable = [
         'padre_id',
         'familia_id',
+        'tipo',
         'nombre',
         'image',
         'orden'

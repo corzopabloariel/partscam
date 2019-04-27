@@ -247,7 +247,8 @@ const ENTIDADES = {
             image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 400x393",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"151px"},
             nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
             familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
-            padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría padre"},
+            modelo_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Modelo"},
+            padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"},
             familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"}
         },
         FORM: [
@@ -256,8 +257,13 @@ const ENTIDADES = {
                 BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
             },
             {
-                familia_id: '<div class="col-12 col-md-3">/familia_id/</div>',
-                nombre: '<div class="col-12 col-md-3">/nombre/</div>'
+                nombre: '<div class="col-12 col-md-6">/nombre/</div>'
+            },
+            {
+                familia_id: '<div class="col-12 col-md-6">/familia_id/</div>'
+            },
+            {
+                modelo_id: '<div class="col-12 col-md-6">/modelo_id/</div>'
             },
             {
                 padre_id: '<div class="col-12 col-md-6">/padre_id/</div>'
@@ -268,8 +274,29 @@ const ENTIDADES = {
         ],
         FUNCIONES: {
             image: {onchange:{F:"readURL(this,'/id/')",C:"id"}},
-            familia_id: {onchange: "changeFamilia(this)"}
+            familia_id: {onchange: "changeFamilia(this, 1)"},
+            modelo_id: {onchange: "changeFamilia(this, 2)"},
         }
+    },
+    modelos: {
+        ATRIBUTOS: {
+            orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
+            familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
+            familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"}
+        },
+        FORM: [
+            {
+                orden: '<div class="col-5 col-md-3">/orden/</div>',
+                BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
+            },
+            {
+                familia_id: '<div class="col-12 col-md-6">/familia_id/</div>',
+            },
+            {
+                nombre: '<div class="col-12 col-md-6">/nombre/</div>'
+            }
+        ]
     },
     ofertas: {
         ATRIBUTOS: {

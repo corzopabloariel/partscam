@@ -58,6 +58,12 @@
                         </a>
                     </li>
                     <li>
+                        <a data-link="u" href="{{ route('familias.modelos.index') }}">
+                            <i class="fab fa-modx"></i>
+                            <span class="nav-label">Modelos de productos</span>
+                        </a>
+                    </li>
+                    <li>
                         <a data-link="u" href="{{ route('familias.categorias.index') }}">
                             <i class="fas fa-columns"></i>
                             <span class="nav-label">Categorías</span>

@@ -2,6 +2,9 @@
 .select2-container .select2-selection--single .select2-selection__clear {
     font-family: monospace !important;
 }
+.input-group-lg>.custom-select, .input-group-lg>.form-control:not(textarea) {
+   height: calc(1.5em + 1rem + 0px) !important;
+}
 /* ---------------------------------------------------
     WRAPPER-FORM
 ----------------------------------------------------- */

@@ -82,14 +82,39 @@ class ProductoController extends Controller
         $ARR_data["orden"] = $datosRequest["orden"];
         $ARR_data["familia_id"] = $datosRequest["familia_id"];
         //dd($ARR_data);
-        $precio = $datosRequest["precio"];
-        $stock = $datosRequest["stock"];
+        $precio = 0;
+        if(isset($datosRequest["precio"])) {
+            $precio = $datosRequest["precio"];
+            $precio = str_replace(".","",$precio);
+            $precio = str_replace(",",".",$precio);
+        }
+        //dd($precio);
+        $stock = 0;
+        if(isset($datosRequest["stock"]))
+            $stock = $datosRequest["stock"];
+        //$stock = 
         if(is_null($data)) {
             $data = Producto::create($ARR_data);
             $data->productos()->sync($request->get('relaciones'));
             Productoprecio::create(["producto_id" => $data["id"], "precio" => $precio]);
             Productostock::create(["producto_id" => $data["id"], "cantidad" => $stock]);
         } else {
+            $auxP = Productoprecio::where("producto_id",$data["id"])->first();
+            $auxS = Productostock::where("producto_id",$data["id"])->first();
+            
+            if(empty($auxP)) {
+                Productoprecio::create(["producto_id" => $data["id"], "precio" => $precio]);
+            } else if(empty($auxP["precio"])) {
+                $auxP->fill(["precio" => $stock]);
+                $auxP->save();
+            }
+            
+            if(empty($auxS)) {
+                Productostock::create(["producto_id" => $data["id"], "cantidad" => $stock]);
+            } else if(empty($auxS["cantidad"])) {
+                $auxS->fill(["cantidad" => $stock]);
+                $auxS->save();
+            }
             $ARR_imagenes = $data["imagenes"];
             unset($data["productos"]);
             unset($data["imagenes"]);
@@ -105,56 +130,58 @@ class ProductoController extends Controller
         $path = public_path('images/productos/');
         if (!file_exists($path))
             mkdir($path, 0777, true);
-        for($i = 0; $i < count($datosRequest["imageURL"]); $i++) {
-            //NUEVA IMAGEN
-            if(is_null($datosRequest["imageURL"][$i])) {
-                $imageName = time().'_producto_' . ($i + 1) . '.'.$imagenes[$i]->getClientOriginalExtension();
-                $imagenes[$i]->move($path, $imageName);
-                Productoimages::create([
-                    "producto_id" => $data["id"],
-                    "image" => "images/productos/{$imageName}",
-                    "orden" => $datosRequest["orden_image"][$i]
-                ]);
-            } else {
-                $productoImage = Productoimages::where("image",$datosRequest["imageURL"][$i])->first();
-                $ARR_image = [];
-                $flag = true;
-                //dd($ARR_imagenes);
-                for($xx = 0 ; $xx < count($ARR_imagenes) ; $xx ++) {
-                    if(strcmp($ARR_imagenes[$xx]["image"],$datosRequest["imageURL"][$i]) == 0)
-                        unset($ARR_imagenes[$xx]);
-                }
-                if(isset($imagenes[$i]))
-                    $flag = false;
-                
-
-                if($flag){
-                    $ARR_image["image"] = $datosRequest["imageURL"][$i];
-                    $ARR_image["orden"] = $datosRequest["orden_image"][$i];
-                    
-                    $productoImage->fill($ARR_image);
-                    $productoImage->save();
-                } else {
-                    $filename = public_path() . "/{$datosRequest["imageURL"][$i]}";
-                    if (file_exists($filename))
-                        unlink($filename);
+        if(isset($datosRequest["imageURL"])) {
+            for($i = 0; $i < count($datosRequest["imageURL"]); $i++) {
+                //NUEVA IMAGEN
+                if(is_null($datosRequest["imageURL"][$i])) {
                     $imageName = time().'_producto_' . ($i + 1) . '.'.$imagenes[$i]->getClientOriginalExtension();
                     $imagenes[$i]->move($path, $imageName);
-                    
                     Productoimages::create([
                         "producto_id" => $data["id"],
                         "image" => "images/productos/{$imageName}",
                         "orden" => $datosRequest["orden_image"][$i]
                     ]);
+                } else {
+                    $productoImage = Productoimages::where("image",$datosRequest["imageURL"][$i])->first();
+                    $ARR_image = [];
+                    $flag = true;
+                    //dd($ARR_imagenes);
+                    for($xx = 0 ; $xx < count($ARR_imagenes) ; $xx ++) {
+                        if(strcmp($ARR_imagenes[$xx]["image"],$datosRequest["imageURL"][$i]) == 0)
+                            unset($ARR_imagenes[$xx]);
+                    }
+                    if(isset($imagenes[$i]))
+                        $flag = false;
+                    
+    
+                    if($flag){
+                        $ARR_image["image"] = $datosRequest["imageURL"][$i];
+                        $ARR_image["orden"] = $datosRequest["orden_image"][$i];
+                        
+                        $productoImage->fill($ARR_image);
+                        $productoImage->save();
+                    } else {
+                        $filename = public_path() . "/{$datosRequest["imageURL"][$i]}";
+                        if (file_exists($filename))
+                            unlink($filename);
+                        $imageName = time().'_producto_' . ($i + 1) . '.'.$imagenes[$i]->getClientOriginalExtension();
+                        $imagenes[$i]->move($path, $imageName);
+                        
+                        Productoimages::create([
+                            "producto_id" => $data["id"],
+                            "image" => "images/productos/{$imageName}",
+                            "orden" => $datosRequest["orden_image"][$i]
+                        ]);
+                    }
                 }
             }
-        }
-        if(!is_null($ARR_imagenes)) {
-            foreach($ARR_imagenes AS $xx) {
-                $filename = public_path() . "/{$xx["image"]}";
-                if (file_exists($filename))
-                    unlink($filename);
-                Productoimages::destroy($xx["id"]);
+            if(!is_null($ARR_imagenes)) {
+                foreach($ARR_imagenes AS $xx) {
+                    $filename = public_path() . "/{$xx["image"]}";
+                    if (file_exists($filename))
+                        unlink($filename);
+                    Productoimages::destroy($xx["id"]);
+                }
             }
         }
         return back();
@@ -218,7 +245,11 @@ class ProductoController extends Controller
             $producto["stock"]->save();
             $return = "STOCK cambiado";
         } else {
-            $producto["precio"]->fill(["precio" => $datosRequest["precio_modal"]]);
+            $precio = $datosRequest["precio_modal"];
+            if(empty($precio)) $precio = 0;
+            $precio = str_replace(".","",$precio);
+            $precio = str_replace(",",".",$precio);
+            $producto["precio"]->fill(["precio" => $precio]);
             $producto["precio"]->save();
             $return = "PRECIO cambiado";
         }
@@ -233,6 +264,7 @@ class ProductoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Producto::destroy($id);
+        return 0;
     }
 }

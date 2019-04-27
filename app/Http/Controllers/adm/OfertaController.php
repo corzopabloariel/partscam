@@ -72,6 +72,7 @@ class OfertaController extends Controller
         $ARR_data["producto_id"] = $dataRequest["producto"];
         $ARR_data["precio"] = $dataRequest["precio"];
         $ARR_data["porcentaje"] = $dataRequest["porcentaje"];
+        $ARR_data["orden"] = $dataRequest["orden"];
         
         if(is_null($data)) 
             Productooferta::create($ARR_data);

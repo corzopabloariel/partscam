@@ -26,9 +26,9 @@
                     <div class="col-12 d-flex justify-content-end">
                         <div class="d-flex justify-content-end ordenamiento py-3 w-100 border-top border-bottom">
                             <div class="text-uppercase d-flex align-items-center">vista:<i onclick="ordenamiento(this,1)" class="activo fas fa-th-large ml-2"></i><i onclick="ordenamiento(this,2)" class="fas fa-th-list ml-2"></i></div>
-                            <select name="" style="width:auto !important;" class="text-uppercase bg-light form-control rounded-0 ml-3" id="">
+                            <select onchange="order(this)" style="width:auto !important;" class="text-uppercase bg-light form-control rounded-0 ml-3" id="">
                                 <option value="1">alfabético a-z</option>
-                                <option value="1">alfabético z-a</option>
+                                <option value="2">alfabético z-a</option>
                             </select>
                         </div>
                     </div>
@@ -115,7 +115,34 @@
             }
         ]
     });
-    
+    order = function(t) {
+        let tipo = $(t).val();
+        let items = [];
+        $('#ordenamiento a').each(function() {
+            let name = $(this).find("p").text(),
+                pos = $(this).index;
+            items.push({
+                item: this,
+                name: name,
+                pos: pos 
+            });
+        });
+        items.sort(function(a,b) {
+            console.log(a.name.localeCompare(b.name))
+            if(parseInt(tipo) == 1)
+                return a.name.localeCompare(b.name);
+            else {
+                if(a.name.localeCompare(b.name) == 1)
+                    return -1;
+                return 1;
+            }
+        });
+        let target = $('#ordenamiento');
+        target.empty();
+        items.forEach(function(e) {
+            target.append(e.item);
+        });
+    }
     ordenamiento = function(e,tipo) {
         $(e).parent().find(".activo").removeClass("activo");
         $(e).addClass("activo");
