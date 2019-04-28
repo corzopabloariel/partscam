@@ -161,6 +161,9 @@ a:hover {
     color: #2D3E75;
     background-color: transparent;
 }
+.alertify-notifier.ajs-right .ajs-message.ajs-visible {
+    color: white;
+}
 /* ---------------------------------------------------
     IMAGES / FILE
 ----------------------------------------------------- */

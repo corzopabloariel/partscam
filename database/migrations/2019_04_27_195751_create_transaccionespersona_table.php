@@ -15,26 +15,21 @@ class CreateTransaccionespersonaTable extends Migration
     {
         Schema::create('transaccionespersona', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('email',200)->nullable()->default(NULL);
+            $table->string('cuit',20)->nullable()->default(NULL);
             $table->string('nombre',100)->nullable()->default(NULL);
             $table->string('apellido',100)->nullable()->default(NULL);
-            $table->string('email',200)->nullable()->default(NULL);
             $table->string('telefono',50)->nullable()->default(NULL);
-            $table->string('cuit',20)->nullable()->default(NULL);
-            $table->string('cp',10)->nullable()->default(NULL);
-            /**
-             * Consumidor final
-             * Excento
-             * Monotributo
-             * No responsable}
-             * Operaciones Turísmo
-             * Responsable Inscripto
-             */
-            $table->unsignedBigInteger('condicion_iva')->default(0);
+            $table->string('domicilio',250)->nullable()->default(NULL);
+            $table->unsignedBigInteger('condicioniva_id')->default(0);
             $table->unsignedBigInteger('transaccion_id')->default(0);
+            $table->unsignedBigInteger('provincia_id')->default(0);
             $table->unsignedBigInteger('localidad_id')->default(0);
 
             $table->foreign('transaccion_id')->references('id')->on('transacciones');
-            $table->foreign('localidad_id')->references('id')->on('localidades');
+            $table->foreign('provincia_id')->references('id')->on('provincia');
+            $table->foreign('localidad_id')->references('id')->on('localidad');
+            $table->foreign('condicioniva_id')->references('id')->on('condicioniva');
             $table->timestamps();
         });
     }

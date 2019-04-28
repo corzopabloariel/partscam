@@ -33,7 +33,7 @@
         <div class="row justify-content-center">
             @foreach($datos["ofertas"] AS $o)
                 <div class="col-lg-3 col-sm-6 col-12">
-                    <a href="{{ URL::to('producto/' . $o['producto_id']) }}" class="position-relative oferta title">
+                    <a href="{{ URL::to('productos/producto/' . $o['producto_id']) }}" class="position-relative oferta title">
                         <img class="position-absolute oferta" src="{{ asset('images/general/ofertas.fw.png') }}" />
                         <img class="d-block w-100" src="{{ asset($o['image']) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" alt="{{ $o['producto'] }}" srcset=""/>
                         <div class="py-2 px-3 border">

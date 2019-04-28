@@ -17,6 +17,7 @@ Route::get('contacto', ['uses' => 'page\GeneralController@contacto', 'as' => 'co
 
 Route::get('buscador/{tipo}', ['uses' => 'page\GeneralController@buscador', 'as' => 'buscador']);
 Route::get('carrito', ['uses' => 'page\GeneralController@carrito', 'as' => 'carrito']);
+Route::get('confirmar/{tipo}', ['uses' => 'page\GeneralController@confirmar', 'as' => 'confirmar']);
 Route::post('order',['uses' => 'page\GeneralController@order', 'as' => 'order']);
 Route::group(['prefix' => 'productos', 'as' => 'productos'], function() {
     Route::get('/', ['uses' => 'page\GeneralController@productos', 'as' => 'productos']);
@@ -25,8 +26,10 @@ Route::group(['prefix' => 'productos', 'as' => 'productos'], function() {
     Route::get('categoria/{id}', ['uses' => 'page\GeneralController@categoria', 'as' => '.categoria']);
     Route::get('producto/{id}', ['uses' => 'page\GeneralController@producto', 'as' => '.producto']);
     Route::get('show/{id}', ['uses' => 'adm\ProductoController@show', 'as' => 'show']);
-
 });
+
+Route::get('localidad/{provincia_id}', ['uses' => 'page\GeneralController@localidad', 'as' => 'localidad']);
+Route::get('persona/{tipo}/{value}', ['uses' => 'page\GeneralController@persona', 'as' => 'persona']);
 
 Auth::routes();
 

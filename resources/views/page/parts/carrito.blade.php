@@ -1,5 +1,7 @@
 @push("styles")
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
+<link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
 @endpush
 <div class="wrapper-carrito py-5">
     <div class="container">
@@ -24,13 +26,13 @@
                 <div class="col-12 col-md-6 col-lg-4">
                     <h5 class="title border-bottom">Forma de envío</h5>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="retiro" id="retiroLocal" value="local" checked>
+                        <input class="form-check-input" type="radio" name="payment_shipping" id="retiroLocal" value="local" checked>
                         <label class="form-check-label" for="retiroLocal">
                             Retiro en el local (sin cargo)
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="retiro" id="aConvenir" value="aconvenir">
+                        <input class="form-check-input" type="radio" name="payment_shipping" id="aConvenir" value="aconvenir">
                         <label class="form-check-label" for="aConvenir">
                             A convenir
                         </label>
@@ -42,19 +44,19 @@
                         <div class="box-additions-subtitle">SELECCIONE UN MÉTODO DE PAGO</div>
                         <div>
                             <label>
-                                <input class="with-gap" name="payment_method" onchange="payment(this)" type="radio" value="1" checked="">
+                                <input class="with-gap" name="payment_method" onchange="payment(this)" type="radio" value="mp" checked="">
                                 <span>Mercado Pago</span>
                             </label>
                         </div>
                         <div id="payment_method_mercado_pago" class="pdl35 mgt5 color-scorpion">
                             <p>Usted podrá retirar su compra a las 24hs hábiles posteriores a recibir vía email el cobro por el pago del pedido.</p>
                             <div class="alert alert-danger">
-                                <p class="mb-0">El pago por la plataforma de <strong>Mercado Pago</strong> tiene un incremento de 9%.</p>
+                                <p class="mb-0">El pago por la plataforma de <strong>Mercado Pago</strong> tiene un adicional de 9% del total.</p>
                             </div>
                         </div>
                         <div>
                             <label>
-                                <input class="with-gap" name="payment_method" onchange="payment(this)" type="radio" value="2">
+                                <input class="with-gap" name="payment_method" onchange="payment(this)" type="radio" value="tb">
                                 <span>Transferencia Bancaria</span>
                             </label>
                         </div>
@@ -70,7 +72,7 @@
                         </div>
                         <div id="payment_method_pago_local" class="">
                             <label>
-                                <input class="with-gap" name="payment_method" onchange="payment(this)" type="radio" value="3">
+                                <input class="with-gap" name="payment_method" onchange="payment(this)" type="radio" value="pl">
                                 <span>Pago en local</span>
                             </label>
                             <div id="payment_method_pago_local_info" class="d-none pdl35 mgt5 color-scorpion">
@@ -86,7 +88,7 @@
             <div class="row justify-content-end mt-4 custom">
                 <div class="col-12 d-flex justify-content-end">
                     <a href="{{ URL::to('productos') }}" class="btn btn-ml-inverse text-uppercase mr-2">seguir comprando</a>
-                    <a onclick="return confirm('¿Está seguro que desea procesar la compra?')" class="btn btn-ml text-white text-uppercase" type="button">pagar</a>
+                    <button type="button" disabled="true" id="btnPago" onclick="confirmarOp(this)" class="btn btn-ml text-white text-uppercase">pagar</button>
                 </div>
             </div>
         </form>
@@ -103,11 +105,16 @@
 </div>
 @push('scripts')
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="{{ asset('js/alertify.min.js') }}"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://jqueryui.com/resources/demos/external/jquery-mousewheel/jquery.mousewheel.js"></script>
 <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
 
 <script>
+    alertify.defaults.transition = "slide";
+    alertify.defaults.theme.ok = "btn btn-primary";
+    alertify.defaults.theme.cancel = "btn btn-danger";
+    alertify.defaults.theme.input = "form-control";
     tokenHandler = {
     "id": "ff8080814cbd77a8014cc",
     "public_key": "TEST-98638d24-eb00-4dd5-82d8-4e573fac6a80",
@@ -140,16 +147,39 @@
     $(document).ready(function() {
         $("[name='payment_method']").on("change", function() {
             op = $(this).val();
-            op = parseInt(op);
-            Arr = ["payment_method_mercado_pago","payment_method_bank","payment_method_pago_local_info"];
+            
+            Arr = { mp: "payment_method_mercado_pago", tb: "payment_method_bank", pl: "payment_method_pago_local_info"};
             $(".pdl35").addClass("d-none");
-            $(`#${Arr[op - 1]}`).removeClass("d-none");
+            $(`#${Arr[op]}`).removeClass("d-none");
         });
 
         $(document).on("click",".ui-button.ui-widget",function(t) {
             $(this).parent().find(".cantidad").click();
         })
-    })
+    });
+    confirmarOp = function(t) {
+        let payment_method = $('[name="payment_method"]:checked').val();
+        let payment_shipping = $('[name="payment_shipping"]:checked').val();
+        let url = `{{ url('/confirmar/${payment_method}') }}`;
+
+        localStorage.setItem("payment_method",payment_method);
+        localStorage.setItem("payment_shipping",payment_shipping);
+        localStorage.setItem("pedido",JSON.stringify(window.sumTotal));
+        window.location = url;
+        /*alertify.confirm("ATENCIÓN","Está seguro de continuar?",
+            function() {
+                let url = `{{ url('/order') }}`;
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.open( "POST", url, true );
+                xmlHttp.onload = function() {
+                    resolve(xmlHttp.response);
+                }
+                xmlHttp.send( null );
+            },
+            function(){
+            }
+        ).set('labels', {ok:'Confirmar', cancel:'Cancelar'});*/
+    };
     payment = function(t) {
         switch(parseInt($(t).val())) {
             case 1:
@@ -157,11 +187,13 @@
                 total += window.sumTotal.TOTAL * .09;
                 $("#subtotal").parent().removeClass("d-none");
                 $("#total").text(`${formatter.format(total)}`);
+                $("#btnPago").text("pagar");
                 break;
             default:
                 total = window.sumTotal.TOTAL;
                 $("#subtotal").parent().addClass("d-none");
                 $("#total").text(`${formatter.format(total)}`);
+                $("#btnPago").text("generar");
         }
     };
     recursivaCategoria = function(categoria) {
@@ -172,20 +204,30 @@
     };
     del = function(t) {
         id = $(t).closest("tr").data("id");
-        $(t).closest("tr").remove();
-        delete window.session[id];
-        localStorage.carrito = JSON.stringify(window.session);
-        
-        window.sumTotal.TOTAL -= parseFloat(window.sumTotal[id].C);
-        delete window.sumTotal[id];
-        $("#subtotal").text(`${formatter.format(window.sumTotal.TOTAL * .09)}`);
-            
-        total = window.sumTotal.TOTAL;
-        if(parseInt($('[name="payment_method"]:checked').val()) == 1)
-            total += window.sumTotal.TOTAL * .09;
-        $("#total").text(`${formatter.format(window.sumTotal.TOTAL)}`);
+        alertify.confirm("ATENCIÓN","¿Seguro de quitar el producto del carrito?",
+            function(){
+                $(t).closest("tr").find("+ tr").remove();
+                $(t).closest("tr").remove();
+                delete window.session[id];
+                localStorage.carrito = JSON.stringify(window.session);
+                
+                window.sumTotal.TOTAL -= parseFloat(window.sumTotal[id].PRECIO);
+                delete window.sumTotal[id];
+                $("#subtotal").text(`${formatter.format(window.sumTotal.TOTAL * .09)}`);
+                    
+                total = window.sumTotal.TOTAL;
+                if($('[name="payment_method"]:checked').val() == "mp")
+                    total += window.sumTotal.TOTAL * .09;
+                $("#total").text(`${formatter.format(window.sumTotal.TOTAL)}`);
 
-        $("#carritoHeader").find("span").text(Object.keys(window.session).length);
+                $("#carritoHeader").find("span").text(Object.keys(window.session).length);
+                if(window.sumTotal.TOTAL == 0)
+                    $("#btnPago").attr("disabled",true);
+                
+            },
+            function(){
+            }
+        ).set('labels', {ok:'Confirmar', cancel:'Cancelar'});
     };
     formatter = new Intl.NumberFormat('es-AR', {
         style: 'currency',
@@ -208,19 +250,20 @@
         }
         window.session[id] = cantidad;
         localStorage.carrito = JSON.stringify(window.session);
+        window.sumTotal[id].PEDIDO = cantidad;
         if(flagStock) {
             tr = `<td colspan="9" class="border-bottom border-top-0">`;
                 tr += `Cantidad solicitada supera STOCK disponible por <strong>${auxStock}</strong>. El excedente se consultará de forma automática cuando finalice la operación.`;
             tr += `</td>`;
         } else {
             tr = ''
-            window.sumTotal.TOTAL -= parseFloat(window.sumTotal[id].C);
-            window.sumTotal[id].C = parseFloat(cantidad * precio);
-            window.sumTotal.TOTAL += window.sumTotal[id].C;
+            window.sumTotal.TOTAL -= parseFloat(window.sumTotal[id].PRECIO);
+            window.sumTotal[id].PRECIO = parseFloat(cantidad * precio);
+            window.sumTotal.TOTAL += window.sumTotal[id].PRECIO;
             $("#subtotal").text(`${formatter.format(window.sumTotal.TOTAL * .09)}`);
             
             total = window.sumTotal.TOTAL;
-            if(parseInt($('[name="payment_method"]:checked').val()) == 1)
+            if($('[name="payment_method"]:checked').val() == "mp")
                 total += window.sumTotal.TOTAL * .09;
 
             $("#total").text(`${formatter.format(total)}`);
@@ -239,6 +282,10 @@
         let flagStock = false;
         let auxStock = 0;
         aux = aux.split("--, ");
+
+        if($("#btnPago").is(":disabled"))
+            $("#btnPago").removeAttr("disabled");
+
         let ARR = [
             /* 0 */data.imagenes.length > 0 ? "{{ asset('/') }}" + data.imagenes[0].image : null,
             /* 1 */data.familia.nombre,
@@ -264,15 +311,16 @@
         }
         if(window.sumTotal[data.id] === undefined) {
             window.sumTotal[data.id] = {};
-            window.sumTotal[data.id]["C"] = 0;
-            window.sumTotal[data.id]["T"] = stockReal;
+            window.sumTotal[data.id]["PRECIO"] = 0;
+            window.sumTotal[data.id]["STOCK"] = stockReal;
+            window.sumTotal[data.id]["PEDIDO"] = parseInt(cantidadPedida);
         }
-        window.sumTotal[data.id].C = parseFloat(ARR[7]);
+        window.sumTotal[data.id].PRECIO = parseFloat(ARR[7]);
         window.sumTotal.TOTAL += parseFloat(ARR[7]);
         $("#subtotal").text(`${formatter.format(window.sumTotal.TOTAL * .09)}`);
 
         total = window.sumTotal.TOTAL;
-        if(parseInt($('[name="payment_method"]:checked').val()) == 1)
+        if($('[name="payment_method"]:checked').val() == "mp")
             total += window.sumTotal.TOTAL * .09;
         $("#total").text(`${formatter.format(total)}`);
         tr = `<tr data-id="${data.id}">`;

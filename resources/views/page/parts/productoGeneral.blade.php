@@ -1,5 +1,7 @@
 @push("styles")
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+<link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
 @endpush
 <div class="wrapper-producto">
     <div class="container py-5">
@@ -130,6 +132,8 @@
 </div>
 @push('scripts')
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+<script src="{{ asset('js/alertify.min.js') }}"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://jqueryui.com/resources/demos/external/jquery-mousewheel/jquery.mousewheel.js"></script>
 <script>
@@ -150,7 +154,8 @@
 
         localStorage.carrito = JSON.stringify(window.session);
         $("#carritoHeader").find("span").text(Object.keys(window.session).length);
-        alert("Producto agregado");
+        
+        alertify.success('Producto agregado');
     }
 </script>
 @endpush

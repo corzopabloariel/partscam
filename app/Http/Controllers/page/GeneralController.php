@@ -15,6 +15,11 @@ use App\Producto;
 use App\Productooferta;
 use App\Categoria;
 
+use App\CondicionIva;
+use App\Provincia;
+use App\Localidad;
+use App\Persona;
+
 class GeneralController extends Controller
 {
     public $idioma = "es";
@@ -250,9 +255,47 @@ class GeneralController extends Controller
         dd($results);
     }
 
-    public function order(Request $request) {
-        dd($request->all());
+    public function confirmar($tipo) {
+        $title = "CARRITO";
+        $view = "page.parts.confirmar.{$tipo}";
+        $datos = [];
+        $datos["empresa"] = self::datos();
+        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["select2"] = [];
+        $condicion = CondicionIva::orderBy('nombre')->pluck('nombre', 'id');
+        $provincias = Provincia::orderBy('nombre')->pluck('nombre', 'id');
+        $datos["select2"]["condicion"] = [];
+        $datos["select2"]["provincia"] = [];
+        $datos["select2"]["condicion"][] = ["id" => "", "text" => ""];
+        $datos["select2"]["provincia"][] = ["id" => "", "text" => ""];
+
+        foreach($condicion AS $k => $v)
+            $datos["select2"]["condicion"][] = ["id" => $k, "text" => $v];
+        foreach($provincias AS $k => $v)
+            $datos["select2"]["provincia"][] = ["id" => $k, "text" => $v];
         
+        return view('page.distribuidor',compact('title','view','datos'));
+    }
+    public function persona($tipo, $value) {
+        $data = Persona::where($tipo,"=",$value)->orderBy('id',"DESC")->first();
+        
+        return $data;
+    }
+
+    public function localidad($provincia_id) {
+        $data = Provincia::find($provincia_id)->localidades;
+        $ARR = [];
+        $ARR[] = ["id" => "", "text" => ""];
+
+        foreach($data AS $l)
+            $ARR[] = ["id" => $l["id"], "text" => "{$l["nombre"]} ({$l["codigopostal"]})"];
+        
+        return $ARR;
+    }
+    public function order(Request $request) {
+        $data = $request->all();
+        
+        return $data["pedido"];
     }
 
     public function carrito() {
@@ -262,7 +305,6 @@ class GeneralController extends Controller
         $datos["empresa"] = self::datos();
         $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
         
-
         return view('page.distribuidor',compact('title','view','datos'));
     }
 
