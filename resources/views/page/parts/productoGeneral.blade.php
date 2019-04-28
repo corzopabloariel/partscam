@@ -68,7 +68,7 @@
                             @endif
                             <div class="d-flex justify-content-between align-items-start mt-4">
                                 <div class="d-flex cantidad align-items-center text-uppercase">
-                                    <span class="mr-2">cantidad</span><input type="number" value="1" class="form-control form-control-sm" name="" min="1" max="{{$datos['stock']['cantidad']}}" id="cantidad">
+                                    <span class="mr-2">cantidad</span><input type="number" value="1" class="form-control form-control-sm" name="" min="1" data-max="{{$datos['stock']['cantidad']}}" id="cantidad">
                                 </div>
                                 <div class="d-flex align-items-center flex-column">
                                     <button onclick="addCarrito(this,{{$datos['producto']['id']}})" class="btn btn-sm mb-2 text-uppercase"><i class="fas fa-shopping-cart mr-2"></i>compra online</button>
@@ -138,23 +138,19 @@
     
     addCarrito = function(t,idProducto) {
         let cantidad = $("#cantidad");
-        let max = cantidad.attr("max");
-        if(sessionStorage.carrito == undefined) 
-            sessionStorage.setItem("carrito","{}");
-        window.session = JSON.parse(sessionStorage.carrito);
+        let max = cantidad.data("max");
+        if(localStorage.carrito == undefined) 
+            localStorage.setItem("carrito","{}");
+        window.session = JSON.parse(localStorage.carrito);
 
         if(window.session[idProducto] === undefined)
             window.session[idProducto] = parseInt(cantidad.val());
-        else {
-            if(parseInt(max) < parseInt(window.session[idProducto]) + parseInt(cantidad.val())) {
-                alert("STOCK superado. Verifique cantidad.");
-                return false;
-            } else {
-                window.session[idProducto] = parseInt(window.session[idProducto]) + parseInt(cantidad.val());
-            }
-        }
-        sessionStorage.carrito = JSON.stringify(window.session);
-        alert("Producto agregado")
+        else
+            window.session[idProducto] = parseInt(window.session[idProducto]) + parseInt(cantidad.val());
+
+        localStorage.carrito = JSON.stringify(window.session);
+        $("#carritoHeader").find("span").text(Object.keys(window.session).length);
+        alert("Producto agregado");
     }
 </script>
 @endpush

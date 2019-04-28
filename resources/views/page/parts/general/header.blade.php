@@ -61,7 +61,10 @@
                         <button class="navbar-toggler" type="button" data-toggle="modal" data-target="#menuNav">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-                        <a class="btn shadow rounded-0" href="{{ URL::to('carrito') }}"><i class="fas fa-shopping-cart mr-2"></i>compra online</a>
+                        <a id="carritoHeader" class="btn shadow-sm" href="{{ URL::to('carrito') }}">
+                            <span class="badge badge-light mr-2">0</span>
+                            <i class="fas fa-shopping-cart"></i>
+                        </a>
                     </li>
                 </ul>
             </div>

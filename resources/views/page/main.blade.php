@@ -58,6 +58,10 @@
                 if($("nav .menu").find(`a[href="${window.url}"]`).length)
                     $("nav .menu").find(`a[href="${window.url}"]`).addClass("active");
             });
+            if(localStorage.carrito !== undefined) {
+                let aux = JSON.parse(localStorage.carrito);
+                $("#carritoHeader").find("span").text(Object.keys(aux).length);
+            }
         </script>
         @stack('scripts')
         {{--<script src="{{ asset('js/adm.js') }}"></script>--}}
