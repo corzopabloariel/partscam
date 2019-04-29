@@ -139,6 +139,18 @@
     };
     localidades = function(t) {
         let id = $(t).val();
+        $("#localidad_id").attr("disabled", true);
+        $("#localidad_id").find("option").remove();
+        $("#localidad_id").select2({
+            theme: "bootstrap",
+            tags: "true",
+            placeholder: "Seleccione LOCALIDAD",
+            width: "resolve",
+            data: []
+        });
+        if(id == "") {
+            return false;
+        }
         let promise = new Promise(function (resolve, reject) {
             let url = `{{ url('/localidad/${id}') }}`;
             var xmlHttp = new XMLHttpRequest();
@@ -171,11 +183,25 @@
         let request = new XMLHttpRequest();
         let formData = new FormData(formElement);
         let url = `{{ url('/order') }}`;
+
+        console.log(url)
         request.responseType = 'json';
         formData.append("pedido", localStorage.pedido);
+        formData.append("payment_method", localStorage.payment_method);
+        formData.append("payment_shipping", localStorage.payment_shipping);
+        
         request.open("POST", url);
         request.onload = function() {
-            console.log(request.response);
+            data = request.response;
+            switch(data.tipo) {
+                case "pl":
+                    url = `{{ url('/pedido/ok') }}`;
+                    localStorage.removeItem("carrito");
+                    localStorage.removeItem("payment_method");
+                    localStorage.removeItem("payment_shipping");
+                    localStorage.removeItem("pedido");
+                    window.location = url
+            }
         }
         request.send(formData);
     }

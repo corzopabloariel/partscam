@@ -12,4 +12,9 @@ class Localidad extends Model
         'codigopostal',
         'provincia_id'
     ];
+    protected $appends = ['nombre_cp'];
+
+    public function getNombreCPAttribute() {
+        return "{$this->nombre} ({$this->codigopostal})";
+    }
 }

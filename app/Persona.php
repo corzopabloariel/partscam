@@ -17,6 +17,6 @@ class Persona extends Model
         'condicioniva_id',
         'transaccion_id',
         'provincia_id',
-        'localdiad_id'
+        'localidad_id'
     ];
 }

@@ -115,31 +115,6 @@
     alertify.defaults.theme.ok = "btn btn-primary";
     alertify.defaults.theme.cancel = "btn btn-danger";
     alertify.defaults.theme.input = "form-control";
-    tokenHandler = {
-    "id": "ff8080814cbd77a8014cc",
-    "public_key": "TEST-98638d24-eb00-4dd5-82d8-4e573fac6a80",
-    "card_id": null,
-    "luhn_validation": true,
-    "status": "active",
-    "date_used": null,
-    "card_number_length": 16,
-    "date_created": "2015-04-16T13:06:25.525-04:00",
-    "first_six_digits": "450995",
-    "last_four_digits": "3704",
-    "security_code_length": 3,
-    "expiration_month": 6,
-    "expiration_year": 2017,
-    "date_last_updated": "2015-04-16T13:06:25.525-04:00",
-    "date_due": "2015-04-24T13:06:25.531-04:00",
-    "live_mode": false,
-    "cardholder": {
-        "identification": {
-            "number": "23456789",
-            "type": "type"
-        },
-        "name": "name"
-    }
-}
     //Mercadopago.setPublishableKey("TEST-b3d5b663-664a-4e8f-b759-de5d7c12ef8f");
     //Mercadopago.createToken(form, tokenHandler);
 
@@ -313,7 +288,7 @@
             window.sumTotal[data.id] = {};
             window.sumTotal[data.id]["PRECIO"] = 0;
             window.sumTotal[data.id]["STOCK"] = stockReal;
-            window.sumTotal[data.id]["PEDIDO"] = parseInt(cantidadPedida);
+            window.sumTotal[data.id]["PEDIDO"] = parseInt(ARR[6]);
         }
         window.sumTotal[data.id].PRECIO = parseFloat(ARR[7]);
         window.sumTotal.TOTAL += parseFloat(ARR[7]);

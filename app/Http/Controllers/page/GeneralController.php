@@ -5,6 +5,8 @@ namespace App\Http\Controllers\page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use MP;
+use Cookie;
 
 use App\Empresa;
 use App\Contenido;
@@ -20,9 +22,13 @@ use App\Provincia;
 use App\Localidad;
 use App\Persona;
 
+use App\Transaccion;
+use App\TransaccionProducto;
+
 class GeneralController extends Controller
 {
     public $idioma = "es";
+
     public function index() {
         $title = "HOME";
         $view = "page.parts.index";
@@ -284,28 +290,122 @@ class GeneralController extends Controller
 
     public function localidad($provincia_id) {
         $data = Provincia::find($provincia_id)->localidades;
+        
         $ARR = [];
         $ARR[] = ["id" => "", "text" => ""];
 
         foreach($data AS $l)
-            $ARR[] = ["id" => $l["id"], "text" => "{$l["nombre"]} ({$l["codigopostal"]})"];
+            $ARR[] = ["id" => $l["id"], "text" => $l->getNombreCPAttribute()];
         
         return $ARR;
     }
     public function order(Request $request) {
         $data = $request->all();
-        
-        return $data["pedido"];
+        $nombre = $data["nombre"];
+        $apellido = $data["apellido"];
+        $email = $data["email"];
+        $cuit = $data["cuit"];
+        $domicilio = $data["domicilio"];
+        $provincia_id = $data["provincia_id"];
+        $localidad_id = $data["localidad_id"];
+        $telefono = $data["telefono"];
+        /** ------------- */
+        $pedido = json_decode($data["pedido"], true);
+        /** ------------- */
+        $condicioniva_id = $data["condicioniva_id"];
+        $payment_method = $data["payment_method"];
+        $payment_shipping = $data["payment_shipping"];
+
+        //dd($payment_method);
+        switch($payment_method) {
+            case "pl":
+                //GUARDA información
+                $transaccion = Transaccion::create([
+                    "tipopago" => strtoupper($payment_method),
+                    "shipping" => strtoupper($payment_shipping),
+                    "estado" => 1,
+                    "total" => $pedido["TOTAL"]
+                ]);
+                Persona::create([
+                    "email" => $email,//ENVIAR COMPOBANTE
+                    "cuit" => $cuit,
+                    "nombre" => $nombre,
+                    "apellido" => $apellido,
+                    "telefono" => $telefono,
+                    "domicilio" => $domicilio,
+                    "condicioniva_id" => $condicioniva_id,
+                    "transaccion_id" => $transaccion["id"],
+                    "provincia_id" => $provincia_id,
+                    "localidad_id" => $localidad_id
+                ]);
+                foreach($pedido AS $i => $v) {
+                    if($i == "TOTAL") continue;
+                    TransaccionProducto::create([
+                        "cantidad" => $v["PEDIDO"],
+                        "consultar" => $v["PEDIDO"] - $v["STOCK"],
+                        "precio" => $v["PRECIO"],
+                        "transaccion_id" => $transaccion["id"],
+                        "producto_id" => $i
+                    ]);
+                }
+                Cookie::queue("transaccion", $transaccion["id"], 100);
+                break;
+        }
+        return ["tipo" => $payment_method];
     }
 
-    public function carrito() {
+    public function pedido($tipo) {
         $title = "CARRITO";
         $view = "page.parts.carrito";
+        //Cookie::queue("prueba", "1", 10);
+
+       // dd(Cookie::get("prueba"));
+
         $datos = [];
         $datos["empresa"] = self::datos();
         $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
         
         return view('page.distribuidor',compact('title','view','datos'));
+    }
+
+    public function carrito() {
+        $title = "CARRITO";
+        $view = "page.parts.carrito";
+        //Cookie::queue("prueba", "1", 10);
+
+       // dd(Cookie::get("prueba"));
+
+        $datos = [];
+        $datos["empresa"] = self::datos();
+        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        
+        return view('page.distribuidor',compact('title','view','datos'));
+    }
+
+    public function getCreatePreference()
+    {
+        $preferenceData = [
+            'items' => [
+                [
+                    'id' => 12,
+                    'category_id' => 'phones',
+                    'title' => 'iPhone 6',
+                    'description' => 'iPhone 6 de 64gb nuevo',
+                    'picture_url' => 'http://d243u7pon29hni.cloudfront.net/images/products/iphone-6-dorado-128-gb-red-4g-8-mpx-1256254%20(1)_m.png',
+                    'quantity' => 1,
+                    'currency_id' => 'ARS',
+                    'unit_price' => 14999
+                ]
+            ],
+        ];
+
+        try {
+            $preference = MP::create_preference($preferenceData);
+            return redirect()->to($preference['response']['init_point']);
+        } catch (Exception $e){
+            dd($e->getMessage());
+        }
+
     }
 
     public function datos() {

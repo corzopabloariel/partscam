@@ -30,6 +30,8 @@ Route::group(['prefix' => 'productos', 'as' => 'productos'], function() {
 
 Route::get('localidad/{provincia_id}', ['uses' => 'page\GeneralController@localidad', 'as' => 'localidad']);
 Route::get('persona/{tipo}/{value}', ['uses' => 'page\GeneralController@persona', 'as' => 'persona']);
+Route::get('p', ['uses' => 'page\GeneralController@getCreatePreference', 'as' => 'getCreatePreference']);
+Route::get('pedido/{tipo}', ['uses' => 'page\GeneralController@pedido', 'as' => 'pedido']);
 
 Auth::routes();
 
