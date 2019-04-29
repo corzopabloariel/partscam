@@ -177,6 +177,7 @@ return [
 
         /** */
         SantiGraviano\LaravelMercadoPago\Providers\MercadoPagoServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
     ],
 
     /*
@@ -229,6 +230,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         /** */
         'MP' => SantiGraviano\LaravelMercadoPago\Facades\MP::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 
 ];

@@ -5,7 +5,7 @@
         <div class="d-flex justify-content-between">
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
             <form class="position-relative" action="" method="post">
-                <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Nombre, Categor铆a y C贸digo"/>
+                <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Nombre, Categoría y Código"/>
                 <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
             </form>
         </div>
@@ -327,7 +327,7 @@
                 theme: "bootstrap",
                 tags: "true",
                 allowClear: true,
-                placeholder: "Seleccione: CATEGOR脥A",
+                placeholder: "Seleccione: CATEGORÍA",
             });
         }
         let columnas = window.pyrus.columnas();

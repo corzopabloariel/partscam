@@ -66,13 +66,19 @@
                     <li>
                         <a data-link="u" href="{{ route('familias.categorias.index') }}">
                             <i class="fas fa-columns"></i>
-                            <span class="nav-label">Categorías</span>
+                            <span class="nav-label">Categorías de productos</span>
                         </a>
                     </li>
                     <li>
                         <a data-link="u" href="{{ route('familias.categorias.productos.index') }}">
                             <i class="fas fa-clipboard-list"></i>
                             <span class="nav-label">Todos los productos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a data-link="u" href="{{ route('familias.carga') }}">
+                        <i class="fas fa-file-upload"></i>
+                            <span class="nav-label">Carga masiva</span>
                         </a>
                     </li>
                 </ul>

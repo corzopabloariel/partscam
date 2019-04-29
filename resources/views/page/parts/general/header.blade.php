@@ -38,7 +38,7 @@
                         <span class="text-truncate d-inline-block"><i class="far fa-clock"></i>{!! $datos['empresa']['horario'] !!}</span>
                     </li>
                     <li>
-                        <form action="{{ url('/buscador/header') }}" class="position-relative">
+                        <form method="post" action="{{ url('/buscador/header') }}" class="position-relative">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                             <input type="text" name="input" placeholder="Buscar..." id="">
                             <i class="fas fa-search position-absolute"></i>
@@ -62,7 +62,7 @@
                             <span class="navbar-toggler-icon"></span>
                         </button>
                         <a id="carritoHeader" class="btn shadow-sm" href="{{ URL::to('carrito') }}">
-                            <span class="badge badge-light mr-2">0</span>
+                            Carrito (<span class="">0</span>)
                             <i class="fas fa-shopping-cart"></i>
                         </a>
                     </li>

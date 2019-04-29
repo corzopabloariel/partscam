@@ -156,16 +156,21 @@
         ).set('labels', {ok:'Confirmar', cancel:'Cancelar'});*/
     };
     payment = function(t) {
-        switch(parseInt($(t).val())) {
-            case 1:
-                total = window.sumTotal.TOTAL;
-                total += window.sumTotal.TOTAL * .09;
+        total = 0;
+        switch($(t).val()) {
+            case "mp":
+                if(window.sumTotal !== undefined) {
+                    total = window.sumTotal.TOTAL;
+                    total += window.sumTotal.TOTAL * .09;
+                }
                 $("#subtotal").parent().removeClass("d-none");
                 $("#total").text(`${formatter.format(total)}`);
                 $("#btnPago").text("pagar");
                 break;
             default:
-                total = window.sumTotal.TOTAL;
+                if(window.sumTotal !== undefined) {
+                    total = window.sumTotal.TOTAL;
+                }
                 $("#subtotal").parent().addClass("d-none");
                 $("#total").text(`${formatter.format(total)}`);
                 $("#btnPago").text("generar");
@@ -354,9 +359,11 @@
         promiseFunction();
     };
 
-    window.session = JSON.parse(localStorage.carrito);
-    for(let x in window.session) {
-        edit(x);
+    if(localStorage.carrito !== undefined) {
+        window.session = JSON.parse(localStorage.carrito);
+        for(let x in window.session) {
+            edit(x);
+        }
     }
 </script>
 @endpush

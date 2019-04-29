@@ -1,7 +1,7 @@
 <footer>
     <div class="container">
         <div class="row justify-content-end pt-3">
-            <div class="col-12 col-md-10 col-lg-9">
+            <div class="col-12">
                 <div class="row">
                     <div class="col-12 col-lg-3">
                         <h5 class="title text-uppercase">categorías</h5>

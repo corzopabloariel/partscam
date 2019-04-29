@@ -97,10 +97,12 @@ class FamiliaController extends Controller
     public function destroy($id)
     {
         $data = self::edit($id);
+        
         $filename = public_path() . "/{$data["image"]}";
-        if (file_exists($filename))
-            unlink($filename);
-
+        if(!empty($data["image"])) {
+            if (file_exists($filename))
+                unlink($filename);
+        }
         Familia::destroy($id);
         return 1;
     }

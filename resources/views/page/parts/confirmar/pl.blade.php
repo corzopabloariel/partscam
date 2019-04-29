@@ -13,7 +13,7 @@
                                 <input maslength="200" onblur="buscarData(this,'email')" type="email" placeholder="Email" name="email" class="form-control">
                             </div>
                             <div class="col-md-6 col-12">
-                                <input maxlength="20" onblur="buscarData(this,'cuit')" type="text" name="cuit" placeholder="CUIT" class="form-control">
+                                <input maxlength="20" onblur="buscarData(this,'cuit')" type="text" id="cuit" name="cuit" placeholder="CUIT" class="form-control">
                             </div>
                         </div>
                         <div class="row">
@@ -34,7 +34,7 @@
                         <div class="col-12 col-md-6">
                             <fieldset>
                                 <legend>CONDICIÓN FRENTE AL IVA</legend>
-                                <select disabled id="condicionIva" name="condicioniva_id" class="form-control"></select>
+                                <select disabled id="condicioniva_id" name="condicioniva_id" class="form-control"></select>
                             </fieldset>
                         </div>
                     </div>    
@@ -77,7 +77,7 @@
 @push("scripts")
 <script>
     window.select2 = @json($datos["select2"]);
-    $("#condicionIva").select2({
+    $("#condicioniva_id").select2({
         theme: "bootstrap",
         tags: "true",
         placeholder: "Condicion IVA",
@@ -118,7 +118,8 @@
                         console.log(data)
                         $("#btnSuccess").removeAttr("disabled");
                         if(data === null) {
-                            $("#nombre,#apellido,#telefono,#condicionIva,#domicilio,#provincia_id").removeAttr("disabled");
+                            delete window.buscar;
+                            $("#nombre,#apellido,#telefono,#condicioniva_id,#domicilio,#provincia_id").removeAttr("disabled");
                         } else {
                             $("#nombre").val(data.nombre);
                             $("#apellido").val(data.apellido);
@@ -126,8 +127,11 @@
                             $("#email").val(data.email);
                             $("#cuit").attr("readonly",true);
                             $("#telefono").val(data.telefono);
-                            
+                            $("#provincia_id").val(data.provincia_id).trigger("change");
                             $("#domicilio").val(data.domicilio);
+                            $("#condicioniva_id").val(data.condicioniva_id).trigger("change");
+                            window.localidadID = data.localidad_id;
+                            $("#nombre,#apellido,#telefono,#condicioniva_id,#domicilio,#provincia_id").removeAttr("disabled");
                         }
                     })
             };
@@ -173,6 +177,11 @@
                         width: "resolve",
                         data: data
                     });
+
+                    if(window.localidadID !== undefined) {
+                        $("#localidad_id").val(window.localidadID).trigger("change");
+                        delete window.localidadID;
+                    }
                 })
         };
         promiseFunction();

@@ -46,6 +46,12 @@
             @include('page.parts.general.header')
             @yield('body')
             @include('page.parts.general.footer')
+            <a href="https://wa.me/{{$datos['empresa']['telefono']['wha'][0]}}" class="position-fixed text-white rounded-circle bg-success d-flex justify-content-center align-items-center" style="right: 10px;bottom: 10px;z-index: 99;width: 50px;height: 50px;">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="tel:{{$datos['empresa']['telefono']['tel'][0]}}" class="position-fixed text-white rounded-circle bg-primary d-flex justify-content-center align-items-center" style="left: 10px;bottom: 10px;z-index: 99;width: 50px;height: 50px;">
+                <i class="fas fa-phone"></i>
+            </a>
         </div>
         <!-- Scripts -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

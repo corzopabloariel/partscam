@@ -287,6 +287,11 @@ footer .info li + li {
     color: #A0A3A5;
     font-size: 20px;
 }
+.wrapper-oferta a.oferta a img {
+    max-height: 255px;
+    height: 255px;
+    width: 100%;
+}
 .wrapper-oferta a.oferta span {
     color: #2CC5ED
 }

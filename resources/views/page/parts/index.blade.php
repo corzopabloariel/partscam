@@ -74,7 +74,7 @@
                 <p>Buscá por código, modelo o nombre del repuesto</p>
             </div>
             <div class="col-12 col-lg-5 d-flex align-items-center">
-                <form action="{{ url('/buscador/home') }}" class="position-relative w-100">
+                <form method="post" action="{{ url('/buscador/home') }}" class="position-relative w-100">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                     <input type="text" name="input" placeholder="Buscar Producto" class="form-control rounded-0 border-0" name="" id="">
                     <i class="fas fa-search position-absolute"></i>
@@ -92,9 +92,9 @@
                 <div class="col-lg-3 col-sm-6 col-12">
                     <a href="{{ URL::to('productos/producto/' . $o['producto_id']) }}" class="position-relative oferta title">
                         <img class="position-absolute oferta" src="{{ asset('images/general/ofertas.fw.png') }}" />
-                        <img class="d-block w-100" src="{{ asset($o['image']) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" alt="{{ $o['producto'] }}" srcset=""/>
+                        <img class="d-block w-100 border border-bottom-0" src="{{ asset($o['image']) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" alt="{{ $o['producto'] }}" srcset=""/>
                         <div class="py-2 px-3 border">
-                            <p class="text-center w-75 mx-auto mb-0">{{ $o["producto"] }}</p>
+                            <p class="text-center text-truncate mx-auto mb-0">{{ $o["producto"] }}</p>
                             <div class="d-flex justify-content-between">
                                 <strike>$ {{ $o["precioAnterior"]}}</strike>
                                 <span>$ {{ $o["precio"] }}</span>

@@ -15,7 +15,7 @@ Route::get('/', 'page\GeneralController@index');
 Route::get('empresa', ['uses' => 'page\GeneralController@empresa', 'as' => 'empresa']);
 Route::get('contacto', ['uses' => 'page\GeneralController@contacto', 'as' => 'contacto']);
 
-Route::get('buscador/{tipo}', ['uses' => 'page\GeneralController@buscador', 'as' => 'buscador']);
+Route::post('buscador/{tipo}', ['uses' => 'page\GeneralController@buscador', 'as' => 'buscador']);
 Route::get('carrito', ['uses' => 'page\GeneralController@carrito', 'as' => 'carrito']);
 Route::get('confirmar/{tipo}', ['uses' => 'page\GeneralController@confirmar', 'as' => 'confirmar']);
 Route::post('order',['uses' => 'page\GeneralController@order', 'as' => 'order']);
@@ -32,7 +32,7 @@ Route::get('localidad/{provincia_id}', ['uses' => 'page\GeneralController@locali
 Route::get('persona/{tipo}/{value}', ['uses' => 'page\GeneralController@persona', 'as' => 'persona']);
 Route::get('p', ['uses' => 'page\GeneralController@getCreatePreference', 'as' => 'getCreatePreference']);
 Route::get('pedido/{tipo}', ['uses' => 'page\GeneralController@pedido', 'as' => 'pedido']);
-
+Route::get('payment/{tipo}', ['uses' => 'page\GeneralController@payment', 'as' => 'payment']);
 Auth::routes();
 
 Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
@@ -74,6 +74,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
             Route::get('delete/{id}', ['uses' => 'adm\ModelosController@destroy', 'as' => '.destroy']);
             Route::post('update/{id}', ['uses' => 'adm\ModelosController@update', 'as' => 'update']);
         });
+        
+        Route::get('carga', ['uses' => 'adm\ProductoController@carga', 'as' => '.carga']);
+        Route::post('carga', ['uses' => 'adm\CargaController@index', 'as' => '.carga']);
 
         Route::group(['prefix' => 'categorias', 'as' => '.categorias'], function() {
             Route::get('index', ['uses' => 'adm\CategoriaController@index', 'as' => '.index']);

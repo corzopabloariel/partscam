@@ -41,6 +41,13 @@ class ProductoController extends Controller
         return view('adm.distribuidor',compact('title','view','familias','productos','prod'));
     }
 
+    public function carga() {
+        $title = "Productos Carga";
+        $view = "adm.parts.familia.carga";
+
+        return view('adm.distribuidor',compact('title','view'));
+    }
+
     public function familia_categoria($id)
     {
         $familia = Familia::find($id);

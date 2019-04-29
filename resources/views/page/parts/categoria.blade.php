@@ -47,16 +47,21 @@
                     @endphp
                     @foreach($datos["menu"] AS $i => $d)
                         @if(isset($d['imagenes']))
+                        @php
+                        $img = null;
+                        if(isset($d['imagenes'][0]))
+                            $img = $d['imagenes'][0]['image'];
+                        @endphp
                         <a href="{{ URL::to('productos/producto/'. $d['id']) }}" class="col-lg-4 col-md-6 col-12 mb-4">
                             <div class="img">
                                 <div></div>
                                 <i class="fas fa-plus"></i>
-                                <img src="{{ asset($d['imagenes'][0]['image']) }}" class="w-100" />
+                                <img src="{{ asset($img) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" class="w-100" />
                             </div>
                             <p class="text-center mt-1 mb-0">{{ $d['nombre'] }}</p>
                         </a>
                         @else
-                        <a href="{{ URL::to('productos/categoria/'. $i) }}" class="col-lg-4 col-md-6 col-12 mb-4">
+                        <a href="{{ URL::to('productos/categoria/'. $i) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" class="col-lg-4 col-md-6 col-12 mb-4">
                             <div class="img">
                                 <div></div>
                                 <i class="fas fa-plus"></i>

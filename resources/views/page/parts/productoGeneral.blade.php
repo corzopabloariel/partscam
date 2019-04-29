@@ -59,10 +59,7 @@
                             <p class="text-uppercase">Cód. del producto: <span>{{$datos["producto"]["codigo"]}}</span></p>
                         @endif
                         @if($datos["stock"]["cantidad"] > 0)
-                            @php
-                                $articulo = ($datos["stock"]["cantidad"] == 1) ? "1 Artículo" : "{$datos["stock"]["cantidad"]} Artículos";
-                            @endphp
-                            <p class="text-uppercase">en stock: <span>{{$articulo}}</span></p>
+                            <p class="text-uppercase"><span>Artículo disponible</span></p>
                             @if(empty($datos["oferta"]))
                                 <h3 class="title price">${{$datos["precio"]}}</h3>
                             @else
@@ -80,6 +77,20 @@
                                 </div>
                             </div>
                         @else
+                            <p class="text-uppercase"><span>Sin Stock</span></p>
+                            @if(empty($datos["oferta"]))
+                                <h3 class="title price">${{$datos["precio"]}}</h3>
+                            @else
+                                <h3 class="title price"><strike class="mr-2" style="color:#A0A3A5; font-weight: normal">${{$datos["precio"]}}</strike> ${{$datos["oferta"]}}</h3>
+                            @endif
+                            <div class="d-flex justify-content-between align-items-start mt-4">
+                                <div class="d-flex align-items-center flex-column">
+                                    <button onclick="consultar(this,{{$datos['producto']['id']}})" class="btn btn-warning mb-2 text-uppercase"><i class="fas fa-shopping-cart mr-2"></i>consultar</button>
+                                    @if(!empty($datos["producto"]['mercadolibre']))
+                                        <a href="{{$datos['producto']['mercadolibre']}}" target="blank"><img src="{{ asset('images/general/mercadolibre.jpg') }}" /></a>
+                                    @endif
+                                </div>
+                            </div>
                         @endif
                     </div>
                 </div>

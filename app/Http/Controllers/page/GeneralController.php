@@ -24,6 +24,7 @@ use App\Persona;
 
 use App\Transaccion;
 use App\TransaccionProducto;
+use App\Productostock;
 
 class GeneralController extends Controller
 {
@@ -244,8 +245,11 @@ class GeneralController extends Controller
     /** */
     public function buscador(Request $request, $tipo) {
         $buscar = $request->all()["input"];
-
-        $results = DB::table('productos')
+        $title = "CARRITO";
+        $view = "page.parts.buscador";
+        
+        $datos = [];
+        $datos["resultados"] = DB::table('productos')
                         ->distinct()
                         /*->leftJoin('categorias', function($join) {
                             $join->on('categorias.id', '=', 'productos.categoria_id');
@@ -258,7 +262,11 @@ class GeneralController extends Controller
                 //->orWhere('categorias.nombre','like',"%{$buscar}%")
                 //->orWhere('familias.nombre','like',"%{$buscar}%")
             ->get();
-        dd($results);
+        $datos["empresa"] = self::datos();
+        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["marcas"] = Marca::orderBy('orden')->get();
+        
+        return view('page.distribuidor',compact('title','view','datos'));
     }
 
     public function confirmar($tipo) {
@@ -315,7 +323,6 @@ class GeneralController extends Controller
         $condicioniva_id = $data["condicioniva_id"];
         $payment_method = $data["payment_method"];
         $payment_shipping = $data["payment_shipping"];
-
         //dd($payment_method);
         switch($payment_method) {
             case "pl":
@@ -340,6 +347,88 @@ class GeneralController extends Controller
                 ]);
                 foreach($pedido AS $i => $v) {
                     if($i == "TOTAL") continue;
+                    $aux = Productostock::where("producto_id",$i)->first();
+                    $pedido = $v["PEDIDO"];
+                    if($pedido > $v["STOCK"])
+                        $pedido = $v["PEDIDO"] - $v["STOCK"];
+                    $aux->fill(["cantidad" => $pedido]);
+                    $aux->save();
+                    TransaccionProducto::create([
+                        "cantidad" => $v["PEDIDO"],
+                        "consultar" => $v["PEDIDO"] - $v["STOCK"],
+                        "precio" => $v["PRECIO"],
+                        "transaccion_id" => $transaccion["id"],
+                        "producto_id" => $i
+                    ]);
+                }
+                Cookie::queue("transaccion", $transaccion["id"], 100);
+                break;
+            case "tb":
+                //GUARDA información
+                $transaccion = Transaccion::create([
+                    "tipopago" => strtoupper($payment_method),
+                    "shipping" => strtoupper($payment_shipping),
+                    "estado" => 1,
+                    "total" => $pedido["TOTAL"]
+                ]);
+                Persona::create([
+                    "email" => $email,//ENVIAR COMPOBANTE
+                    "cuit" => $cuit,
+                    "nombre" => $nombre,
+                    "apellido" => $apellido,
+                    "telefono" => $telefono,
+                    "domicilio" => $domicilio,
+                    "condicioniva_id" => $condicioniva_id,
+                    "transaccion_id" => $transaccion["id"],
+                    "provincia_id" => $provincia_id,
+                    "localidad_id" => $localidad_id
+                ]);
+                foreach($pedido AS $i => $v) {
+                    if($i == "TOTAL") continue;
+                    $aux = Productostock::where("producto_id",$i)->first();
+                    $pedido = $v["PEDIDO"];
+                    if($pedido > $v["STOCK"])
+                        $pedido = $v["PEDIDO"] - $v["STOCK"];
+                    $aux->fill(["cantidad" => $pedido]);
+                    $aux->save();
+                    TransaccionProducto::create([
+                        "cantidad" => $v["PEDIDO"],
+                        "consultar" => $v["PEDIDO"] - $v["STOCK"],
+                        "precio" => $v["PRECIO"],
+                        "transaccion_id" => $transaccion["id"],
+                        "producto_id" => $i
+                    ]);
+                }
+                Cookie::queue("transaccion", $transaccion["id"], 100);
+                break;
+            case "mp":
+                //GUARDA información
+                $transaccion = Transaccion::create([
+                    "tipopago" => strtoupper($payment_method),
+                    "shipping" => strtoupper($payment_shipping),
+                    "estado" => 1,
+                    "total" => $pedido["TOTAL"]
+                ]);
+                Persona::create([
+                    "email" => $email,//ENVIAR COMPOBANTE
+                    "cuit" => $cuit,
+                    "nombre" => $nombre,
+                    "apellido" => $apellido,
+                    "telefono" => $telefono,
+                    "domicilio" => $domicilio,
+                    "condicioniva_id" => $condicioniva_id,
+                    "transaccion_id" => $transaccion["id"],
+                    "provincia_id" => $provincia_id,
+                    "localidad_id" => $localidad_id
+                ]);
+                foreach($pedido AS $i => $v) {
+                    if($i == "TOTAL") continue;
+                    $aux = Productostock::where("producto_id",$i)->first();
+                    $pedido = $v["PEDIDO"];
+                    if($pedido > $v["STOCK"])
+                        $pedido = $v["PEDIDO"] - $v["STOCK"];
+                    $aux->fill(["cantidad" => $pedido]);
+                    $aux->save();
                     TransaccionProducto::create([
                         "cantidad" => $v["PEDIDO"],
                         "consultar" => $v["PEDIDO"] - $v["STOCK"],
@@ -356,16 +445,20 @@ class GeneralController extends Controller
 
     public function pedido($tipo) {
         $title = "CARRITO";
-        $view = "page.parts.carrito";
-        //Cookie::queue("prueba", "1", 10);
+        $view = "page.parts.confirmar.ok";
+        if($tipo == "ok") {
+            //Cookie::queue("prueba", "1", 10);
 
-       // dd(Cookie::get("prueba"));
+        // dd(Cookie::get("prueba"));
 
-        $datos = [];
-        $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
-        
-        return view('page.distribuidor',compact('title','view','datos'));
+            $datos = [];
+            $datos["empresa"] = self::datos();
+            $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+            
+            return view('page.distribuidor',compact('title','view','datos'));
+        } else {
+            return self::getCreatePreference();
+        }
     }
 
     public function carrito() {
@@ -373,7 +466,7 @@ class GeneralController extends Controller
         $view = "page.parts.carrito";
         //Cookie::queue("prueba", "1", 10);
 
-       // dd(Cookie::get("prueba"));
+       // dd();
 
         $datos = [];
         $datos["empresa"] = self::datos();
@@ -384,30 +477,39 @@ class GeneralController extends Controller
 
     public function getCreatePreference()
     {
+        $transaccion = Transaccion::find(Cookie::get("transaccion"));
+        
         $preferenceData = [
             'items' => [
                 [
-                    'id' => 12,
-                    'category_id' => 'phones',
-                    'title' => 'iPhone 6',
-                    'description' => 'iPhone 6 de 64gb nuevo',
-                    'picture_url' => 'http://d243u7pon29hni.cloudfront.net/images/products/iphone-6-dorado-128-gb-red-4g-8-mpx-1256254%20(1)_m.png',
+                    'id' => 1,
+                    'category_id' => 'PARTSCAM IVECO',
+                    'title' => 'PARTSCAM SRL',
+                    'description' => 'Compra del sitio partscam.com.ar',
+                    'picture_url' => '',
                     'quantity' => 1,
                     'currency_id' => 'ARS',
-                    'unit_price' => 14999
+                    'unit_price' => $transaccion["total"]
                 ]
             ],
         ];
 
         try {
             $preference = MP::create_preference($preferenceData);
+            /*$preference->back_urls = array(
+                "success" => route('payment.success'),
+                "failure" => route('payment.failure'),
+                "pending" => route('payment.pending'),
+            );*/
             return redirect()->to($preference['response']['init_point']);
         } catch (Exception $e){
             dd($e->getMessage());
         }
 
     }
-
+    public function payment($tipo) {
+        dd($tipo);
+    }
     public function datos() {
         $empresa = Empresa::first();
 
