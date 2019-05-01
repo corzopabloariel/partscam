@@ -15,6 +15,8 @@ class Empresa extends Model
         'horario',
         'image',//JSON - TEXT
         'metadatos',//JSON - TEXT
-        'images'
+        'images',
+        'pago',//JSON
+        'validaciones'
     ];
 }

@@ -30,38 +30,59 @@
                 </ul>
             </div>
             <div class="col-lg-8">
-                <div class="row">
-                    <div class="col-lg-6 col-12">
-                        <input placeholder="Nombre" type="text" name="" id="" class="form-control">
+                <form action="{{ url('/form/contacto') }}" method="post">
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-lg-6 col-12">
+                            <input placeholder="Nombre *" required type="text" value="{{ old('nombre') }}" name="nombre" class="form-control">
+                        </div>
+                        <div class="col-lg-6 col-12">
+                            <input placeholder="Apellido" type="text" name="apellido" value="{{ old('apellido') }}" class="form-control">
+                        </div>
                     </div>
-                    <div class="col-lg-6 col-12">
-                        <input placeholder="Apellido" type="text" name="" id="" class="form-control">
+                    <div class="row">
+                        <div class="col-lg-6 col-12">
+                            <input placeholder="Email *" required type="email" name="email" value="{{ old('email') }}" class="form-control">
+                        </div>
+                        <div class="col-lg-6 col-12">
+                            <input placeholder="Teléfono" type="phone" name="telefono" value="{{ old('telefono') }}" class="form-control">
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6 col-12">
-                        <input placeholder="Email" type="email" name="" id="" class="form-control">
+                    <div class="row">
+                        <div class="col-12">
+                            <textarea name="mensaje" rows="5" placeholder="Mensaje" class="form-control">{{ old('mensaje') }}</textarea>
+                        </div>
                     </div>
-                    <div class="col-lg-6 col-12">
-                        <input placeholder="Teléfono" type="phone" name="" id="" class="form-control">
+                    <div class="row">
+                        <div class="col-lg-4 col-12">
+                            <input type="text" name="marca" placeholder="Marca Iveco" value="{{ old('marca') }}" class="form-control">
+                        </div>
+                        <div class="col-lg-4 col-12">
+                            <input type="text" name="modelo" placeholder="Modelo" value="{{ old('modelo') }}" class="form-control">
+                        </div>
+                        <div class="col-lg-4 col-12">
+                            <input type="number" name="anio" placeholder="Año" value="{{ old('anio') }}" class="form-control">
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <textarea name="" id="" rows="5" placeholder="Mensaje" class="form-control"></textarea>
+                    <div class="row">
+                        <div class="col-lg-6 col-12">
+                            <div class="g-recaptcha" data-sitekey="6Lf8ypkUAAAAAKVtcM-8uln12mdOgGlaD16UcLXK"></div>
+                        </div>
+                        <div class="col-lg-6 col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" name="terminos" id="defaultCheck1">
+                            <label class="form-check-label" for="defaultCheck1">
+                                Acepto los términos y condiciones de privacidad
+                            </label>
+                        </div>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-4 col-12">
-                        <input type="text" name="" placeholder="Marca Iveco" id="" class="form-control">
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-g text-white text-uppercase">enviar</button>
+                        </div>
                     </div>
-                    <div class="col-lg-4 col-12">
-                        <input type="text" name="" placeholder="Modelo" id="" class="form-control">
-                    </div>
-                    <div class="col-lg-4 col-12">
-                        <input type="text" name="" placeholder="Año" id="" class="form-control">
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -75,3 +96,6 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script src='https://www.google.com/recaptcha/api.js'></script>
+@endpush

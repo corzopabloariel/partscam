@@ -66,11 +66,52 @@
             $(document).ready(function() {
                 if($("nav .menu").find(`a[href="${window.url}"]`).length)
                     $("nav .menu").find(`a[href="${window.url}"]`).addClass("active");
+                
+                if($("#marcas").length) {
+                    slickMarcas = $("#marcas").slick({
+                        dots: false,
+                        infinite: true,
+                        slidesToShow: 5,
+                        slidesToScroll: 1,
+                        autoplay: true,
+                        autoplaySpeed: 2000,
+                        responsive: [
+                            {
+                                breakpoint: 1024,
+                                settings: {
+                                    slidesToShow: 3,
+                                    slidesToScroll: 1
+                                }
+                            },
+                            {
+                                breakpoint: 768,
+                                settings: {
+                                    slidesToShow: 2,
+                                    slidesToScroll: 1
+                                }
+                            },
+                            {
+                                breakpoint: 425,
+                                settings: {
+                                    slidesToShow: 1,
+                                    slidesToScroll: 1,
+                                    dots: true
+                                }
+                            }
+                        ]
+                    });
+                }
             });
             if(localStorage.carrito !== undefined) {
                 let aux = JSON.parse(localStorage.carrito);
-                $("#carritoHeader").find("span").text(Object.keys(aux).length);
-            }
+                let t = Object.keys(aux).length;
+                if(t > 0) {
+                    $("#carritoHeader").find("span").text(t);
+                    $("#carritoHeader").attr("href","{{ URL::to('carrito') }}");
+                } else
+                    $("#carritoHeader").attr("href","{{ URL::to('productos') }}");
+            } else
+                $("#carritoHeader").attr("href","{{ URL::to('productos') }}");
         </script>
         @stack('scripts')
         {{--<script src="{{ asset('js/adm.js') }}"></script>--}}

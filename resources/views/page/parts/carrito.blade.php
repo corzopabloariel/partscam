@@ -24,7 +24,7 @@
             </table>
             <div class="row justify-content-end mt-4 custom">
                 <div class="col-12 col-md-6 col-lg-4">
-                    <h5 class="title border-bottom">Forma de envío</h5>
+                    <h5 class="title border-bottom text-uppercase">Forma de envío</h5>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="payment_shipping" id="retiroLocal" value="local" checked>
                         <label class="form-check-label" for="retiroLocal">
@@ -49,7 +49,7 @@
                             </label>
                         </div>
                         <div id="payment_method_mercado_pago" class="pdl35 mgt5 color-scorpion">
-                            <p>Usted podrá retirar su compra a las 24hs hábiles posteriores a recibir vía email el cobro por el pago del pedido.</p>
+                            {!! $datos["empresa"]["pago"]["mp"] !!}
                             <div class="alert alert-danger">
                                 <p class="mb-0">El pago por la plataforma de <strong>Mercado Pago</strong> tiene un adicional de 9% del total.</p>
                             </div>
@@ -61,14 +61,14 @@
                             </label>
                         </div>
                         <div id="payment_method_bank" class="d-none pdl35 mgt5 color-scorpion">
-                            <p><strong>BANCO:</strong><br>
-                            <strong>TIPO:</strong><br>
-                            <strong>NRO.</strong><br>
-                            <strong>SUC.:</strong><br>
-                            <strong>NOMBRE DE LA CUENTA:</strong><br>
-                            <strong>CBU.:</strong><br>
-                            <strong>CUIT:</strong><br>
-                            Enviar comprobante a</p>
+                            <p><strong>BANCO:</strong> {{$datos["empresa"]["pago"]["tb"]["banco"]}}<br>
+                            <strong>TIPO:</strong> {{$datos["empresa"]["pago"]["tb"]["tipo"]}}<br>
+                            <strong>NRO.</strong> {{$datos["empresa"]["pago"]["tb"]["nro"]}}<br>
+                            <strong>SUC.:</strong> {{$datos["empresa"]["pago"]["tb"]["suc"]}}<br>
+                            <strong>NOMBRE DE LA CUENTA:</strong> {{$datos["empresa"]["pago"]["tb"]["nombre"]}}<br>
+                            <strong>CBU.:</strong> {{$datos["empresa"]["pago"]["tb"]["cbu"]}}<br>
+                            <strong>CUIT:</strong> {{$datos["empresa"]["pago"]["tb"]["cuit"]}}<br></p>
+                            <p class="mt-2">Enviar comprobante a <a class="title" href="mailto:{{$datos['empresa']['pago']['tb']['emailpago']}}">{{$datos['empresa']['pago']['tb']['emailpago']}}</a></p>
                         </div>
                         <div id="payment_method_pago_local" class="">
                             <label>
@@ -76,12 +76,11 @@
                                 <span>Pago en local</span>
                             </label>
                             <div id="payment_method_pago_local_info" class="d-none pdl35 mgt5 color-scorpion">
-                                <p>En caso que abone el pedido directamente en nuestro local, usted podrá acercarse a pagar y retirar su pedido a las 24hs hábiles posteriores a recibir vía email la solicitud de pedido.</p>
-                                <p>El pago lo podrá hacer en efectivo, con tarjeta de débito o con tarjeta de crédito.</p>
+                                {!! $datos["empresa"]["pago"]["pl"] !!}
                             </div>
                         </div>
                     </div>
-                    <h5 class="title border-top pt-2 mt-2">MP 9%<big class="float-right" id="subtotal">$ 0,00</big></h5>
+                    <h5 class="title border-top pt-2 mt-2">MercadoPago 9%<big class="float-right" id="subtotal">$ 0,00</big></h5>
                     <h4 class="title mt-2 pb-2 border-bottom" style="border-color: #2D3E75 !important;">Total a pagar<big class="float-right" id="total">$ 0,00</big></h4>
                 </div>
             </div>
@@ -173,11 +172,11 @@
                 }
                 $("#subtotal").parent().addClass("d-none");
                 $("#total").text(`${formatter.format(total)}`);
-                $("#btnPago").text("generar");
+                $("#btnPago").text("confirmar compra");
         }
     };
     recursivaCategoria = function(categoria) {
-        if(categoria.padre === null)
+        if(categoria.padre === null || categoria.padre === undefined)
             return `${categoria.nombre}--`;
         else
             return recursivaCategoria(categoria.padre) + `, ${categoria.nombre}`;
@@ -215,6 +214,11 @@
     });
     recalcular = function(t) {
         cantidad = $(t).val();
+        max = $(t).attr("max");
+        if(parseInt(max) < parseInt(cantidad)) {
+            $(t).val(max);
+            return false;
+        }
         precio = $(t).closest("td").find(".precio").val();
         id = $(t).closest("td").find(".id").val();
         stock = $(t).closest("td").find(".stock").val();
@@ -312,7 +316,7 @@
                     tr += `<input class="id" type="hidden" value="${data.id}" name="idProducto[]" >`;
                     tr += `<input class="precio" type="hidden" value="${ARR[5]}" name="precio[]" />`;
                     tr += `<input class="stock" type="hidden" value="${stockReal}" name="stock[]" />`;
-                    tr += `<input onclick="recalcular(this)" type="number" value="${e}" class="form-control cantidad" name="cantidad[]" min="1" data-max="${data.stock.cantidad}">`;
+                    tr += `<input onclick="recalcular(this)" type="number" value="${e}" class="form-control cantidad" name="cantidad[]" min="1" max="${data.stock.cantidad}">`;
                 tr +=`</td>`;
             } else if(index == 5)
                 tr += `<td class="text-right">${formatter.format(e)}</td>`;

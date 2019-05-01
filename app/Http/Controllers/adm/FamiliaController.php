@@ -5,8 +5,16 @@ namespace App\Http\Controllers\adm;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Familia;
+use App\Producto;
+use App\Categoria;
 class FamiliaController extends Controller
 {
+    public function rec_padre($data, $tipo = 0) {
+        if(empty($data->padre["padre_id"]))
+            return ($tipo ? "{$data["nombre"]}---" : $data["nombre"]);
+        else
+            return self::rec_padre($data->padre, $tipo) . ", {$data["nombre"]}";
+    }
     /**
      * Display a listing of the resource.
      *
@@ -16,9 +24,31 @@ class FamiliaController extends Controller
     {
         $title = "Familia de productos";
         $view = "adm.parts.familia.index";
-        $familias = Familia::orderBy('orden')->get();
+        $familias = Familia::where("id","!=",5)->orderBy('orden')->get();
         
         return view('adm.distribuidor',compact('title','view','familias'));
+    }
+
+    public function sin()
+    {
+        $title = "Productos sin clasificación";
+        $view = "adm.parts.familia.producto";
+        $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
+        $productos = Producto::where("familia_id",5)->orderBy("orden")->simplePaginate(15);
+        $prod = Producto::orderBy('orden')->pluck('nombre', 'id');
+        $sin = 1;
+        foreach($productos AS $p) {
+            $c = Categoria::find($p["categoria_id"]);
+            
+            if($c["id"] == 0)
+                $p["categoria"] = $c["nombre"];
+            else
+                $p["categoria"] = self::rec_padre($c);
+            $p["imagenes"] = $p->imagenes;
+            $p["precio"] = $p->precio;
+            $p["stock"] = $p->stock;
+        }
+        return view('adm.distribuidor',compact('title','view','familias','productos','prod','sin'));
     }
 
     /**

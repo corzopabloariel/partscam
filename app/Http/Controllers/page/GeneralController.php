@@ -41,8 +41,8 @@ class GeneralController extends Controller
             $s["texto"] = json_decode($s["texto"],true)[$this->idioma];
         $datos["marcas"] = Marca::orderBy('orden')->get();
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
-        $datos["prodfamilias"] = Familia::orderBy('orden')->get();
+        $datos["familias"] = self::familiaMenu();
+        $datos["prodfamilias"] = Familia::where("id","!=",5)->orderBy('orden')->get();
 
         $datos["ofertas"] = Productooferta::orderBy('orden')->limit(4)->get();
         foreach($datos["ofertas"] AS $o) {
@@ -53,7 +53,6 @@ class GeneralController extends Controller
             $o["precio"] = number_format($o["precio"],2,",",".");
             $o["producto"] = $o->producto["nombre"];
             $o["image"] = $image;
-
         }
 
         return view('page.distribuidor',compact('title','view','datos'));
@@ -72,7 +71,7 @@ class GeneralController extends Controller
         foreach($datos["slider"] AS $s)
             $s["texto"] = json_decode($s["texto"],true)[$this->idioma];
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["familias"] = self::familiaMenu();
         
         return view('page.distribuidor',compact('title','view','datos'));
     }
@@ -82,8 +81,8 @@ class GeneralController extends Controller
         $view = "page.parts.producto";
         $datos = [];
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
-        $datos["prodfamilias"] = Familia::orderBy('orden')->get();
+        $datos["familias"] = self::familiaMenu();
+        $datos["prodfamilias"] = Familia::where("id","!=",5)->orderBy('orden')->get();
 
         return view('page.distribuidor',compact('title','view','datos'));
     }
@@ -93,7 +92,7 @@ class GeneralController extends Controller
         $view = "page.parts.ofertas";
         $datos = [];
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["familias"] = self::familiaMenu();
         $datos["slider"] = Slider::where('seccion','oferta')->get();
         foreach($datos["slider"] AS $s)
             $s["texto"] = json_decode($s["texto"],true)[$this->idioma];
@@ -117,7 +116,7 @@ class GeneralController extends Controller
         $view = "page.parts.contacto";
         $datos = [];
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["familias"] = self::familiaMenu();
 
         return view('page.distribuidor',compact('title','view','datos'));
     }
@@ -127,11 +126,11 @@ class GeneralController extends Controller
         $view = "page.parts.familia";
         $datos = [];
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["familias"] = self::familiaMenu();
         $datos["marcas"] = Marca::orderBy('orden')->get();
 
-        $datos["familia"] = Familia::find($id);
-        $familias = Familia::get();
+        $datos["familia"] = Familia::where("id","!=",5)->find($id);
+        $familias = Familia::where("id","!=",5)->get();
         $datos["menu"] = [];
         foreach($familias AS $f) {
             $datos["menu"][$f["id"]] = [];
@@ -147,7 +146,7 @@ class GeneralController extends Controller
         $view = "page.parts.categoria";
         $datos = [];
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["familias"] = self::familiaMenu();
         $datos["categoria"] = Categoria::find($id);
         $datos["familia"] = $datos["categoria"]->familia;
 
@@ -162,7 +161,7 @@ class GeneralController extends Controller
         $idsCategorias = array_reverse ($idsCategorias);
         
         $datos["idsCategorias"] = $idsCategorias;
-        $familias = Familia::get();
+        $familias = Familia::where("id","!=",5)->get();
         $datos["menu"] = [];
         foreach($familias AS $f) {
             $datos["menu"][$f["id"]] = [];
@@ -175,7 +174,6 @@ class GeneralController extends Controller
             $datos["menu"][$f["id"]]["image"] = $f["image"];
             $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),0,$idsCategorias);
         }
-        //dd($datos["menu"]);
         return view('page.distribuidor',compact('title','view','datos'));
     }
     public function producto($id) {
@@ -183,7 +181,7 @@ class GeneralController extends Controller
         $view = "page.parts.productoGeneral";
         $datos = [];
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["familias"] = self::familiaMenu();
         $datos["producto"] = Producto::find($id);
         $datos["imagenes"] = $datos["producto"]->imagenes;
         $datos["oferta"] = empty($datos["producto"]->oferta) ? null : number_format($datos["producto"]->oferta["precio"],2,",",".");
@@ -192,19 +190,20 @@ class GeneralController extends Controller
         $datos["categoria"] = $datos["producto"]->categoria;
         $datos["familia"] = $datos["producto"]->familia;
         $datos["productos"] = $datos["producto"]->productos;
-
+        
         $aux = $datos["categoria"];
         $idsCategorias = [];
         do {
             $idsCategorias[] = $aux["id"];
             $aux = $aux->padre;
-        } while(!empty($aux));
+        } while(!is_null($aux["padre_id"]));
         $idsCategorias[] = $datos["familia"]["id"];
         $idsCategorias = array_reverse ($idsCategorias);
         
         $datos["idsCategorias"] = $idsCategorias;
-        $familias = Familia::get();
+        $familias = Familia::where("id","!=",5)->get();
         $datos["menu"] = [];
+        
         foreach($familias AS $f) {
             $datos["menu"][$f["id"]] = [];
             $datos["menu"][$f["id"]]["activo"] = 0;
@@ -216,6 +215,7 @@ class GeneralController extends Controller
             $datos["menu"][$f["id"]]["image"] = $f["image"];
             $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),0,$idsCategorias);
         }
+        
         return view('page.distribuidor',compact('title','view','datos'));
     }
     /** */
@@ -249,21 +249,10 @@ class GeneralController extends Controller
         $view = "page.parts.buscador";
         
         $datos = [];
-        $datos["resultados"] = DB::table('productos')
-                        ->distinct()
-                        /*->leftJoin('categorias', function($join) {
-                            $join->on('categorias.id', '=', 'productos.categoria_id');
-                        })
-                        ->leftJoin('familias', function($join) {
-                            $join->on('familias.id', '=', 'productos.familia_id');
-                        })*/
-                ->where('productos.nombre','like',"%{$buscar}%")
-                ->orWhere('productos.codigo','like',"%{$buscar}%")
-                //->orWhere('categorias.nombre','like',"%{$buscar}%")
-                //->orWhere('familias.nombre','like',"%{$buscar}%")
-            ->get();
+        $datos["resultados"] = Producto::where("codigo",$buscar)->get();
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["buscar"] = $buscar;
+        $datos["familias"] = self::familiaMenu();
         $datos["marcas"] = Marca::orderBy('orden')->get();
         
         return view('page.distribuidor',compact('title','view','datos'));
@@ -274,7 +263,7 @@ class GeneralController extends Controller
         $view = "page.parts.confirmar.{$tipo}";
         $datos = [];
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["familias"] = self::familiaMenu();
         $datos["select2"] = [];
         $condicion = CondicionIva::orderBy('nombre')->pluck('nombre', 'id');
         $provincias = Provincia::orderBy('nombre')->pluck('nombre', 'id');
@@ -323,7 +312,7 @@ class GeneralController extends Controller
         $condicioniva_id = $data["condicioniva_id"];
         $payment_method = $data["payment_method"];
         $payment_shipping = $data["payment_shipping"];
-        //dd($payment_method);
+        
         switch($payment_method) {
             case "pl":
                 //GUARDA información
@@ -449,11 +438,9 @@ class GeneralController extends Controller
         if($tipo == "ok") {
             //Cookie::queue("prueba", "1", 10);
 
-        // dd(Cookie::get("prueba"));
-
             $datos = [];
             $datos["empresa"] = self::datos();
-            $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+            $datos["familias"] = self::familiaMenu();
             
             return view('page.distribuidor',compact('title','view','datos'));
         } else {
@@ -466,11 +453,9 @@ class GeneralController extends Controller
         $view = "page.parts.carrito";
         //Cookie::queue("prueba", "1", 10);
 
-       // dd();
-
         $datos = [];
         $datos["empresa"] = self::datos();
-        $datos["familias"] = Familia::orderBy('orden')->pluck('nombre','id');
+        $datos["familias"] = self::familiaMenu();
         
         return view('page.distribuidor',compact('title','view','datos'));
     }
@@ -478,29 +463,32 @@ class GeneralController extends Controller
     public function getCreatePreference()
     {
         $transaccion = Transaccion::find(Cookie::get("transaccion"));
-        
+        $productos = $transaccion->productos;
         $preferenceData = [
-            'items' => [
-                [
-                    'id' => 1,
-                    'category_id' => 'PARTSCAM IVECO',
-                    'title' => 'PARTSCAM SRL',
-                    'description' => 'Compra del sitio partscam.com.ar',
-                    'picture_url' => '',
-                    'quantity' => 1,
-                    'currency_id' => 'ARS',
-                    'unit_price' => $transaccion["total"]
-                ]
+            'external_reference' => Cookie::get("transaccion"),
+            'items' => [],
+            'back_urls' => [
+                'success' => route('payment.success'),
+                'failure' => route('payment.failure'),
+                'pending' => route('payment.pending'),
             ],
+            'notification_url' => route('ipn')
         ];
-
+        foreach($productos AS $p) {
+            $preferenceData["items"][] = [
+                'id' => $p["id"],
+                'category_id' => $p->producto->familia["nombre"],
+                'title' => $p->producto["nombre"],
+                'description' => 'Producto de partscam.com.ar',
+                'picture_url' => '',
+                'quantity' => $p["cantidad"],
+                'currency_id' => 'ARS',
+                'unit_price' => $p["precio"]
+            ];
+        }
         try {
             $preference = MP::create_preference($preferenceData);
-            /*$preference->back_urls = array(
-                "success" => route('payment.success'),
-                "failure" => route('payment.failure'),
-                "pending" => route('payment.pending'),
-            );*/
+            
             return redirect()->to($preference['response']['init_point']);
         } catch (Exception $e){
             dd($e->getMessage());
@@ -517,7 +505,19 @@ class GeneralController extends Controller
         $empresa["telefono"] = json_decode($empresa["telefono"], true);
         $empresa["domicilio"] = json_decode($empresa["domicilio"], true);
         $empresa["images"] = json_decode($empresa["images"], true);
+        $empresa["pago"] = json_decode($empresa["pago"], true);
 
         return $empresa;
+    }
+    public function familiaMenu() {
+        $data = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre','id');
+        $familias = [];
+        foreach($data AS $i => $n) {
+            $dd = Familia::find($i)->categorias->where("padre_id",0)->pluck('nombre','id');
+            $familias[$i] = [];
+            $familias[$i]["nombre"] = $n;
+            $familias[$i]["sub"] = $dd;
+        }
+        return $familias;
     }
 }

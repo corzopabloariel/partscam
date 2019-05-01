@@ -284,15 +284,11 @@ const ENTIDADES = {
             orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
             nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
             familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
-            familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"}
         },
         FORM: [
             {
                 orden: '<div class="col-5 col-md-3">/orden/</div>',
                 BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
-            },
-            {
-                familia_id: '<div class="col-12 col-md-6">/familia_id/</div>',
             },
             {
                 nombre: '<div class="col-12 col-md-6">/nombre/</div>'
@@ -413,5 +409,55 @@ const ENTIDADES = {
             estado: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",ENUM:{1:"Activo",2:"En proceso", 3:"Cancelado"}},
             codigo: {TIPO:"TP_STRING",MAXLENGTH: 25, VISIBILIDAD:"TP_VISIBLE"}
         }
-    }
+    },
+    mp: {
+        ATRIBUTOS: {
+            textomp: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"texto"}
+        },
+        FORM: [
+            {
+                textomp: '<div class="col-12">/textomp/</div>',
+            }
+        ]
+    },
+    pl: {
+        ATRIBUTOS: {
+            textopl: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"texto"}
+        },
+        FORM: [
+            {
+                textopl: '<div class="col-12">/textopl/</div>',
+            }
+        ]
+    },
+    tb: {
+        ATRIBUTOS: {
+            banco: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE"},
+            tipo: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE"},
+            nro: {TIPO:"TP_ENTERO",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"número"},
+            suc: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"sucursal"},
+            nombre: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE"},
+            cbu: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"C.B.U."},
+            cuit: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"C.U.I.T."},
+            emailpago: {TIPO:"TP_EMAIL",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Email para mandar comprobante"},
+        },
+        FORM: [
+            {
+                banco: '<div class="d-flex col-12 col-md-6">/banco/</div>',
+                nro: '<div class="col-12 col-md-3">/nro/</div>',
+                suc: '<div class="col-12 col-md-3">/suc/</div>',
+            },
+            {
+                tipo: '<div class="d-flex col-12 col-md-6">/tipo/</div>',
+                cbu: '<div class="col-12 col-md-6">/cbu/</div>',
+            },
+            {
+                nombre: '<div class="col-12 col-md-6">/nombre/</div>',
+                cuit: '<div class="col-12 col-md-6">/cuit/</div>',
+            },
+            {
+                emailpago: '<div class="col-12 col-md-6">/emailpago/</div>',
+            },
+        ]
+    },
 };

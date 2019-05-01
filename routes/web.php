@@ -32,7 +32,14 @@ Route::get('localidad/{provincia_id}', ['uses' => 'page\GeneralController@locali
 Route::get('persona/{tipo}/{value}', ['uses' => 'page\GeneralController@persona', 'as' => 'persona']);
 Route::get('p', ['uses' => 'page\GeneralController@getCreatePreference', 'as' => 'getCreatePreference']);
 Route::get('pedido/{tipo}', ['uses' => 'page\GeneralController@pedido', 'as' => 'pedido']);
-Route::get('payment/{tipo}', ['uses' => 'page\GeneralController@payment', 'as' => 'payment']);
+Route::post('form/{seccion}', ['uses' => 'page\FormController@index', 'as' => 'form']);
+
+Route::get('payment-success', 'page\PaymentController@success')->name('payment.success');
+Route::get('payment-failure', 'page\PaymentController@failure')->name('payment.failure');
+Route::get('payment-pending', 'page\PaymentController@pending')->name('payment.pending');
+
+Route::get('ipn', 'page\PaymentController@ipn')->name('ipn');
+
 Auth::routes();
 
 Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
@@ -66,6 +73,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
         Route::get('edit/{id}', ['uses' => 'adm\FamiliaController@edit', 'as' => '.edit']);
         Route::get('delete/{id}', ['uses' => 'adm\FamiliaController@destroy', 'as' => '.destroy']);
         Route::post('update/{id}', ['uses' => 'adm\FamiliaController@update', 'as' => 'update']);
+        Route::get('sin', ['uses' => 'adm\FamiliaController@sin', 'as' => '.sin']);
 
         Route::group(['prefix' => 'modelos', 'as' => '.modelos'], function() {
             Route::get('index', ['uses' => 'adm\ModelosController@index', 'as' => '.index']);

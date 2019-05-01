@@ -3,7 +3,9 @@
 <section class="mt-3">
     <div class="container-fluid">
         <div class="d-flex justify-content-between">
+            @if(!isset($sin))
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
+            @endif
             <form class="position-relative" action="" method="post">
                 <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Nombre, Categoría y Código"/>
                 <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
@@ -337,7 +339,7 @@
                 table.append('<thead class="thead-dark"></thead>');
             table.find("thead").append(`<th class="${e.CLASS}" style="width:${e.WIDTH}">${e.NAME}</th>`);
         });
-        table.find("thead").append(`<th class="text-uppercase text-center" style="width:150px">acci贸n</th>`);
+        table.find("thead").append(`<th class="text-uppercase text-center" style="width:150px">acción</th>`);
         
         window.productos.data.forEach(function(data) {
             let tr = "";

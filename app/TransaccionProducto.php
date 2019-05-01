@@ -14,4 +14,9 @@ class TransaccionProducto extends Model
         'transaccion_id',
         'producto_id'
     ];
+    
+    public function producto()
+    {
+        return $this->hasOne('App\Producto','id','producto_id');
+    }
 }

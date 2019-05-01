@@ -21,7 +21,9 @@ class ProductosImport implements ToModel
         if(empty($row[1]))
             return null;
 
-        $familia_id = $modelo_id = $categoria_id = 0;
+        $familia_id = 5;
+        $modelo_id = 0;
+        $categoria_id = 69;
         if(isset($row[4])) {
             $aux = Familia::where("nombre",$row[4])->first();
             if(empty($aux)) {//NO EXISTE
@@ -30,8 +32,7 @@ class ProductosImport implements ToModel
                 ]);
             }
             $familia_id = $aux["id"];
-        } else
-            $familia_id = Familia::first()["id"];
+        }
         if(isset($row[5])) {
             $aux = Categoria::where("familia_id",$familia_id)->where("nombre",$row[5])->where("tipo",1)->first();
             if(empty($aux)) {
@@ -52,11 +53,6 @@ class ProductosImport implements ToModel
             } else {
                 $auxCat = explode($aux);
             }
-        } else {
-            $auxCategoria = Familia::first()->categorias->where("tipo",3)->first();
-            if(empty($auxCategoria))
-                $auxCategoria = Familia::first()->categorias->where("tipo",2)->first();
-            $categoria_id = $auxCategoria["id"];
         }
 
         $nombre = str_replace('"',"'",$row[1]);

@@ -28,17 +28,25 @@ body::-webkit-scrollbar-thumb { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3)
 .slick-next:before {
     content: "" !important;
 }
+.alertify-notifier .ajs-message.ajs-warning {
+    color: #000 !important;
+}
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
 /* ---------------------------------------------------
     NAV
 ----------------------------------------------------- */
 nav {
     min-height: 150px;
 }
+nav a:hover {
+    color:#2D3E75;
+}
 nav .menu > li + li {
     margin-left: 20px;
 }
 nav .menu a {
-    font-family: 'Exo 2', sans-serif;
     font-weight: 500;
     text-transform: uppercase;
 }
@@ -68,6 +76,26 @@ nav .menu .submenu li + li {
 }
 nav .menu .submenu li:hover {
     color: #2C3E72;
+}
+
+nav .menu li:hover ul ul {
+    display:none;
+} /* hides sub-sublists */
+
+nav .menu li:hover ul {
+    display:block;
+} /* shows sublist on hover */
+
+nav .menu li li ul {
+    margin-left:100%;
+    margin-top: -24px;
+    width: 200%;
+    position: absolute;
+    background: #ECECEC;
+    color: #9FA3A5;
+}
+nav .menu li li:hover ul {
+    display:block;
 }
 nav .menu li:hover .submenu {
     display: block;
@@ -109,7 +137,6 @@ nav .btn.active {
 }
 #menuNav .modal-dialog .modal-content {
     border-radius: 0;
-    height: 100vh;
 }
 #menuNav .modal-footer {
     align-items: initial;
@@ -123,6 +150,16 @@ nav .btn.active {
     margin-left: 10px;
     padding-left: 10px;
     border-left: 1px solid #8C8C99;
+}
+#menuNav .info form input {
+    border: none;
+    outline: none;
+    font-size: inherit;
+    font-family: inherit;
+}
+#menuNav .info form i {
+    right: 10px;
+    top: calc(50% - 8px);
 }
 /* ---------------------------------------------------
     FOOTER
@@ -308,7 +345,8 @@ footer .info li + li {
     text-align: center;
 }
 .wrapper-producto .nombre.active,
-.wrapper-producto .nombre.active a {
+.wrapper-producto .nombre.active a,
+.wrapper-producto a:hover {
     color: #2CC5ED !important;
 }
 .wrapper-producto .sidebar a {
@@ -403,9 +441,12 @@ footer .info li + li {
     font-family: 'Montserrat', sans-serif;
     font-size: 15px;
 }
-.wrapper-producto .cantidad + div .btn {
+.wrapper-producto .cantidad + div .btn-carrito {
     background: #2DC5EE;
     color: #FFF;
+}
+.wrapper-producto .cantidad + div .btn + .btn {
+    margin-top: 10px;
 }
 .wrapper-producto .price {
     font-size: 40px;
@@ -486,11 +527,26 @@ footer .info li + li {
     color: #2C3C77;
     width: 30px;
 }
+.wrapper-contacto .form-control {
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid #ccc;
+}
+.wrapper-contacto .form-control:focus {
+    box-shadow: none;
+}
+.wrapper-contacto .btn-g {
+    background-color: #2CC5EC;
+    border-radius: 0;
+    padding: 10px 25px 
+}
 /**/
 .ui-spinner .form-control {
     text-align: center;
     padding: 0;
+    width: 60px;
     margin: 0;
+    padding-right: 24px;
 }
 .ui-spinner .form-control:focus {
     box-shadow: none;
@@ -504,21 +560,20 @@ footer .info li + li {
 .ui-spinner html .ui-button.ui-state-disabled:active {
     background: #DDDDDD;
 }
-
-
-.ui-spinner .form-control {
-    width: 80px;
-}
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
 @media (max-width: 768px) {
     .hidden-tablet {
         display: none !important;
-    }
+    } 
     /* ---------------------------------------------------
         NAV
     ----------------------------------------------------- */
+    
+    .wrapper-oferta .row > * + * {
+        margin-top:20px;
+    }
     .navbar-brand {
         position: static !important;
         margin: 10px auto;
@@ -534,7 +589,7 @@ footer .info li + li {
         flex-direction: column!important;
     }
     nav .info li + li {
-        display: block !important;
+        display: block;
         width: 100%;
         border: none;
         margin-top: 15px;
@@ -580,18 +635,9 @@ footer .info li + li {
     }
 
     .price + div {
-        justify-content: center!important;
-        flex-direction: column!important;
     }
     .price + div .cantidad {
         justify-content: center!important;
-    }
-    .price + div .cantidad,
-    .price + div .cantidad + div {
-        width: 100%;
-    }
-    .price + div .cantidad + div {
-        margin-top: 1em;
     }
 }
 @media (max-width: 991px) {

@@ -13,7 +13,7 @@ use App\Productostock;
 class ProductoController extends Controller
 {
     public function rec_padre($data, $tipo = 0) {
-        if(empty($data->padre))
+        if(empty($data->padre["padre_id"]))
             return ($tipo ? "{$data["nombre"]}---" : $data["nombre"]);
         else
             return self::rec_padre($data->padre, $tipo) . ", {$data["nombre"]}";
@@ -27,13 +27,17 @@ class ProductoController extends Controller
     {
         $title = "Productos";
         $view = "adm.parts.familia.producto";
-        $familias = Familia::orderBy('orden')->pluck('nombre', 'id');
+        $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
         $productos = Producto::orderBy("orden")->simplePaginate(15);
         $prod = Producto::orderBy('orden')->pluck('nombre', 'id');
         
         foreach($productos AS $p) {
             $c = Categoria::find($p["categoria_id"]);
-            $p["categoria"] = self::rec_padre($c);
+            
+            if($c["id"] == 0)
+                $p["categoria"] = $c["nombre"];
+            else
+                $p["categoria"] = self::rec_padre($c);
             $p["imagenes"] = $p->imagenes;
             $p["precio"] = $p->precio;
             $p["stock"] = $p->stock;

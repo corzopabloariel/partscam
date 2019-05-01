@@ -60,7 +60,7 @@
                     <li>
                         <a data-link="u" href="{{ route('familias.modelos.index') }}">
                             <i class="fab fa-modx"></i>
-                            <span class="nav-label">Modelos de productos</span>
+                            <span class="nav-label">Modelos de camiones</span>
                         </a>
                     </li>
                     <li>
@@ -79,6 +79,13 @@
                         <a data-link="u" href="{{ route('familias.carga') }}">
                         <i class="fas fa-file-upload"></i>
                             <span class="nav-label">Carga masiva</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a data-link="u" href="{{ route('familias.sin') }}">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span class="nav-label">Sin Familia / Categoría</span>
                         </a>
                     </li>
                 </ul>

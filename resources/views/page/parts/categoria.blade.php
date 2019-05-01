@@ -49,11 +49,15 @@
                         @if(isset($d['imagenes']))
                         @php
                         $img = null;
+                        $oferta = $d->oferta;
                         if(isset($d['imagenes'][0]))
                             $img = $d['imagenes'][0]['image'];
                         @endphp
-                        <a href="{{ URL::to('productos/producto/'. $d['id']) }}" class="col-lg-4 col-md-6 col-12 mb-4">
-                            <div class="img">
+                        <a href="{{ URL::to('productos/producto/'. $d['id']) }}" class="position-relative col-lg-4 col-md-6 col-12 mb-4">
+                            <div class="img position-relative">
+                                @if(!empty($oferta))
+                                    <img class="position-absolute oferta" style="top: -8px; left: -8px; z-index: 11;" src="{{ asset('images/general/ofertas.fw.png') }}" />
+                                @endif
                                 <div></div>
                                 <i class="fas fa-plus"></i>
                                 <img src="{{ asset($img) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" class="w-100" />
@@ -89,37 +93,6 @@
 
 @push('scripts')
 <script>
-    slickMarcas = $("#marcas").slick({
-        dots: false,
-        infinite: true,
-        slidesToShow: 5,
-        slidesToScroll: 1,
-        autoplay: false,
-        responsive: [
-            {
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 1
-                }
-            },
-            {
-                breakpoint: 768,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 1
-                }
-            },
-            {
-                breakpoint: 425,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    dots: true
-                }
-            }
-        ]
-    });
     order = function(t) {
         let tipo = $(t).val();
         let items = [];

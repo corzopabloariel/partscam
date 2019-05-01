@@ -12,12 +12,21 @@
     </div>
 </div>
 @push('scripts_distribuidor')
+<script src="//cdn.ckeditor.com/4.7.3/full/ckeditor.js"></script>
 <script>
+    $(document).on("ready",function() {
+        $(".ckeditor").each(function () {
+            CKEDITOR.replace( $(this).attr("name") );
+        });
+    });
     const src = "{{ asset('images/general/no-img.png') }}";
     window.pyrusImage = new Pyrus("empresa_images", null, src);
     window.pyrusDomicilio = new Pyrus("empresa_domicilio");
     window.pyrusTelefono = new Pyrus("empresa_telefono");
     window.pyrusEmail = new Pyrus("empresa_email");
+    window.pyrusTB = new Pyrus("tb");
+    window.pyrusMP = new Pyrus("mp");
+    window.pyrusPL = new Pyrus("pl");
     window.datos = @JSON($datos)
     /** ------------------------------------- */
     readURL = function(input, target) {
@@ -72,8 +81,22 @@
     /** ------------------------------------- */
     init = function(callbackOK) {
         console.log("CONSTRUYENDO FORMULARIO Y TABLA");
+        form = "";
         /** */
-        form = `<fieldset>`;
+        form += `<fieldset>`;
+            form += `<legend>Cuenta bancaria</legend>`;
+            form += window.pyrusTB.formulario();
+        form += `</fieldset>`;
+        form += `<fieldset>`;
+            form += `<legend>Mercado Pago</legend>`;
+            form += window.pyrusMP.formulario();
+        form += `</fieldset>`;
+        form += `<fieldset>`;
+            form += `<legend>Pago en el local</legend>`;
+            form += window.pyrusPL.formulario();
+        form += `</fieldset>`;
+
+        form += `<fieldset>`;
             form += `<legend>Imágenes</legend>`;
             form += window.pyrusImage.formulario();
         form += `</fieldset>`;
@@ -98,6 +121,7 @@
             form += `</div>`;
         form += `</div>`;
         form += '<div class="row mt-0" id="wrapper-email"></div>';
+
         $("#form .container-form").html(form);
         setTimeout(() => {
             callbackOK.call(this);
@@ -112,6 +136,14 @@
         $(`#src-logo`).attr("src",logo);
         $(`#src-logoFooter`).attr("src",logoFooter);
         $(`#src-favicon`).attr("src",favicon);
+
+        $("#textomp").val(window.datos.pago.mp);
+        $("#textopl").val(window.datos.pago.pl);
+
+        for(let x in window.pyrusTB.especificacion) {
+            if($(`#${x}`).length)
+                $(`#${x}`).val(window.datos.pago.tb[x]);
+        }
 
         $("#calle").val(window.datos.domicilio.calle);
         $("#altura").val(window.datos.domicilio.altura);

@@ -3,6 +3,42 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
 <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
 @endpush
+<div class="modal" id="modalConsulta" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ url('/form/consultar') }}" method="post">
+                {{ csrf_field() }}
+                <div class="modal-body">
+                    <input type="hidden" name="productoIDinput" id="productoIDinput" value="0">
+                    <input type="hidden" name="productoCantidad" id="productoCantidad" value="0">
+                    <div class="alert alert-warning" role="alert">
+                        Se enviará una consulta del producto por la cantidad de <span id="cantidadFORM"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" required name="nombre" class="form-control" placeholder="Nombre completo *">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" required name="email" class="form-control" id="email" placeholder="Email *">
+                    </div>
+                    <div class="form-group">
+                        <textarea name="consulta" id="" cols="30" class="form-control"></textarea>
+                    </div>
+                    <small class="form-text text-muted">* campos necesarios</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class="wrapper-producto">
     <div class="container py-5">
         <div class="row">
@@ -60,42 +96,49 @@
                         @endif
                         @if($datos["stock"]["cantidad"] > 0)
                             <p class="text-uppercase"><span>Artículo disponible</span></p>
-                            @if(empty($datos["oferta"]))
-                                <h3 class="title price">${{$datos["precio"]}}</h3>
-                            @else
-                                <h3 class="title price"><strike class="mr-2" style="color:#A0A3A5; font-weight: normal">${{$datos["precio"]}}</strike> ${{$datos["oferta"]}}</h3>
-                            @endif
-                            <div class="d-flex justify-content-between align-items-start mt-4">
-                                <div class="d-flex cantidad align-items-center text-uppercase">
-                                    <span class="mr-2">cantidad</span><input type="number" value="1" class="form-control form-control-sm" name="" min="1" data-max="{{$datos['stock']['cantidad']}}" id="cantidad">
-                                </div>
-                                <div class="d-flex align-items-center flex-column">
-                                    <button onclick="addCarrito(this,{{$datos['producto']['id']}})" class="btn btn-sm mb-2 text-uppercase"><i class="fas fa-shopping-cart mr-2"></i>compra online</button>
-                                    @if(!empty($datos["producto"]['mercadolibre']))
-                                        <a href="{{$datos['producto']['mercadolibre']}}" target="blank"><img src="{{ asset('images/general/mercadolibre.jpg') }}" /></a>
-                                    @endif
-                                </div>
-                            </div>
                         @else
                             <p class="text-uppercase"><span>Sin Stock</span></p>
-                            @if(empty($datos["oferta"]))
-                                <h3 class="title price">${{$datos["precio"]}}</h3>
-                            @else
-                                <h3 class="title price"><strike class="mr-2" style="color:#A0A3A5; font-weight: normal">${{$datos["precio"]}}</strike> ${{$datos["oferta"]}}</h3>
-                            @endif
-                            <div class="d-flex justify-content-between align-items-start mt-4">
-                                <div class="d-flex align-items-center flex-column">
-                                    <button onclick="consultar(this,{{$datos['producto']['id']}})" class="btn btn-warning mb-2 text-uppercase"><i class="fas fa-shopping-cart mr-2"></i>consultar</button>
-                                    @if(!empty($datos["producto"]['mercadolibre']))
-                                        <a href="{{$datos['producto']['mercadolibre']}}" target="blank"><img src="{{ asset('images/general/mercadolibre.jpg') }}" /></a>
-                                    @endif
-                                </div>
-                            </div>
                         @endif
+
+                        @if(empty($datos["oferta"]))
+                            <h3 class="title price">${{$datos["precio"]}}</h3>
+                        @else
+                            <h3 class="title price">
+                                <div class="row">
+                                    <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
+                                        <strike class="mr-2" style="color:#A0A3A5; font-weight: normal">${{$datos["precio"]}}</strike>        
+                                    </div>
+                                    <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
+                                        ${{$datos["oferta"]}}
+                                    </div>
+                                </div>
+                            </h3>
+                        @endif
+                        <div class="row mt-4">
+                            <div class="col-12 col-sm-6 col-lg-12 col-xl-6 cantidad flex-column justify-content-end align-items-center text-uppercase">
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <small class="mr-2">cantidad</small>
+                                    <input type="number" value="1" class="form-control form-control-sm" name="" min="1" data-max="{{$datos['stock']['cantidad']}}" id="cantidad">
+                                </div>
+                                <small class="d-flex align-items-center justify-content-end w-100" id="consultarTEXT" style="margin-top: 10px;"></small>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-12 col-xl-6 align-items-start flex-column ">
+                                @if($datos["stock"]["cantidad"] > 0)
+                                <button onclick="addCarrito(this,{{$datos['producto']['id']}})" class="btn btn-sm btn-carrito btn-block text-uppercase" id="btnADD"><i class="fas fa-shopping-cart mr-2"></i><small>añadir a carrito</small></button>
+                                @else
+                                <button data-toggle="modal" data-target="#modalConsulta" onclick="consultar(this,{{$datos['producto']['id']}})" class="btn btn-warning mb-2 btn-block text-uppercase" id="btnCONSULTAR"><i class="fas fa-question-circle mr-2"></i>consultar</button>
+                                @endif
+                            </div>
+                            <div class="col-12 align-items-center flex-column">
+                                @if(!empty($datos["producto"]['mercadolibre']))
+                                    <a href="{{$datos['producto']['mercadolibre']}}" class="mt-2" target="blank"><img src="{{ asset('images/general/mercadolibre.jpg') }}" /></a>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <p class="title mt-5">Productos Relacionados</p>
-                <div class="wrapper-oferta">
+                <div class="wrapper-oferta wrapper">
                     <div class="row">
                         @foreach($datos["productos"] AS $p)
                         @php
@@ -109,12 +152,16 @@
                         @endphp
                         <div class="col-lg-4 col-md-6 col-12 my-2">
                             <a href="{{ URL::to('productos/producto/' . $p['id']) }}" class="position-relative oferta title">
-                                @if(!empty($oferta))
-                                    <img class="position-absolute oferta" src="{{ asset('images/general/ofertas.fw.png') }}" />
-                                @endif
-                                <img class="d-block w-100" onError="this.src='{{ asset('images/general/no-img.png') }}'" src="{{ asset($image) }}?t=<?php echo time(); ?>" />
+                                <div class="img position-relative">
+                                    @if(!empty($oferta))
+                                        <img class="position-absolute oferta" src="{{ asset('images/general/ofertas.fw.png') }}" />
+                                    @endif
+                                    <div></div>
+                                    <i class="fas fa-plus"></i>
+                                    <img class="d-block w-100" onError="this.src='{{ asset('images/general/no-img.png') }}'" src="{{ asset($image) }}?t=<?php echo time(); ?>" />
+                                </div>
                                 <div class="py-2 px-3 border">
-                                    <p class="text-center mb-0"><small>{{ $p["nombre"] }}</small></p>
+                                    <p class="text-center mb-0 text-truncate"><small>{{ $p["nombre"] }}</small></p>
                                     <div class="d-flex justify-content-center">
                                         @if(!empty($oferta))
                                             <strike class="mr-2">$ {{ number_format($oferta["precio"],2,",",".") }}</strike>
@@ -150,23 +197,47 @@
 <script>
     if($("#cantidad").length)
         $( "#cantidad" ).spinner();
-    
+    consultar = function(t, idProducto) {
+        if(window.consultarINT === undefined) window.consultarINT = 0;
+        window.consultarINT = parseInt($("#cantidad").val());
+        $("#cantidadFORM").text((window.consultarINT == 1 ? "1 unidad" : `${window.consultarINT} unidades`));
+        $("#productoIDinput").val(idProducto);
+        $("#productoCantidad").val(window.consultarINT);
+    }
     addCarrito = function(t,idProducto) {
         let cantidad = $("#cantidad");
         let max = cantidad.data("max");
+        
         if(localStorage.carrito == undefined) 
             localStorage.setItem("carrito","{}");
         window.session = JSON.parse(localStorage.carrito);
 
-        if(window.session[idProducto] === undefined)
+        if(window.session[idProducto] === undefined) {
             window.session[idProducto] = parseInt(cantidad.val());
-        else
-            window.session[idProducto] = parseInt(window.session[idProducto]) + parseInt(cantidad.val());
-
-        localStorage.carrito = JSON.stringify(window.session);
-        $("#carritoHeader").find("span").text(Object.keys(window.session).length);
-        
-        alertify.success('Producto agregado');
+            localStorage.carrito = JSON.stringify(window.session);
+            $("#carritoHeader").find("span").text(Object.keys(window.session).length);
+            
+            alertify.success('Producto agregado');
+        } else {
+            if(max > parseInt(cantidad.val()) + parseInt(window.session[idProducto])) {
+                window.session[idProducto] = parseInt(window.session[idProducto]) + parseInt(cantidad.val());
+                localStorage.carrito = JSON.stringify(window.session);
+                $("#carritoHeader").find("span").text(Object.keys(window.session).length);
+                
+                alertify.success('Producto agregado');
+            } else {
+                if(window.consultarINT === undefined) window.consultarINT = 0;
+                if(cantidad.val() > max)
+                    window.consultarINT = parseInt(cantidad.val()) - max;
+                else
+                    window.consultarINT = parseInt(cantidad.val());
+                
+                $("#consultarTEXT").text(`Consulta por: ${window.consultarINT}`);
+                if(!$("#btnCONSULTAR").length)
+                    $("#btnADD").parent().append(`<button data-toggle="modal" data-target="#modalConsulta" onclick="consultar(this,${idProducto})" class="btn btn-sm btn-block btn-warning mb-2 text-uppercase" id="btnCONSULTAR"><small><i class="fas fa-question-circle mr-2"></i>consultar</small></button>`);
+                alertify.notify('Producto supera el stock disponible', 'warning');
+            }
+        }
     }
 </script>
 @endpush

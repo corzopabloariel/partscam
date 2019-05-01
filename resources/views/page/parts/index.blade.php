@@ -35,7 +35,7 @@
 </div>
 @endif
 @if(in_array('marcas',$datos["contenido"]["PAGE"]))
-<div class="wrapper-marcas">
+<div class="wrapper-marcas hidden-tablet">
     <div class="container position-relative">
         <div class="row justify-content-center">
             <div class="col-12">
@@ -52,13 +52,17 @@
 </div>
 @endif
 @if(in_array('familias',$datos["contenido"]["PAGE"]))
-<div class="wrapper-producto py-2">
+<div class="wrapper-producto wrapper py-2">
     <div class="container">
         <div class="row justify-content-center">
             @foreach($datos["prodfamilias"] AS $f)
-            <a href="{{ URL::to('productos/familia/' . $f['id']) }}" class="col-12 col-lg-3 my-2">
-                <img onError="this.src='{{ asset('images/general/no-img.png') }}'" class="w-100" src="{{ $f['image'] }}" alt="{{ $f['nombre'] }}">
-                <p class="title nombre mb-0">{{ $f["nombre"] }}</p>
+            <a href="{{ URL::to('productos/familia/' . $f['id']) }}" class="col-6 col-lg-3 my-2 position-relative">
+                <div class="img position-relative">
+                    <div></div>
+                    <i class="fas fa-plus"></i>
+                    <img onError="this.src='{{ asset('images/general/no-img.png') }}'" class="w-100" src="{{ $f['image'] }}" alt="{{ $f['nombre'] }}">
+                </div>
+                <p class="title nombre mb-0 text-truncate">{{ $f["nombre"] }}</p>
             </a>
             @endforeach
         </div>
@@ -85,14 +89,18 @@
 </div>
 @endif
 @if(in_array('ofertas',$datos["contenido"]["PAGE"]))
-<div class="wrapper-oferta py-5">
+<div class="wrapper-oferta wrapper py-5">
     <div class="container">
         <div class="row justify-content-center">
             @foreach($datos["ofertas"] AS $o)
                 <div class="col-lg-3 col-sm-6 col-12">
                     <a href="{{ URL::to('productos/producto/' . $o['producto_id']) }}" class="position-relative oferta title">
-                        <img class="position-absolute oferta" src="{{ asset('images/general/ofertas.fw.png') }}" />
-                        <img class="d-block w-100 border border-bottom-0" src="{{ asset($o['image']) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" alt="{{ $o['producto'] }}" srcset=""/>
+                        <div class="img position-relative">
+                            <img class="position-absolute oferta" src="{{ asset('images/general/ofertas.fw.png') }}" />
+                            <div></div>
+                            <i class="fas fa-plus"></i>
+                            <img class="d-block w-100 border border-bottom-0" src="{{ asset($o['image']) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" alt="{{ $o['producto'] }}" srcset=""/>
+                        </div>
                         <div class="py-2 px-3 border">
                             <p class="text-center text-truncate mx-auto mb-0">{{ $o["producto"] }}</p>
                             <div class="d-flex justify-content-between">
@@ -127,37 +135,4 @@
 </div>
 @endif
 @push('scripts')
-<script>
-    slickMarcas = $("#marcas").slick({
-        dots: false,
-        infinite: true,
-        slidesToShow: 5,
-        slidesToScroll: 1,
-        autoplay: false,
-        responsive: [
-            {
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 1
-                }
-            },
-            {
-                breakpoint: 768,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 1
-                }
-            },
-            {
-                breakpoint: 425,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    dots: true
-                }
-            }
-        ]
-    });
-</script>
 @endpush

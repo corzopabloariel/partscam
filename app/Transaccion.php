@@ -14,4 +14,8 @@ class Transaccion extends Model
         'estado',
         'total'
     ];
+    public function productos()
+    {
+        return $this->hasMany('App\TransaccionProducto');
+    }
 }

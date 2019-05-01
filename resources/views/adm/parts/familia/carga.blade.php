@@ -46,15 +46,9 @@
                 <h5>Campos / celdas sin información:</h5>
                 <ul class="mb-0">
                     <li><strong>NOMBRE</strong> Pasa a la siguiente fila</li>
-                    <li><strong>FAMILIA</strong> Por defecto :: <span class="text-dark">{{ App\Familia::first()["nombre"] }}</span></li>
-                    <li><strong>MODELO</strong> Por defecto :: <span class="text-dark">{{ App\Familia::first()["nombre"] }} > {{ App\Familia::first()->categorias->where("tipo",1)->first()["nombre"] }}</span></li>
-                    @php
-                    $aux = App\Familia::first()->categorias->where("tipo",3)->first();
-                    $name = "";
-                    if(!empty($aux))
-                        $name = " > {$aux["nombre"]}";
-                    @endphp
-                    <li><strong>CATEGORÍA</strong> Por defecto :: <span class="text-dark">{{ App\Familia::first()["nombre"] }} > {{ App\Familia::first()->categorias->where("tipo",1)->first()["nombre"] }} > {{ App\Familia::first()->categorias->where("tipo",2)->first()["nombre"].$name }}</span></li>
+                    <li><strong>FAMILIA</strong> Por defecto :: <span class="text-dark">SIN FAMILIA</span></li>
+                    <li><strong>MODELO</strong> Por defecto :: <span class="text-dark">SIN MODELO</li>
+                    <li><strong>CATEGORÍA</strong> Por defecto :: <span class="text-dark">SIN CATEGORÍA</span></li>
                     <li><strong>STOCK Y PRECIO</strong> Por defecto 0</li>
                 </ul>
             </div>

@@ -2,12 +2,8 @@
 
 <section class="mt-3">
     <div class="container-fluid">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex">
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
-            <form id="formBuscador" class="position-relative" action="" method="post">
-                <input style="width: 250px;" type="text" name="" class="form-control" placeholder="Buscador: Modelos"/>
-                <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
-            </form>
         </div>
         <div style="display: none;" id="wrapper-form" class="mt-2">
             <div class="card">
@@ -25,7 +21,7 @@
         <div class="card mt-2" id="wrapper-tabla">
             <div class="card-body">
                 <table class="table mb-0" id="tabla"></table>
-                {{ $categorias->links() }}
+                
             </div>
         </div>
     </div>
@@ -64,9 +60,9 @@
         $("#wrapper-tabla").toggle("fast");
 
         if(id != 0)
-            action = `{{ url('/adm/familias/categorias/update/${id}') }}`;
+            action = `{{ url('/adm/familias/modelos/update/${id}') }}`;
         else
-            action = `{{ url('/adm/familias/categorias/store') }}`;
+            action = `{{ url('/adm/familias/modelos/store') }}`;
         if(data !== null) {
             for(let x in window.pyrus.especificacion) {
                 if(!$(`[name="${x}"]`).length) continue;
@@ -99,7 +95,7 @@
     erase = function(t, id) {
         $(t).attr("disabled",true);
         let promise = new Promise(function (resolve, reject) {
-            let url = `{{ url('/adm/familias/categorias/delete/${id}') }}`;
+            let url = `{{ url('/adm/familias/modelos/delete/${id}') }}`;
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.open( "GET", url, true );
             
@@ -180,7 +176,7 @@
         });
         table.find("thead").append(`<th class="text-uppercase text-center" style="width:150px">acción</th>`);
         
-        window.categorias.data.forEach(function(data) {
+        window.categorias.forEach(function(data) {
             let tr = "";
             if(!table.find("tbody").length) 
                 table.append("<tbody></tbody>");

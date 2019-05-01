@@ -31,8 +31,8 @@ class CategoriaController extends Controller
     {
         $title = "Categoría de productos";
         $view = "adm.parts.familia.categoria";
-        $familias = Familia::orderBy('orden')->pluck('nombre', 'id');
-        $categoriasSelect = Familia::first()->categorias->where('tipo',1)->pluck('nombre', 'id');
+        $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
+        $categoriasSelect = Familia::where("id","!=",5)->first()->categorias->where('tipo',1)->pluck('nombre', 'id');
         $categorias = DB::table("categorias AS c")
                             ->join('familias AS f', 'f.id', '=', 'c.familia_id')
                         ->where('c.padre_id','!=',0)

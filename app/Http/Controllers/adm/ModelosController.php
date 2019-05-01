@@ -23,14 +23,9 @@ class ModelosController extends Controller
          * padre_id = 0 -> identificador de MODELO
          * != 0 -> CATEGORÍA / SUBCATEGORIA..etc
          */
-        $categorias = DB::table('categorias AS c')
-                            ->join('familias AS f', 'f.id', '=', 'c.familia_id')
-                        ->where('c.padre_id',0)
-                        ->where('c.tipo',1)
-                            ->select('c.*', 'f.nombre AS familia')
-                            ->orderBy('f.orden')
-                            ->orderBy('c.orden')
-                        ->simplePaginate(15);
+        $categorias = DB::select(
+            DB::raw('SELECT DISTINCT c.nombre, c.orden, c.id FROM categorias AS c WHERE c.padre_id = 0 AND c.tipo = 1 GROUP BY c.nombre ORDER BY c.orden asc'));
+        
         return view('adm.distribuidor',compact('title','view','familias','categorias'));
     }
 
@@ -50,31 +45,36 @@ class ModelosController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $data = null)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        $datosRequest = $request->all();
+        $familias = Familia::get()->pluck('nombre', 'id');
+        if(is_null($data)) {
+            foreach($familias AS $i => $n) {
+                $ARR_data = [];
+                $ARR_data["image"] = null;
+                $ARR_data["familia_id"] = $i;
+                $ARR_data["padre_id"] = 0;
+                $ARR_data["nombre"] = $datosRequest["nombre"];
+                $ARR_data["orden"] = $datosRequest["orden"];
+                $ARR_data["tipo"] = 1;    
+                Categoria::create($ARR_data);
+            }
+        } else {
+            for($i = 0; $i < count($data) ; $i ++) {
+                $aux = Categoria::find($data[$i]["id"]);
+                $ARR_data = [];
+                $ARR_data["image"] = null;
+                $ARR_data["padre_id"] = 0;
+                $ARR_data["nombre"] = $datosRequest["nombre"];
+                $ARR_data["orden"] = $datosRequest["orden"];
+                $ARR_data["tipo"] = 1;
+                
+                $aux->fill($ARR_data);
+                $aux->save();
+            }
+        }
+        return back();
     }
 
     /**
@@ -86,7 +86,9 @@ class ModelosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Categoria::find($id);
+        $datas = Categoria::where("nombre",$data["nombre"])->get();
+        return self::store($request, $datas);
     }
 
     /**
@@ -97,6 +99,11 @@ class ModelosController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = Categoria::find($id);
+        $datas = Categoria::where("nombre",$data["nombre"])->get();
+
+        foreach($datas AS $d)
+            Categoria::destroy($d["id"]);
+        return 1;
     }
 }

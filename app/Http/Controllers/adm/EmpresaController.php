@@ -23,6 +23,8 @@ class EmpresaController extends Controller
         $datos["telefono"] = json_decode($datos["telefono"], true);
         $datos["domicilio"] = json_decode($datos["domicilio"], true);
         $datos["images"] = json_decode($datos["images"], true);
+        $datos["pago"] = json_decode($datos["pago"], true);
+        
         return view('adm.distribuidor',compact('title','view','datos','seccion'));
     }
 
@@ -36,8 +38,9 @@ class EmpresaController extends Controller
     public function update(Request $request)
     {
         $datos = Empresa::first();
+        $datos["images"] = json_decode($datos["images"], true);
         $requestData = $request->all();
-        //dd($requestData);
+        
         $ARR_data = [];
         $ARR_data["horario"] = $requestData["horario"];
         $ARR_data["email"] = empty($requestData["email_email"]) ? [] : $requestData["email_email"];
@@ -47,11 +50,22 @@ class EmpresaController extends Controller
         $ARR_data["domicilio"]["altura"] = $requestData["altura"];
         $ARR_data["domicilio"]["barrio"] = $requestData["barrio"];
         $ARR_data["images"] = [];
-        $ARR_data["images"]["logo"] = null;
-        $ARR_data["images"]["logoFooter"] = null;
-        $ARR_data["images"]["favicon"] = [];
-        $ARR_data["images"]["favicon"]["t"] = null;
-        $ARR_data["images"]["favicon"]["i"] = null;
+        $ARR_data["images"]["logo"] = $datos["images"]["logo"];
+        $ARR_data["images"]["logoFooter"] = $datos["images"]["logoFooter"];
+        $ARR_data["images"]["favicon"] = $datos["images"]["logoFooter"];
+
+        $ARR_data["pago"] = [];
+        $ARR_data["pago"]["tb"] = [];
+        $ARR_data["pago"]["mp"] = $requestData["textomp"];
+        $ARR_data["pago"]["pl"] = $requestData["textopl"];
+        $ARR_data["pago"]["tb"]["banco"] = $requestData["banco"];
+        $ARR_data["pago"]["tb"]["nro"] = $requestData["nro"];
+        $ARR_data["pago"]["tb"]["suc"] = $requestData["suc"];
+        $ARR_data["pago"]["tb"]["tipo"] = $requestData["tipo"];
+        $ARR_data["pago"]["tb"]["nombre"] = $requestData["nombre"];
+        $ARR_data["pago"]["tb"]["cuit"] = $requestData["cuit"];
+        $ARR_data["pago"]["tb"]["cbu"] = $requestData["cbu"];
+        $ARR_data["pago"]["tb"]["emailpago"] = $requestData["emailpago"];
 
         for($i = 0; $i < count($requestData["tipo_telefono"]); $i ++) {
             if(empty($requestData["tipo_telefono"][$i]) || empty($requestData["telefono_telefono"][$i])) continue;
@@ -97,6 +111,7 @@ class EmpresaController extends Controller
         $ARR_data["telefono"] = json_encode($ARR_data["telefono"]);
         $ARR_data["domicilio"] = json_encode($ARR_data["domicilio"]);
         $ARR_data["images"] = json_encode($ARR_data["images"]);
+        $ARR_data["pago"] = json_encode($ARR_data["pago"]);
         $datos->fill($ARR_data);
         $datos->save();
         return back();
