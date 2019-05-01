@@ -132,6 +132,13 @@
             </li>
             <li><hr/></li>
             <li>
+                <a data-link="a" href="{{ route('compras') }}">
+                    <i class="fas fa-cash-register"></i>
+                    <span class="nav-label">Compras</span>
+                </a>
+            </li>
+            <li><hr/></li>
+            <li>
                 <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">
                     <i class="fas fa-compass"></i>
                     <span class="nav-label">PARTSCAM</span>
@@ -169,6 +176,26 @@
                 <a data-link="a" href="{{ route('marca.index') }}">
                     <i class="fab fa-bandcamp"></i>
                     <span class="nav-label">Marcas</span>
+                </a>
+            </li>
+            <li>
+                <a data-link="a" href="{{ route('contenido.edit', ['seccion' => 'terminos']) }}">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span class="nav-label">Términos y condiciones</span>
+                </a>
+            </li>
+            @if(Auth::user()["is_admin"])
+            <li>
+                <a data-link="a" href="{{ route('empresa.usuarios.index') }}">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-label">Usuarios</span>
+                </a>
+            </li>
+            @endif
+            <li>
+                <a data-link="a" href="{{ route('empresa.usuarios.datos') }}">
+                    <i class="fas fa-user-cog"></i>
+                    <span class="nav-label">Mis datos</span>
                 </a>
             </li>
             <li><hr/></li>

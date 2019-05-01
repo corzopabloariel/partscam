@@ -28,6 +28,12 @@ class EmpresaController extends Controller
         return view('adm.distribuidor',compact('title','view','datos','seccion'));
     }
 
+    public function terminos() {
+        $title = "Empresa :: Términos y condiciones";
+        $view = "adm.parts.empresa.terminos";
+        $seccion = "empresa";
+        return view('adm.distribuidor',compact('title','view','datos','seccion'));
+    }
     /**
      * Update the specified resource in storage.
      *

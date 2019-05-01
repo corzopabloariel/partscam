@@ -16,9 +16,8 @@
                     <div class="col-12 col-lg-5">
                         <h5 class="title text-uppercase">información</h5>
                         <ul class="list-unstyled mb-0">
-                            <li>Modalidad de entrega / envío</li>
-                            <li>Términos y condiciones</li>
-                            <li>Política de devoluciones</li>
+                            <li><a href="{{ route('pagos') }}">Pagos y envíos</a></li>
+                            <li><a href="{{ route('terminos') }}">Términos y condiciones</a></li>
                         </ul>
                     </div>
                     <div class="col-12 col-lg-4">

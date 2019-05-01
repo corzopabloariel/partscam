@@ -18,4 +18,8 @@ class Transaccion extends Model
     {
         return $this->hasMany('App\TransaccionProducto');
     }
+    public function persona()
+    {
+        return $this->hasOne('App\Persona');
+    }
 }

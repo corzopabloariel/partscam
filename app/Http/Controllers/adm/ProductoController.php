@@ -10,6 +10,7 @@ use App\Producto;
 use App\Productoimages;
 use App\Productoprecio;
 use App\Productostock;
+use App\Transaccion;
 class ProductoController extends Controller
 {
     public function rec_padre($data, $tipo = 0) {
@@ -62,14 +63,30 @@ class ProductoController extends Controller
         return $catTOTAL->pluck('nombre', 'id');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function compras()
     {
-        //
+        $title = "Compras";
+        $view = "adm.parts.compras";
+
+        $compras = Transaccion::orderBy('created_at','DESC')->get();
+        
+        return view('adm.distribuidor',compact('title','view','compras'));
+    }
+
+    public function transaccion($id) {
+        $data = Transaccion::find($id);
+        $data["persona"] = $data->persona;
+        $data["persona"]["iva"] = $data->persona->iva;
+        $data["persona"]["provincia"] = $data->persona->provincia;
+        $data["persona"]["localidad"] = $data->persona->localidad;
+        $data["productos"] = $data->productos;
+        foreach($data["productos"] AS $p) {
+            $p["producto"] = $p->producto;
+            $p["producto"]["imagenes"] = $p->producto->imagenes;
+            $p["producto"]["familia"] = $p->producto->familia;
+            $p["producto"]["categoria"] = $p->producto->categoria;
+        }
+        return $data;
     }
 
     /**

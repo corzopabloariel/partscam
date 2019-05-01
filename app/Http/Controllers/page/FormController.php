@@ -24,7 +24,7 @@ class FormController extends Controller
         Mail::to('franco_spagnoletti@hotmail.com')->send(new Contacto($data["nombre"], $data["apellido"], $data["telefono"], $data["email"], $data["mensaje"], $data["marca"], $data["modelo"], $data["anio"]));
         
         if (count(Mail::failures()) > 0)
-            return back()->widthErrors(['mssg' => "Ha ocurrido un error al enviar el correo"]);
+            return back()->withErrors(['mssg' => "Ha ocurrido un error al enviar el correo"]);
         else
             return back()->withSuccess(['mssg' => "Correo enviado correctamente"]);
     }
@@ -39,7 +39,7 @@ class FormController extends Controller
             ->send(new Consultar($data["nombre"], $data["email"], $data["consulta"], $data["productoCantidad"], $producto));
         
         if (count(Mail::failures()) > 0)
-            return back()->widthErrors(['mssg' => "Ha ocurrido un error al enviar la consulta"]);
+            return back()->withErrors(['mssg' => "Ha ocurrido un error al enviar la consulta"]);
         else
             return back()->withSuccess(['mssg' => "Consulta enviada correctamente"]);
     }

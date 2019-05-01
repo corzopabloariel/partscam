@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'page\GeneralController@index');
+Route::get('/', 'page\GeneralController@index')->name('index');
 Route::get('empresa', ['uses' => 'page\GeneralController@empresa', 'as' => 'empresa']);
 Route::get('contacto', ['uses' => 'page\GeneralController@contacto', 'as' => 'contacto']);
 
@@ -27,7 +27,8 @@ Route::group(['prefix' => 'productos', 'as' => 'productos'], function() {
     Route::get('producto/{id}', ['uses' => 'page\GeneralController@producto', 'as' => '.producto']);
     Route::get('show/{id}', ['uses' => 'adm\ProductoController@show', 'as' => 'show']);
 });
-
+Route::get('pagos', ['uses' => 'page\CosasController@pagos', 'as' => 'pagos']);
+Route::get('terminos', ['uses' => 'page\CosasController@terminos', 'as' => 'terminos']);
 Route::get('localidad/{provincia_id}', ['uses' => 'page\GeneralController@localidad', 'as' => 'localidad']);
 Route::get('persona/{tipo}/{value}', ['uses' => 'page\GeneralController@persona', 'as' => 'persona']);
 Route::get('p', ['uses' => 'page\GeneralController@getCreatePreference', 'as' => 'getCreatePreference']);
@@ -45,6 +46,9 @@ Auth::routes();
 Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
     Route::get('/', 'adm\AdmController@index');
     Route::get('logout', ['uses' => 'adm\AdmController@logout' , 'as' => 'adm.logout']);
+
+    Route::get('compras', ['uses' => 'adm\ProductoController@compras' , 'as' => 'compras']);
+    Route::get('transaccion/{id}', ['uses' => 'adm\ProductoController@transaccion' , 'as' => 'transaccion']);
     /**
      * CONTENIDO
      */
@@ -128,6 +132,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
      */
     Route::group(['prefix' => 'empresa', 'as' => 'empresa'], function() {
         Route::get('datos', ['uses' => 'adm\EmpresaController@datos', 'as' => '.datos']);
+        Route::get('terminos', ['uses' => 'adm\EmpresaController@terminos', 'as' => '.terminos']);
         Route::post('update', ['uses' => 'adm\EmpresaController@update', 'as' => '.update']);
 
         Route::group(['prefix' => 'metadatos', 'as' => '.metadatos'], function() {
@@ -136,6 +141,14 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
             Route::post('update/{page}', ['uses' => 'adm\MetadatosController@update', 'as' => '.update']);
             Route::post('store', ['uses' => 'adm\MetadatosController@store', 'as' => '.store']);
             Route::get('delete/{page}', ['uses' => 'adm\MetadatosController@destroy', 'as' => '.destroy']);
+        });
+        Route::group(['prefix' => 'usuarios', 'as' => '.usuarios'], function() {
+            Route::get('/', ['uses' => 'adm\UserController@index', 'as' => '.index']);
+            Route::get('datos', ['uses' => 'adm\UserController@datos', 'as' => '.datos']);
+            Route::get('edit/{id}', ['uses' => 'adm\UserController@edit', 'as' => '.edit']);
+            Route::post('update/{id}', ['uses' => 'adm\UserController@update', 'as' => '.update']);
+            Route::post('store', ['uses' => 'adm\UserController@store', 'as' => '.store']);
+            Route::get('delete/{id}', ['uses' => 'adm\UserController@destroy', 'as' => '.destroy']);
         });
     });
 });

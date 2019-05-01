@@ -560,6 +560,25 @@ footer .info li + li {
 .ui-spinner html .ui-button.ui-state-disabled:active {
     background: #DDDDDD;
 }
+.wrapper-pagos .title {
+    color: #2CC5EB;
+    font-size: 30px;
+}
+.wrapper-pagos ul {
+    list-style-image: url(../images/general/li.fw.png);
+    list-style-position: outside;
+}
+.wrapper-pagos .texto {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 10px;
+    -moz-column-gap: 10px;
+    column-gap: 10px;
+    -webkit-column-rule: 1px solid transparent;
+    -moz-column-rule: 1px solid transparent;
+    column-rule: 1px solid transparent;
+}
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */

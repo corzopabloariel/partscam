@@ -4,22 +4,32 @@ namespace App\Http\Controllers\page;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Cancelar;
+use App\Mail\PedidoCliente;
 use MP;
 use Cookie;
 use App\Transaccion;
+use App\Empresa;
 class PaymentController extends Controller
 {
     //
     public function success()
     {
-        dd(request()->external_reference);
+        $transaccion = Transaccion::find(request()->external_reference);
         
+        $transaccion->fill(["estado" => 2]);
+        $transaccion->save();
+
+        return redirect()->route('index')->withSuccess(['mssg' => 'Su compra fue realizada con éxito']);
     }
     public function failure()
     {
         //-> Vuelve a sumar la cantidad
         $transaccion = Transaccion::find(request()->external_reference);
         $productos = $transaccion->productos;
+        $persona = $transaccion->persona;
+        
         foreach($productos AS $p) {
             $aux = $p->producto;
             $aux->stock->fill(["cantidad" => $aux->stock["cantidad"] + $p["cantidad"]]);
@@ -27,7 +37,14 @@ class PaymentController extends Controller
         }
         $transaccion->fill(["estado" => 0]);
         $transaccion->save();
-        return 'Su compra no a podido ser procesada';
+        
+        Mail::to('corzo.pabloariel@gmail.com')
+            ->send(new Cancelar($transaccion, $persona, $productos));
+        $empresa = Empresa::first();
+        $empresa["pago"] = json_decode($empresa["pago"], true);
+        Mail::to($persona["email"])
+            ->send(new PedidoCliente($transaccion, $persona, $productos, $empresa["pago"]), 1);
+        return redirect()->route('index')->withErrors(['mssg' => 'Su compra fue cancelada']);
     }
     public function pending()
     {

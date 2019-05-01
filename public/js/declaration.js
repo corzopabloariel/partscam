@@ -125,6 +125,29 @@ const ENTIDADES = {
             image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
         }
     },
+    terminos: {
+        ATRIBUTOS: {
+            titulo: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"}
+        },
+        JSON: {
+            titulo: {
+                es: "español"
+            },
+            texto: {
+                es: "español"
+            },
+        },
+        FORM: [
+            {
+                BTN: '<div class="d-flex col-3 col-md-2">/BTN/</div>'
+            },
+            {
+                titulo: '<div class="col-12">/titulo/</div>',
+                texto: '<div class="col-12 mt-2">/texto/</div>',
+            }
+        ]
+    },
     pagos: {
         ATRIBUTOS: {
             page: {TIPO:"TP_ENUM",ENUM:{slider:"Slider"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"secciones",MULTIPLE: 1},
@@ -196,6 +219,29 @@ const ENTIDADES = {
         FUNCIONES: {
             image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
         }
+    },
+    usuarios: {
+        ATRIBUTOS: {
+            username: {TIPO:"TP_STRING",MAXLENGTH:30,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"usuario"},
+            name: {TIPO:"TP_STRING",MAXLENGTH:100,NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"nombre"},
+            password: {TIPO:"TP_PASSWORD",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"contraseña"},
+            is_admin: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",ENUM:{1:"Administrador",0:"Usuario"},NOMBRE:"Tipo",CLASS:"text-uppercase"},
+        },
+        FORM: [
+            {
+                BTN: '<div class="col-3 col-md-2">/BTN/</div>'
+            },
+            {
+                is_admin: '<div class="col-12 col-md-6">/is_admin/</div>',
+            },
+            {
+                name: '<div class="col-12 col-md-6">/name/</div>',
+            },
+            {
+                username: '<div class="col-3">/username/</div>',
+                password: '<div class="col-3">/password/</div>',
+            }
+        ],
     },
     marca: {
         ATRIBUTOS: {

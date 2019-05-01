@@ -26,6 +26,10 @@ use App\Transaccion;
 use App\TransaccionProducto;
 use App\Productostock;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Pedido;
+use App\Mail\PedidoCliente;
+
 class GeneralController extends Controller
 {
     public $idioma = "es";
@@ -313,135 +317,77 @@ class GeneralController extends Controller
         $payment_method = $data["payment_method"];
         $payment_shipping = $data["payment_shipping"];
         
-        switch($payment_method) {
-            case "pl":
-                //GUARDA información
-                $transaccion = Transaccion::create([
-                    "tipopago" => strtoupper($payment_method),
-                    "shipping" => strtoupper($payment_shipping),
-                    "estado" => 1,
-                    "total" => $pedido["TOTAL"]
-                ]);
-                Persona::create([
-                    "email" => $email,//ENVIAR COMPOBANTE
-                    "cuit" => $cuit,
-                    "nombre" => $nombre,
-                    "apellido" => $apellido,
-                    "telefono" => $telefono,
-                    "domicilio" => $domicilio,
-                    "condicioniva_id" => $condicioniva_id,
-                    "transaccion_id" => $transaccion["id"],
-                    "provincia_id" => $provincia_id,
-                    "localidad_id" => $localidad_id
-                ]);
-                foreach($pedido AS $i => $v) {
-                    if($i == "TOTAL") continue;
-                    $aux = Productostock::where("producto_id",$i)->first();
-                    $pedido = $v["PEDIDO"];
-                    if($pedido > $v["STOCK"])
-                        $pedido = $v["PEDIDO"] - $v["STOCK"];
-                    $aux->fill(["cantidad" => $pedido]);
-                    $aux->save();
-                    TransaccionProducto::create([
-                        "cantidad" => $v["PEDIDO"],
-                        "consultar" => $v["PEDIDO"] - $v["STOCK"],
-                        "precio" => $v["PRECIO"],
-                        "transaccion_id" => $transaccion["id"],
-                        "producto_id" => $i
-                    ]);
-                }
-                Cookie::queue("transaccion", $transaccion["id"], 100);
-                break;
-            case "tb":
-                //GUARDA información
-                $transaccion = Transaccion::create([
-                    "tipopago" => strtoupper($payment_method),
-                    "shipping" => strtoupper($payment_shipping),
-                    "estado" => 1,
-                    "total" => $pedido["TOTAL"]
-                ]);
-                Persona::create([
-                    "email" => $email,//ENVIAR COMPOBANTE
-                    "cuit" => $cuit,
-                    "nombre" => $nombre,
-                    "apellido" => $apellido,
-                    "telefono" => $telefono,
-                    "domicilio" => $domicilio,
-                    "condicioniva_id" => $condicioniva_id,
-                    "transaccion_id" => $transaccion["id"],
-                    "provincia_id" => $provincia_id,
-                    "localidad_id" => $localidad_id
-                ]);
-                foreach($pedido AS $i => $v) {
-                    if($i == "TOTAL") continue;
-                    $aux = Productostock::where("producto_id",$i)->first();
-                    $pedido = $v["PEDIDO"];
-                    if($pedido > $v["STOCK"])
-                        $pedido = $v["PEDIDO"] - $v["STOCK"];
-                    $aux->fill(["cantidad" => $pedido]);
-                    $aux->save();
-                    TransaccionProducto::create([
-                        "cantidad" => $v["PEDIDO"],
-                        "consultar" => $v["PEDIDO"] - $v["STOCK"],
-                        "precio" => $v["PRECIO"],
-                        "transaccion_id" => $transaccion["id"],
-                        "producto_id" => $i
-                    ]);
-                }
-                Cookie::queue("transaccion", $transaccion["id"], 100);
-                break;
-            case "mp":
-                //GUARDA información
-                $transaccion = Transaccion::create([
-                    "tipopago" => strtoupper($payment_method),
-                    "shipping" => strtoupper($payment_shipping),
-                    "estado" => 1,
-                    "total" => $pedido["TOTAL"]
-                ]);
-                Persona::create([
-                    "email" => $email,//ENVIAR COMPOBANTE
-                    "cuit" => $cuit,
-                    "nombre" => $nombre,
-                    "apellido" => $apellido,
-                    "telefono" => $telefono,
-                    "domicilio" => $domicilio,
-                    "condicioniva_id" => $condicioniva_id,
-                    "transaccion_id" => $transaccion["id"],
-                    "provincia_id" => $provincia_id,
-                    "localidad_id" => $localidad_id
-                ]);
-                foreach($pedido AS $i => $v) {
-                    if($i == "TOTAL") continue;
-                    $aux = Productostock::where("producto_id",$i)->first();
-                    $pedido = $v["PEDIDO"];
-                    if($pedido > $v["STOCK"])
-                        $pedido = $v["PEDIDO"] - $v["STOCK"];
-                    $aux->fill(["cantidad" => $pedido]);
-                    $aux->save();
-                    TransaccionProducto::create([
-                        "cantidad" => $v["PEDIDO"],
-                        "consultar" => $v["PEDIDO"] - $v["STOCK"],
-                        "precio" => $v["PRECIO"],
-                        "transaccion_id" => $transaccion["id"],
-                        "producto_id" => $i
-                    ]);
-                }
-                Cookie::queue("transaccion", $transaccion["id"], 100);
-                break;
+        //GUARDA información
+        $transaccion = Transaccion::create([
+            "tipopago" => strtoupper($payment_method),
+            "shipping" => strtoupper($payment_shipping),
+            "estado" => 1,
+            "codigo" => self::generarCodigo(),
+            "total" => $pedido["TOTAL"]
+        ]);
+        Persona::create([
+            "email" => $email,//ENVIAR COMPOBANTE
+            "cuit" => $cuit,
+            "nombre" => $nombre,
+            "apellido" => $apellido,
+            "telefono" => $telefono,
+            "domicilio" => $domicilio,
+            "condicioniva_id" => $condicioniva_id,
+            "transaccion_id" => $transaccion["id"],
+            "provincia_id" => $provincia_id,
+            "localidad_id" => $localidad_id
+        ]);
+        foreach($pedido AS $i => $v) {
+            if($i == "TOTAL") continue;
+            $aux = Productostock::where("producto_id",$i)->first();
+            $pedido = $v["PEDIDO"];
+            if($pedido > $v["STOCK"])
+                $pedido = $v["PEDIDO"] - $v["STOCK"];
+            $aux->fill(["cantidad" => $pedido]);
+            $aux->save();
+            TransaccionProducto::create([
+                "cantidad" => $v["PEDIDO"],
+                "consultar" => $v["PEDIDO"] - $v["STOCK"],
+                "precio" => $v["PRECIO"],
+                "transaccion_id" => $transaccion["id"],
+                "producto_id" => $i
+            ]);
         }
+        Cookie::queue("transaccion", $transaccion["id"], 100);
+        
         return ["tipo" => $payment_method];
     }
-
+    public function generarCodigo($longitud = 5) {
+        $codigo = "";
+        $caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        $max = strlen($caracteres) - 1;
+        for( $i = 0 ; $i < $longitud ; $i++)
+            $codigo .= $caracteres[rand(0,$max)];
+        
+        return $codigo;
+    }
+    public function enviarDetalle($transaccion, $cliente = 0) {
+        $persona = $transaccion->persona;
+        $productos = $transaccion->productos;
+        if($cliente) {//ENVIO A CLIENTE LA INFO
+            $empresa = Empresa::first();
+            $empresa["pago"] = json_decode($empresa["pago"], true);
+            Mail::to($persona["email"])
+                ->send(new PedidoCliente($transaccion, $persona, $productos, $empresa["pago"]));
+        } else {
+            Mail::to('corzo.pabloariel@gmail.com')
+                ->send(new Pedido($transaccion, $persona, $productos));
+        }
+    }
     public function pedido($tipo) {
         $title = "CARRITO";
         $view = "page.parts.confirmar.ok";
+        self::enviarDetalle(Transaccion::find(Cookie::get("transaccion")));
+        self::enviarDetalle(Transaccion::find(Cookie::get("transaccion")), 1);
         if($tipo == "ok") {
-            //Cookie::queue("prueba", "1", 10);
-
             $datos = [];
             $datos["empresa"] = self::datos();
             $datos["familias"] = self::familiaMenu();
-            
             return view('page.distribuidor',compact('title','view','datos'));
         } else {
             return self::getCreatePreference();
@@ -474,18 +420,29 @@ class GeneralController extends Controller
             ],
             'notification_url' => route('ipn')
         ];
+        $id = "";
+        $descripcion = "";
         foreach($productos AS $p) {
-            $preferenceData["items"][] = [
-                'id' => $p["id"],
-                'category_id' => $p->producto->familia["nombre"],
-                'title' => $p->producto["nombre"],
-                'description' => 'Producto de partscam.com.ar',
-                'picture_url' => '',
-                'quantity' => $p["cantidad"],
-                'currency_id' => 'ARS',
-                'unit_price' => $p["precio"]
-            ];
+            if(!empty($id)) $id .= "-";
+            if(!empty($descripcion)) $descripcion .= " / ";
+            $id .= $p->producto["id"];
+            $o = $p->producto->oferta;
+            $precio = $p->producto->precio["precio"];
+            if(!empty($o))
+                $precio = $o["precio"];
+            $precio = number_format($precio,2,",",".");
+            $descripcion .= "{$p->producto["nombre"]} - {$p->producto->familia["nombre"]}: $ {$precio} x {$p["cantidad"]}";
         }
+        $preferenceData["items"][] = [
+            'id' => $id,
+            'category_id' => 'PARTSCAM',
+            'title' => 'Compra en partscam.com.ar',
+            'description' => 'Producto de partscam.com.ar',
+            'picture_url' => $descripcion,
+            'quantity' => 1,
+            'currency_id' => 'ARS',
+            'unit_price' => $transaccion["total"]
+        ];
         try {
             $preference = MP::create_preference($preferenceData);
             

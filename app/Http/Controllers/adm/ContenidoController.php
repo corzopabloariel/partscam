@@ -52,6 +52,12 @@ class ContenidoController extends Controller
                     $ARR_data["data"]["CONTENIDO"]["titulo"] = null;
                     $ARR_data["data"]["CONTENIDO"]["texto"] = null;
                     break;
+                case "terminos":
+                    $ARR_data["data"] = [];
+                    $ARR_data["data"]["CONTENIDO"] = [];
+                    $ARR_data["data"]["CONTENIDO"]["titulo"] = null;
+                    $ARR_data["data"]["CONTENIDO"]["texto"] = null;
+                    break;
             }
             $ARR_data["data"] = json_encode($ARR_data["data"]);
             $contenido = Contenido::create($ARR_data);
@@ -129,6 +135,12 @@ class ContenidoController extends Controller
                 $ARR_data["data"]["CONTENIDO"]["texto"] = [];
                 $ARR_data["data"]["CONTENIDO"]["texto"][$this->idioma] = $datosRequest["texto_{$this->idioma}"];
                 $ARR_data["data"]["PAGE"] = $datosRequest["page"];
+                break;
+            case "terminos":
+                $ARR_data["data"]["CONTENIDO"]["titulo"] = [];
+                $ARR_data["data"]["CONTENIDO"]["titulo"][$this->idioma] = $datosRequest["titulo_{$this->idioma}"];
+                $ARR_data["data"]["CONTENIDO"]["texto"] = [];
+                $ARR_data["data"]["CONTENIDO"]["texto"][$this->idioma] = $datosRequest["texto_{$this->idioma}"];
                 break;
         }
         $contenido->fill(["data" => json_encode($ARR_data["data"])]);
