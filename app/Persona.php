@@ -21,7 +21,7 @@ class Persona extends Model
     ];
     public function iva()
     {
-        return $this->belongsTo('App\Condicioniva','condicioniva_id');
+        return $this->belongsTo('App\CondicionIva','condicioniva_id');
     }
     public function provincia()
     {

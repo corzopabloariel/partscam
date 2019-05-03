@@ -132,6 +132,30 @@ nav .info form input {
 nav .btn.active {
     background: #B11E16 !important;
 }
+nav .logo {
+    display: none;
+}
+nav .fixed {
+    position: fixed;
+    z-index: 100;
+    background-color: #fff;
+    top: 0;
+    width: 100%;
+    margin-bottom: 0;
+    left: 0;
+    padding: 10px;
+    justify-content: center !important;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+}
+nav .fixed .menuBTN {
+    display: none !important;
+}
+nav .fixed .logo {
+    display: list-item !important;
+}
+nav .fixed .logo img {
+    height: 50px;
+}
 #menuNav .modal-dialog {
     margin: 0;
 }
@@ -315,6 +339,20 @@ footer .info li + li {
 /* ---------------------------------------------------
     OFERTA
 ----------------------------------------------------- */
+.wrapper-oferta fieldset {
+    padding: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+}
+.wrapper-oferta fieldset legend {
+    text-align: center;
+    font-size: 100%;
+    background: transparent;
+    border: none;
+    padding: 20px;
+    color: #333;
+}
 .wrapper-oferta img.oferta {
     z-index: 11;
     left: -8px;
@@ -339,6 +377,20 @@ footer .info li + li {
 /* ---------------------------------------------------
     PRODUCTO
 ----------------------------------------------------- */
+.wrapper-producto fieldset {
+    padding: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+}
+.wrapper-producto fieldset legend {
+    text-align: center;
+    font-size: 100%;
+    background: transparent;
+    border: none;
+    padding: 20px;
+    color: #333;
+}
 .wrapper-producto .nombre {
     font-size: 26px;
     font-weight: 600;
@@ -589,7 +641,49 @@ footer .info li + li {
     /* ---------------------------------------------------
         NAV
     ----------------------------------------------------- */
-    
+    section {
+        padding-top: 82px;
+    }
+    nav {
+        min-height: auto;
+        position: fixed !important;
+        top: 0;
+        width: 100%;
+        z-index: 111;
+        background-color: #fff;
+    }
+    nav .info {
+        display: none !important;
+    }
+    nav .fixed {
+        position: static !important;
+        padding: 0;
+        box-shadow: none !important;
+        margin-bottom: 1rem;
+    }
+    nav .fixed .menuBTN {
+        display: block !important;
+    }
+    nav #carritoHeader {
+        display: none;
+    }
+    nav .logo {
+        display: list-item !important;
+        padding-left: 15px;
+    }
+    nav .logo img {
+        height: 50px;
+    }
+    nav .navbar-brand + div > div {
+        margin: 0 !important;
+    }
+    nav #ulNavFixed {
+        justify-content: space-between!important;
+    }
+    nav .navbar-brand + div > div .menuBTN {
+        justify-content: end !important;
+        width: auto;
+    }
     .wrapper-oferta .row > * + * {
         margin-top:20px;
     }
@@ -619,8 +713,25 @@ footer .info li + li {
         width: 100%;
     }
 
-    .carousel:not(.carouselProducto) {
+    /*.carousel:not(.carouselProducto) {
         display: none;
+    }*/
+    .carousel-indicators {
+        margin-bottom: 0;
+    }
+    .carousel-caption {
+        padding: 5px 0;
+    }
+    .carousel .texto {
+        top: 0;
+        left: 4px;
+    }
+    .carousel .texto p:first-child {
+        font-size: 25px;
+        line-height: 25px;
+    }
+    .carousel .texto p:last-child {
+        font-size: 16px;
     }
     .slick-prev {
         left: 0 !important;

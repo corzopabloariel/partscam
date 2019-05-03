@@ -64,6 +64,16 @@
         <script>
             window.url = "{{ url()->current() }}";
             $(document).ready(function() {
+                const hNav = $("nav").outerHeight();
+
+                $(document).scroll(function() {
+                    if($(this).scrollTop() > hNav) {
+                        if(!$("#ulNavFixed.fixed").length)
+                            $("#ulNavFixed").addClass("fixed");
+                    } else
+                        $("#ulNavFixed").removeClass("fixed");
+                });
+
                 if($("nav .menu").find(`a[href="${window.url}"]`).length)
                     $("nav .menu").find(`a[href="${window.url}"]`).addClass("active");
                 

@@ -214,10 +214,28 @@
 
         if(window.session[idProducto] === undefined) {
             window.session[idProducto] = parseInt(cantidad.val());
-            localStorage.carrito = JSON.stringify(window.session);
+            console.log(max)
             $("#carritoHeader").find("span").text(Object.keys(window.session).length);
-            
-            alertify.success('Producto agregado');
+            if(max > parseInt(cantidad.val())) {
+                localStorage.carrito = JSON.stringify(window.session);
+                alertify.success('Producto agregado');
+            } else {
+                alertify.notify('Producto supera el stock disponible', 'warning');
+                alertify.success(`Se agregó ${max} u. al carrito`);
+                
+                if(window.consultarINT === undefined) window.consultarINT = 0;
+                if(cantidad.val() > max)
+                    window.consultarINT = parseInt(cantidad.val()) - max;
+                else
+                    window.consultarINT = parseInt(cantidad.val());
+
+                window.session[idProducto] = parseInt(max);
+                localStorage.carrito = JSON.stringify(window.session);
+                $("#consultarTEXT").text(`Consulta por: ${window.consultarINT}`);
+                if(!$("#btnCONSULTAR").length)
+                    $("#btnADD").parent().append(`<button data-toggle="modal" data-target="#modalConsulta" onclick="consultar(this,${idProducto})" class="btn btn-sm btn-block btn-warning mb-2 text-uppercase" id="btnCONSULTAR"><small><i class="fas fa-question-circle mr-2"></i>consultar</small></button>`);
+            }
+            $("#carritoHeader").attr("href","{{ URL::to('carrito') }}");
         } else {
             if(max > parseInt(cantidad.val()) + parseInt(window.session[idProducto])) {
                 window.session[idProducto] = parseInt(window.session[idProducto]) + parseInt(cantidad.val());

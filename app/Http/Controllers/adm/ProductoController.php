@@ -11,6 +11,9 @@ use App\Productoimages;
 use App\Productoprecio;
 use App\Productostock;
 use App\Transaccion;
+use App\TransaccionProducto;
+use App\Persona;
+use App\CondicionIva;
 class ProductoController extends Controller
 {
     public function rec_padre($data, $tipo = 0) {

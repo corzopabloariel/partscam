@@ -2,7 +2,16 @@
 <div class="wrapper-carrito py-5">
     <div class="container">
         <div class="wrapper-oferta">
-            <p>Se {{count($datos["resultados"]) == 1 ? "ha encontrado 1 resultado" : count($datos["resultados"]) . "han encontrado resultados"}} para su búsqueda <strong>"{{$datos["buscar"]}}"</strong>.</p>
+            @php
+            $texto = "";
+            if(count($datos["resultados"]) == 0)
+                $texto = "No se encontraron resultados";
+            else if(count($datos["resultados"]) == 1)
+                $texto = "Se ha encontrado 1 resultado";
+            else
+                $texto = "Se han encontrado " . count($datos["resultados"]) . " resultados";
+            @endphp
+            <p>{{ $texto }} para su búsqueda <strong>"{{$datos["buscar"]}}"</strong>.</p>
             <div class="row">
                 @foreach($datos["resultados"] AS $p)
                 @php

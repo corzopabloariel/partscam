@@ -53,7 +53,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light p-0 shadow-sm">
     <div class="container">
-        <a class="navbar-brand position-absolute" href="{{ URL::to( '/' ) }}">
+        <a class="navbar-brand position-absolute hidden-tablet" href="{{ URL::to( '/' ) }}">
             <img onError="this.src='{{ asset('images/general/no-img.png') }}'" src="{{ asset($datos['empresa']['images']['logo']) }}?t=<?php echo time(); ?>" />
         </a>
         <div class="row justify-content-end w-100">
@@ -72,7 +72,12 @@
                         </form>
                     </li>
                 </ul>
-                <ul class="list-unstyled menu d-flex justify-content-end align-items-center">
+                <ul id="ulNavFixed" class="list-unstyled menu d-flex justify-content-end align-items-center">
+                    <li class="logo">
+                        <a class="" href="{{ URL::to( '/' ) }}">
+                            <img onError="this.src='{{ asset('images/general/no-img.png') }}'" src="{{ asset($datos['empresa']['images']['logo']) }}?t=<?php echo time(); ?>" />
+                        </a>
+                    </li>
                     <li class="hidden-tablet"><a href="{{ route('empresa') }}">empresa</a></li>
                     <li class="hidden-tablet">
                         <a href="{{ URL::to('productos') }}">productos</a>
@@ -92,8 +97,8 @@
                     <li class="hidden-tablet"><a href="{{ URL::to('productos/ofertas') }}">ofertas</a></li>
                     <li class="hidden-tablet"><a href="{{ route('contacto') }}">contacto</a></li>
                     <li class="menuBTN">
-                        <button class="navbar-toggler" type="button" data-toggle="modal" data-target="#menuNav">
-                            <span class="navbar-toggler-icon"></span>
+                        <button class="navbar-toggler text-white rounded-0" style="background-color:#2CC5EB;" type="button" data-toggle="modal" data-target="#menuNav">
+                            <i class="fas fa-bars"></i>
                         </button>
                         <a id="carritoHeader" class="btn shadow-sm" href="">
                             Carrito (<span class="">0</span>)
