@@ -44,7 +44,7 @@
         @endif
         <div class="wrapper">
             @include('page.parts.general.header')
-            @yield('body')
+            <section>@yield('body')</section>
             @include('page.parts.general.footer')
             <a href="https://wa.me/{{$datos['empresa']['telefono']['wha'][0]}}" class="position-fixed text-white rounded-circle bg-success d-flex justify-content-center align-items-center" style="right: 10px;bottom: 10px;z-index: 99;width: 50px;height: 50px;">
                 <i class="fab fa-whatsapp"></i>

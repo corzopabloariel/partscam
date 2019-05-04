@@ -4,10 +4,6 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between">
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
-            <form id="formBusqueda" class="position-relative d-flex input-group input-group-lg" action="" method="post" style="width: auto">
-                <select id="modelos" class="form-control input-lg select2-multiple select2-hidden-accessible" style="width: 200px"></select>
-                <select id="categorias" class="form-control input-lg select2-multiple select2-hidden-accessible" style="width: 260px"></select>
-            </form>
         </div>
         <div style="display: none;" id="wrapper-form" class="mt-2">
             <div class="card">
@@ -35,11 +31,11 @@
     
     const src = "{{ asset('images/general/no-img.png') }}";
     window.familias = @json($familias);
-    window.select2 = @json($select2);
+    
     window.pyrus = new Pyrus("categorias", {familia_id: {TIPO:"OP",DATA: window.familias}}, src);
     window.categorias = @json($categorias);
     /** */
-    $("#modelos").select2({
+    /*$("#modelos").select2({
         theme: "bootstrap",
         tags: "true",
         placeholder: "FAMILIA",
@@ -52,7 +48,7 @@
         placeholder: "CATEGORÍA",
         data: window.select2.categorias,
         width: "resolve"
-    });
+    });*/
     /** ------------------------------------- */
     readURL = function(input, target) {
         if (input.files && input.files[0]) {

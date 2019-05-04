@@ -16,12 +16,17 @@ class FormController extends Controller
 
     public function contacto(Request $request) {
         $data = $request->all();
-        
         if(!isset($data["terminos"]))
             return back()->withInput($data)->withErrors(['mssg' => "Acepte los términos y condiciones"]);
-        
-        Mail::to('corzo.pabloariel@gmail.com')->send(new Contacto($data["nombre"], $data["apellido"], $data["telefono"], $data["email"], $data["mensaje"], $data["marca"], $data["modelo"], $data["anio"]));
-        Mail::to('franco_spagnoletti@hotmail.com')->send(new Contacto($data["nombre"], $data["apellido"], $data["telefono"], $data["email"], $data["mensaje"], $data["marca"], $data["modelo"], $data["anio"]));
+        if(isset($data["empresa"])) {
+            Mail::to('corzo.pabloariel@gmail.com')->send(new Contacto(null, $data["telefono"], $data["email"], $data["mensaje"], $data["marca"], $data["modelo"], $data["anio"], $data["empresa"]));
+            //Mail::to('franco_spagnoletti@hotmail.com')->send(new Contacto(null, $data["telefono"], $data["email"], $data["mensaje"], $data["marca"], $data["modelo"], $data["anio"], $data["empresa"]));
+            //Mail::to('repuestos@partscam.com.ar')->send(new Contacto(null, $data["telefono"], $data["email"], $data["mensaje"], $data["marca"], $data["modelo"], $data["anio"], $data["empresa"]));
+        } else {
+            Mail::to('corzo.pabloariel@gmail.com')->send(new Contacto($data["nombre"], $data["telefono"], $data["email"], $data["mensaje"], $data["marca"], $data["modelo"], $data["anio"], null));
+            Mail::to('franco_spagnoletti@hotmail.com')->send(new Contacto($data["nombre"], $data["telefono"], $data["email"], $data["mensaje"], $data["marca"], $data["modelo"], $data["anio"], null));
+            Mail::to('repuestos@partscam.com.ar')->send(new Contacto($data["nombre"], $data["telefono"], $data["email"], $data["mensaje"], $data["marca"], $data["modelo"], $data["anio"], null));
+        }
         
         if (count(Mail::failures()) > 0)
             return back()->withErrors(['mssg' => "Ha ocurrido un error al enviar el correo"]);

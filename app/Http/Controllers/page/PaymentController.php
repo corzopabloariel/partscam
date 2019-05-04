@@ -38,12 +38,12 @@ class PaymentController extends Controller
         $transaccion->fill(["estado" => 0]);
         $transaccion->save();
         
-        Mail::to('corzo.pabloariel@gmail.com')
-            ->send(new Cancelar($transaccion, $persona, $productos));
+        /*Mail::to('corzo.pabloariel@gmail.com')
+            ->send(new Cancelar($transaccion, $persona, $productos));*/
         $empresa = Empresa::first();
         $empresa["pago"] = json_decode($empresa["pago"], true);
-        Mail::to($persona["email"])
-            ->send(new PedidoCliente($transaccion, $persona, $productos, $empresa["pago"]), 1);
+        /*Mail::to($persona["email"])
+            ->send(new PedidoCliente($transaccion, $persona, $productos, $empresa["pago"]), 1);*/
         return redirect()->route('index')->withErrors(['mssg' => 'Su compra fue cancelada']);
     }
     public function pending()

@@ -100,8 +100,8 @@
                         <button class="navbar-toggler text-white rounded-0" style="background-color:#2CC5EB;" type="button" data-toggle="modal" data-target="#menuNav">
                             <i class="fas fa-bars"></i>
                         </button>
-                        <a id="carritoHeader" class="btn shadow-sm" href="">
-                            Carrito (<span class="">0</span>)
+                        <a id="carritoHeader" style="font-size: 13.5px;" class="btn btn-sm rounded-0 shadow-sm" href="">
+                            <span class="">0</span>
                             <i class="fas fa-shopping-cart"></i>
                         </a>
                     </li>

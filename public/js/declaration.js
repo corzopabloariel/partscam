@@ -292,11 +292,9 @@ const ENTIDADES = {
             orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"100px"},
             image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 400x393",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"151px"},
             familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"},
-            padre: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"MODELO / CATEGORÍA",WIDTH:"220px"},
+            //padre: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"CATEGORÍA",WIDTH:"220px"},
             nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
-            familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
-            modelo_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Modelo"},
-            padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"}
+            //padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"}
         },
         FORM: [
             {
@@ -305,15 +303,6 @@ const ENTIDADES = {
             },
             {
                 nombre: '<div class="col-12 col-md-6">/nombre/</div>'
-            },
-            {
-                familia_id: '<div class="col-12 col-md-6">/familia_id/</div>'
-            },
-            {
-                modelo_id: '<div class="col-12 col-md-6">/modelo_id/</div>'
-            },
-            {
-                padre_id: '<div class="col-12 col-md-6">/padre_id/</div>'
             },
             {
                 image: '<div class="col-12 col-md-6 col-lg-4">/image/</div>',

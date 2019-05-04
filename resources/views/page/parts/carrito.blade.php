@@ -8,20 +8,22 @@
         <form action="{{ route('order') }}" method="post">
             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
             <h3 class="title text-uppercase">compra online</h3>
-            <table class="table">
-                <thead class="thead-light">
-                    <th class="text-uppercase" style="width:150px;"></th>
-                    <th class="text-uppercase">familia</th>
-                    <th class="text-uppercase">modelo</th>
-                    <th class="text-uppercase">categoría</th>
-                    <th class="text-uppercase">producto</th>
-                    <th class="text-uppercase">precio unitario</th>
-                    <th class="text-uppercase">cantidad</th>
-                    <th class="text-uppercase">subtotal</th>
-                    <th class="text-uppercase">eliminar</th>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="thead-light">
+                        <th class="text-uppercase" style="width:150px;"></th>
+                        <th class="text-uppercase">familia</th>
+                        <th class="text-uppercase">modelo</th>
+                        <th class="text-uppercase">categoría</th>
+                        <th class="text-uppercase">producto</th>
+                        <th class="text-uppercase">precio unitario</th>
+                        <th class="text-uppercase">cantidad</th>
+                        <th class="text-uppercase">subtotal</th>
+                        <th class="text-uppercase">eliminar</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
             <div class="row justify-content-end mt-4 custom">
                 <div class="col-12 col-md-6 col-lg-4">
                     <h5 class="title border-bottom text-uppercase">Forma de envío</h5>
@@ -85,9 +87,11 @@
                 </div>
             </div>
             <div class="row justify-content-end mt-4 custom">
-                <div class="col-12 d-flex justify-content-end">
-                    <a href="{{ URL::to('productos') }}" class="btn btn-ml-inverse text-uppercase mr-2">seguir comprando</a>
-                    <button type="button" disabled="true" id="btnPago" onclick="confirmarOp(this)" class="btn btn-ml text-white text-uppercase">pagar</button>
+                <div class="col-12 col-md-4 col-xl-3">
+                    <a href="{{ URL::to('productos') }}" class="btn btn-block btn-ml-inverse text-uppercase mr-2">seguir comprando</a>
+                </div>
+                <div class="col-12 col-md-4 col-xl-3">
+                    <button type="button" disabled="true" id="btnPago" onclick="confirmarOp(this)" class="btn btn-block btn-ml text-white text-uppercase">pagar</button>
                 </div>
             </div>
         </form>

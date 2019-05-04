@@ -2,7 +2,6 @@
 <link href="{{ asset('css/slick.css') }}" rel="stylesheet" type="text/css" >
 <link href="{{ asset('css/slick-theme.css') }}" rel="stylesheet" type="text/css" >
 @endpush
-<section>
     @if(in_array('slider',$datos["contenido"]["PAGE"]))
     <div id="carouselExampleIndicators" class="carousel slide wrapper-slider" data-ride="carousel">
         <ol class="carousel-indicators">
@@ -122,6 +121,63 @@
         </div>
     </div>
     @endif
+    <div class="wrapper-contacto bg-light py-5">
+        <div class="container">
+            <fieldset>
+                <legend>consulte</legend>
+                <form action="{{ url('/form/contacto') }}" method="post">
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-12">
+                            <input placeholder="Nombre y Apellido / Empresa *" required type="text" value="{{ old('empresa') }}" name="empresa" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-12">
+                            <input placeholder="Email *" required type="email" name="email" value="{{ old('email') }}" class="form-control">
+                        </div>
+                        <div class="col-lg-6 col-12">
+                            <input placeholder="Teléfono" type="phone" name="telefono" value="{{ old('telefono') }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-12">
+                            <input type="text" name="marca" readonly value="IVECO" class="form-control">
+                        </div>
+                        <div class="col-lg-4 col-12">
+                            <input type="text" name="modelo" placeholder="Modelo" value="{{ old('modelo') }}" class="form-control">
+                        </div>
+                        <div class="col-lg-4 col-12">
+                            <input type="number" name="anio" placeholder="Año" value="{{ old('anio') }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <textarea name="mensaje" rows="5" placeholder="Consulta" class="form-control">{{ old('mensaje') }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-12">
+                            <div class="g-recaptcha" data-sitekey="6Lf8ypkUAAAAAKVtcM-8uln12mdOgGlaD16UcLXK"></div>
+                        </div>
+                        <div class="col-lg-6 col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" name="terminos" id="defaultCheck1">
+                            <label class="form-check-label" for="defaultCheck1">
+                                Acepto los términos y condiciones de privacidad
+                            </label>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-g text-white text-uppercase">enviar</button>
+                        </div>
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
     @if(in_array('entrega',$datos["contenido"]["PAGE"]))
     <div class="wrapper-entrega">
         <div class="container d-flex justify-content-center align-items-center">
@@ -141,6 +197,5 @@
         </div>
     </div>
     @endif
-</section>
 @push('scripts')
 @endpush

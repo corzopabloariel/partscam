@@ -32,7 +32,7 @@ class Consultar extends Mailable
      */
     public function build()
     {
-        return $this->subject('Consulta de Producto')->view('page.form.consultar')->with([
+        return $this->replyTo($this->email,$this->nombre)->subject('Consulta de Producto')->view('page.form.consultar')->with([
             'nombre' => $this->nombre,
             'email' => $this->email,
             'mensaje' => $this->mensaje,

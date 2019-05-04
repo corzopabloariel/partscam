@@ -150,6 +150,12 @@ nav .fixed {
 nav .fixed .menuBTN {
     display: none !important;
 }
+nav #carritoHeader span::before {
+    content: "CARRITO (";
+}
+nav #carritoHeader span::after {
+    content: ")";
+}
 nav .fixed .logo {
     display: list-item !important;
 }
@@ -572,6 +578,20 @@ footer .info li + li {
 .wrapper-contacto {
     color: #646464;
 }
+.wrapper-contacto fieldset {
+    padding: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+}
+.wrapper-contacto fieldset legend {
+    text-align: center;
+    font-size: 100%;
+    background: transparent;
+    border: none;
+    padding: 20px;
+    color: #333;
+}
 .wrapper-contacto .info li + li {
     margin-top: 10px;
 }
@@ -638,9 +658,17 @@ footer .info li + li {
     .hidden-tablet {
         display: none !important;
     } 
+    .col-12 + .col-12 {
+        margin-top: .8em;
+    }
     /* ---------------------------------------------------
         NAV
     ----------------------------------------------------- */
+    nav .menu a.btn,
+    nav .menu a.btn:hover {
+        background-color: #000;
+        color: #FFF;
+    }
     section {
         padding-top: 82px;
     }
@@ -662,10 +690,19 @@ footer .info li + li {
         margin-bottom: 1rem;
     }
     nav .fixed .menuBTN {
-        display: block !important;
+        display: flex !important;
     }
-    nav #carritoHeader {
-        display: none;
+    nav .menuBTN button {
+        order: 2
+    }
+    nav .menuBTN a {
+        order: 1
+    }
+    nav #carritoHeader span::before {
+        content: "";
+    }
+    nav #carritoHeader span::after {
+        content: "";
     }
     nav .logo {
         display: list-item !important;

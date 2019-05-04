@@ -7,26 +7,31 @@
     <div class="container py-5">
         <div class="row">
             <div class="col-md-4">
-                <div class="sidebar">
-                    @foreach($datos["menu"] AS $id => $dato)
-                        <h3 class="title mb-1 nombre text-left @if($id == $datos['familia']['id']) active @endif">
-                            <a href="{{ URL::to('productos/familia/'. $id) }}">{{$dato["titulo"]}}</a>
-                        </h3>
-                        @if(count($dato["hijos"]) > 0)
-                            <ul style="" data-nivel="{{$dato['nivel']}}" data-id="{{$id}}" class="list-group">
-                            @foreach ($dato["hijos"] AS $did => $ddato)
-                                @include('page.parts.general._menuItem', ['id' => $did,'dato' => $ddato])
-                            @endforeach
-                            </ul>
-                        @endif
-                    @endforeach
+                <button class="btn btn-primary text-uppercase hidden visible-xs mb-2" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    Productos
+                </button>
+                <div class="collapse dont-collapse-sm" id="collapseExample">
+                    <div class="sidebar">
+                        @foreach($datos["menu"] AS $id => $dato)
+                            <h3 class="title mb-1 nombre text-left @if($id == $datos['familia']['id']) active @endif">
+                                <a href="{{ URL::to('productos/familia/'. $id) }}">{{$dato["titulo"]}}</a>
+                            </h3>
+                            @if(count($dato["hijos"]) > 0)
+                                <ul style="" data-nivel="{{$dato['nivel']}}" data-id="{{$id}}" class="list-group">
+                                @foreach ($dato["hijos"] AS $did => $ddato)
+                                    @include('page.parts.general._menuItem', ['id' => $did,'dato' => $ddato])
+                                @endforeach
+                                </ul>
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
             </div>
             <div class="col-md-8">
                 <div class="row">
                     <div class="col-12 d-flex justify-content-end">
                         <div class="d-flex justify-content-end ordenamiento py-3 w-100 border-top border-bottom">
-                        <div class="text-uppercase d-flex align-items-center">vista:<i onclick="ordenamiento(this,1)" class="activo fas fa-th-large ml-2"></i><i onclick="ordenamiento(this,2)" class="fas fa-th-list ml-2"></i></div>
+                        <div class="text-uppercase d-flex align-items-center hidden-tablet">vista:<i onclick="ordenamiento(this,1)" class="activo fas fa-th-large ml-2"></i><i onclick="ordenamiento(this,2)" class="fas fa-th-list ml-2"></i></div>
                             <select name="" style="width:auto !important;" class="text-uppercase bg-light form-control rounded-0 ml-3" id="">
                                 <option value="1">alfabético a-z</option>
                                 <option value="1">alfabético z-a</option>

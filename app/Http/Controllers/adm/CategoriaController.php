@@ -10,7 +10,7 @@ use App\Categoria;
 class CategoriaController extends Controller
 {
     public function rec_padre($data, $sin = null, $tipo = 0, $strong = 0) {
-        if($data["tipo"] == 1)
+        if($data["tipo"] == 2) 
             return is_null($sin) ? "{$data["nombre"]}" : "";
         else
             return self::rec_padre($data->padre, $sin, $tipo, $strong) . ($tipo != $data["tipo"] ? ", " . ($strong ? "<strong>{$data["nombre"]}</strong>" : "{$data["nombre"]}") : "");
@@ -32,26 +32,13 @@ class CategoriaController extends Controller
         $title = "Categoría de productos";
         $view = "adm.parts.familia.categoria";
         $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
-        $categoriasSelect = Familia::where("id","!=",5)->first()->categorias->where('tipo',1)->pluck('nombre', 'id');
-        $categorias = DB::table("categorias AS c")
-                            ->join('familias AS f', 'f.id', '=', 'c.familia_id')
-                        ->where('c.padre_id','!=',0)
-                        ->where('c.tipo','>',1)
-                        ->select('c.*', 'f.nombre AS familia')
-                        ->orderBy('f.orden')
-                        ->orderBy('c.tipo','ASC')
-                        ->orderBy('c.orden')
-                        ->simplePaginate(15);
-        $select2 = [];
-        $select2["familias"] = [];
-        $select2["categorias"] = [];
-        foreach($familias AS $k => $v)
-            $select2["familias"][] = ["id" => $k, "text" => $v];
-        foreach($categoriasSelect AS $k => $v)
-            $select2["categorias"][] = ["id" => $k, "text" => $v];
+        $categorias = DB::select(
+            DB::raw('SELECT DISTINCT c.nombre, c.orden, c.id FROM categorias AS c WHERE c.tipo > 2 GROUP BY c.nombre ORDER BY c.orden asc'));
+        $categorias = DB::table('categorias')->where("tipo",2)->distinct()->select("nombre","id","image","orden","tipo")->orderBy("tipo")->orderBy("orden")->simplePaginate(15);
         
         foreach($categorias AS $c) {
-            $c->padre = self::rec_padre(Categoria::find($c->id), null, $c->tipo, 1);
+            $aux = Categoria::find($c->id);
+            $c->familia = $aux->familia["nombre"];
         }
         return view('adm.distribuidor',compact('title','view','familias','categorias','select2'));
     }

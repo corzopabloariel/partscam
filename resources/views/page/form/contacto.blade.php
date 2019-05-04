@@ -8,12 +8,16 @@
 	<br>
 	<h3>Datos del contacto</h3>
 	<ul>
-		<li><strong>Nombre:</strong> {{$nombre}} {{$apellido}}</li>
-		<li><strong>Télefono:</strong> {{$telefono}}</li>
+        @if(is_null($empresa))
+        <li><strong>Nombre y Apellido / Empresa:</strong> {{$nombre}}</li>
+        @else
+        <li><strong>Nombre y Apellido / Empresa:</strong> {{$empresa}}</li>
+        @endif
+        <li><strong>Télefono:</strong> {{$telefono}}</li>
 		<li><strong>Email:</strong> <a href="mailto:{{$email}}">{{$email}}</a></li>
 	</ul>
     <br>
-    <h4>Mensaje:</h4>
+    <h4>@if(is_null($empresa)) Mensaje @else Consulta @endif:</h4>
     <p>{{$mensaje}}</p>
     <br>
     @if(!empty($marca))

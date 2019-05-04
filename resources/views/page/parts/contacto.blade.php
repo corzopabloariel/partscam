@@ -33,11 +33,8 @@
                 <form action="{{ url('/form/contacto') }}" method="post">
                     {{ csrf_field() }}
                     <div class="row">
-                        <div class="col-lg-6 col-12">
-                            <input placeholder="Nombre *" required type="text" value="{{ old('nombre') }}" name="nombre" class="form-control">
-                        </div>
-                        <div class="col-lg-6 col-12">
-                            <input placeholder="Apellido" type="text" name="apellido" value="{{ old('apellido') }}" class="form-control">
+                        <div class="col-12">
+                            <input placeholder="Nombre y Apellido / Empresa*" required type="text" value="{{ old('nombre') }}" name="nombre" class="form-control">
                         </div>
                     </div>
                     <div class="row">
@@ -55,7 +52,7 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-4 col-12">
-                            <input type="text" name="marca" placeholder="Marca Iveco" value="{{ old('marca') }}" class="form-control">
+                            <input type="text" name="marca" readonly value="IVECO" class="form-control">
                         </div>
                         <div class="col-lg-4 col-12">
                             <input type="text" name="modelo" placeholder="Modelo" value="{{ old('modelo') }}" class="form-control">

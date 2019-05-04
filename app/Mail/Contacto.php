@@ -16,16 +16,16 @@ class Contacto extends Mailable
      *
      * @return void
      */
-    public function __construct($nombre, $apellido, $telefono, $email, $mensaje, $marca, $modelo, $anio)
+    public function __construct($nombre, $telefono, $email, $mensaje, $marca, $modelo, $anio, $empresa = null)
     {
         $this->nombre = $nombre;
-        $this->apellido = $apellido;
         $this->telefono = $telefono;
         $this->email = $email;
         $this->mensaje = $mensaje;
         $this->marca = $marca;
         $this->modelo = $modelo;
         $this->anio = $anio;
+        $this->empresa = $empresa;
     }
 
     /**
@@ -35,15 +35,15 @@ class Contacto extends Mailable
      */
     public function build()
     {
-        return $this->view('page.form.contacto')->with([
+        return $this->replyTo($this->email,empty($this->empresa) ? $this->nombre : $this->empresa)->subject(empty($this->empresa) ? 'Contacto' : 'Consulta')->view('page.form.contacto')->with([
             'nombre' => $this->nombre,
             'telefono' => $this->telefono,
-            'apellido' => $this->apellido,
             'email' => $this->email,
             'mensaje' => $this->mensaje,
             'marca' => $this->marca,
             'modelo' => $this->modelo,
-            'anio' => $this->anio
+            'anio' => $this->anio,
+            'empresa' => $this->empresa
         ]);
     }
 }
