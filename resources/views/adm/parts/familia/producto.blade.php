@@ -30,7 +30,9 @@
         </div>
         <div class="card mt-2" id="wrapper-tabla">
             <div class="card-body">
-                <table class="table mb-0" id="tabla"></table>
+                <div class="table-responsive">
+                    <table class="table mb-0" id="tabla"></table>
+                </div>
                 {{ $productos->links() }}
             </div>
         </div>

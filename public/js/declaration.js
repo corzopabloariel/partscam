@@ -291,7 +291,7 @@ const ENTIDADES = {
         ATRIBUTOS: {
             orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"100px"},
             image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 400x393",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"151px"},
-            familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"},
+            //familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"},
             //padre: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"CATEGORÍA",WIDTH:"220px"},
             nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
             //padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"}
@@ -306,6 +306,33 @@ const ENTIDADES = {
             },
             {
                 image: '<div class="col-12 col-md-6 col-lg-4">/image/</div>',
+            },
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}},
+            familia_id: {onchange: "changeFamilia(this, 1); habilitar(this)"},
+            modelo_id: {onchange: "changeFamilia(this, 2)"},
+        }
+    },
+    subcategorias: {
+        ATRIBUTOS: {
+            orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"100px"},
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 400x393",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"151px"},
+            //familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"},
+            //padre: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"CATEGORÍA",WIDTH:"220px"},
+            nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
+            //padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"}
+        },
+        FORM: [
+            {
+                orden: '<div class="col-5 col-md-4">/orden/</div>',
+                BTN: '<div class="d-flex col-3 col-md-4">/BTN/</div>'
+            },
+            {
+                nombre: '<div class="col-12 col-md-8">/nombre/</div>'
+            },
+            {
+                image: '<div class="col-12 col-md-6 col-lg-6">/image/</div>',
             },
         ],
         FUNCIONES: {

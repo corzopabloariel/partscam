@@ -32,13 +32,10 @@ class CategoriaController extends Controller
         $title = "Categoría de productos";
         $view = "adm.parts.familia.categoria";
         $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
-        $categorias = DB::select(
-            DB::raw('SELECT DISTINCT c.nombre, c.orden, c.id FROM categorias AS c WHERE c.tipo > 2 GROUP BY c.nombre ORDER BY c.orden asc'));
-        $categorias = DB::table('categorias')->where("tipo",2)->distinct()->select("nombre","id","image","orden","tipo")->orderBy("tipo")->orderBy("orden")->simplePaginate(15);
         
+        $categorias = Categoria::where("tipo",2)->orderBy("tipo")->orderBy("orden")->groupBy("nombre")->simplePaginate(15);
         foreach($categorias AS $c) {
-            $aux = Categoria::find($c->id);
-            $c->familia = $aux->familia["nombre"];
+            $c["familia"] = $c->familia["nombre"];
         }
         return view('adm.distribuidor',compact('title','view','familias','categorias','select2'));
     }
@@ -51,46 +48,17 @@ class CategoriaController extends Controller
      */
     /**
      * CONSIDERACIONES
-     * @param(modelo_id) pertenece a la tabla CATEGORIA
-     * @param(padre_id) si es != null, es una subcategoria - buscar y agregar tipo correspondiente
+     * TIPO = 1: MODELO
+     * TIPO = 2: CATEGORIA
      */
     public function store(Request $request, $data = null)
     {
         $datosRequest = $request->all();
-        /**
-         * @param firstFmaily - elemento por defecto en el guardado
-         */
-        $firstFamily = Familia::orderBy('orden')->first();
-        $flagFamily = false;
+        $tipo = 2;
+        $family = Familia::get();
+        $image = null;
 
-        $padre_id = 0;
-        $tipo = 1;
-        if(isset($datosRequest["padre_id"])) {
-            if(is_null($datosRequest["padre_id"]))
-                $flagFamily = true;
-            $padre_id = is_null($datosRequest["padre_id"]) ? $firstFamily["id"] : $datosRequest["padre_id"];
-        }
-        if(!is_null($data)) {
-            $tipo = $data["tipo"];
-            if($data["tipo"] == 2)
-                $padre_id = $datosRequest["modelo_id"];
-        } else {
-            if(empty($datosRequest["padre_id"]))
-                $tipo = 2;
-            else
-                $tipo = 3;
-        }
-        $ARR_data = [];
-        $ARR_data["image"] = null;
-        $ARR_data["familia_id"] = $datosRequest["familia_id"];
-        $ARR_data["padre_id"] = $padre_id;
-        $ARR_data["nombre"] = $datosRequest["nombre"];
-        $ARR_data["orden"] = $datosRequest["orden"];
-        $ARR_data["tipo"] = $tipo;
         $file = $request->file("image");
-        
-        if(!is_null($data))
-            $ARR_data["image"] = $data["image"];
         if(!is_null($file)) {
             $path = public_path('images/categorias/');
             if (!file_exists($path))
@@ -98,25 +66,78 @@ class CategoriaController extends Controller
             $imageName = time()."_categoria.".$file->getClientOriginalExtension();
             
             $file->move($path, $imageName);
-            $ARR_data["image"] = "images/categorias/{$imageName}";
-            
-            if(!is_null($data)) {
-                $filename = public_path() . "/" . $data["image"];
-                if (file_exists($filename))
-                    unlink($filename);
+            $image = "images/categorias/{$imageName}";
+        }
+
+        if(is_null($data)) {
+            $aux = Categoria::where("familia_id","!=",5)->where("tipo",$tipo)->orderBy("did","DESC")->first();
+            $did = $aux["did"] + 1;
+            foreach($family AS $f) {
+                $modelos = $f->modelos;
+                foreach($modelos AS $m) {
+                    $ARR_data = [];
+                    $ARR_data["did"] = $did;
+                    $ARR_data["image"] = $image;
+                    $ARR_data["familia_id"] = $f["id"];
+                    $ARR_data["padre_id"] = $m["id"];
+                    $ARR_data["nombre"] = $datosRequest["nombre"];
+                    $ARR_data["orden"] = $datosRequest["orden"];
+                    $ARR_data["tipo"] = $tipo;
+                    
+                    Categoria::create($ARR_data);
+                }
+            }
+        } else {
+            if(is_null($image))
+                $image = $data["image"];
+            else {
+                if(!is_null($data["image"])) {
+                    $filename = public_path() . "/" . $data["image"];
+                    if (file_exists($filename))
+                        unlink($filename);
+                }
+            }
+            foreach($family AS $f) {
+                $modelos = $f->modelos;
+                foreach($modelos AS $m) {
+                    $find = Categoria::
+                            where("tipo",$tipo)->
+                            where("familia_id",$f["id"])->
+                            where("padre_id",$m["id"])->
+                            where("did",$data["did"])->first();
+                    if(is_null($find)) {
+                        $aux = [];
+                        $aux["image"] = $image;
+                        $aux["did"] = $data["did"];
+                        $aux["familia_id"] = $f["id"];
+                        $aux["padre_id"] = $m["id"];
+                        $aux["nombre"] = $datosRequest["nombre"];
+                        $aux["orden"] = $datosRequest["orden"];
+                        $aux["tipo"] = $tipo;
+                        Categoria::create($aux);
+                    } else {
+                        $aux = [];
+                        $aux["image"] = $image;
+                        $aux["nombre"] = $datosRequest["nombre"];
+                        $aux["orden"] = $datosRequest["orden"];
+                        $find->fill($aux);
+                        $find->save();
+                    }
+                }
             }
         }
-        if(is_null($data))
-            Categoria::create($ARR_data);
-        else {
-            $data->fill($ARR_data);
-            $data->save();
-        }
-        if($flagFamily)
-            return back()->withErrors(['mssg' => 'Registro guardado sin Familia / Modelo / Categoría']);
+        
         return back();
     }
-
+    /**
+     * 
+     */
+    public function show($id, $tipo) {
+        $data = Categoria::find($id);
+        $data["hijos"] = $data->hijos->where("tipo", $tipo + 1)->groupBy("nombre");
+        $data["padre"] = $data->padre;
+        return $data;
+    }
     /**
      * Display the specified resource.
      *
@@ -172,8 +193,7 @@ class CategoriaController extends Controller
     public function update(Request $request, $id)
     {
         $data = self::edit($id);
-        $data["modelo_id"] = self::store($request, $data);
-        return back();
+        return self::store($request, $data);
     }
 
     /**
@@ -184,6 +204,15 @@ class CategoriaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = self::edit($id);
+        if(!is_null($data["image"])) {
+            $filename = public_path() . "/" . $data["image"];
+            if (file_exists($filename))
+                unlink($filename);
+        }
+        $Arr_data = Categoria::where("did",$data["did"])->pluck("id");
+        
+        Categoria::destroy($Arr_data);
+        return 1;
     }
 }

@@ -138,6 +138,7 @@ class GeneralController extends Controller
         $datos["menu"] = [];
         foreach($familias AS $f) {
             $datos["menu"][$f["id"]] = [];
+            $datos["menu"][$f["id"]]["nivel"] = 0;
             $datos["menu"][$f["id"]]["titulo"] = $f["nombre"];
             $datos["menu"][$f["id"]]["hijos"] = self::categoriasRec($f->categorias->where('padre_id',0),0);
         }
@@ -175,7 +176,7 @@ class GeneralController extends Controller
             $datos["menu"][$f["id"]]["nivel"] = 0;
             $datos["menu"][$f["id"]]["titulo"] = $f["nombre"];
             $datos["menu"][$f["id"]]["image"] = $f["image"];
-            $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),$idsCategorias);
+            $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),0,$idsCategorias);
         }
         return view('page.distribuidor',compact('title','view','datos'));
     }
@@ -216,13 +217,13 @@ class GeneralController extends Controller
             $datos["menu"][$f["id"]]["nivel"] = 0;
             $datos["menu"][$f["id"]]["titulo"] = $f["nombre"];
             $datos["menu"][$f["id"]]["image"] = $f["image"];
-            $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),$idsCategorias);
+            $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),0,$idsCategorias);
         }
         
         return view('page.distribuidor',compact('title','view','datos'));
     }
     /** */
-    public function categoriasRec($categorias, $activo = null) {
+    public function categoriasRec($categorias, $nivel, $activo = null) {
         $menu = [];
         $nivel ++;
         foreach($categorias AS $c) {
@@ -241,7 +242,7 @@ class GeneralController extends Controller
                     $i["imagenes"] = $i->imagenes;
                 $menu[$c["id"]]["hijos"] = [];
             }
-            $menu[$c["id"]]["hijos"] = self::categoriasRec($c->hijos, $activo);
+            $menu[$c["id"]]["hijos"] = self::categoriasRec($c->hijos, $nivel, $activo);
         }
         return $menu;
     }

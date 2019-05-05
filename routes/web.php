@@ -94,10 +94,19 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
             Route::get('index', ['uses' => 'adm\CategoriaController@index', 'as' => '.index']);
             Route::post('store', ['uses' => 'adm\CategoriaController@store', 'as' => '.store']);
             Route::get('edit/{id}', ['uses' => 'adm\CategoriaController@edit', 'as' => '.edit']);
+            Route::get('show/{id}/{tipo}', ['uses' => 'adm\CategoriaController@show', 'as' => '.show']);
             Route::get('delete/{id}', ['uses' => 'adm\CategoriaController@destroy', 'as' => '.destroy']);
             Route::post('update/{id}', ['uses' => 'adm\CategoriaController@update', 'as' => 'update']);
             Route::get('familia_categoria/{id}/{tipo}', ['uses' => 'adm\CategoriaController@familia_categoria', 'as' => '.familia_categoria']);
             
+            Route::group(['prefix' => 'subcategorias', 'as' => '.subcategorias'], function() {
+                Route::get('index', ['uses' => 'adm\SubcategoriaController@index', 'as' => '.index']);
+                Route::post('store', ['uses' => 'adm\SubcategoriaController@store', 'as' => '.store']);
+                Route::get('edit/{id}', ['uses' => 'adm\SubcategoriaController@edit', 'as' => '.edit']);
+                Route::get('delete/{id}', ['uses' => 'adm\SubcategoriaController@destroy', 'as' => '.destroy']);
+                Route::post('update/{id}', ['uses' => 'adm\SubcategoriaController@update', 'as' => 'update']);
+            });
+
             Route::group(['prefix' => 'productos', 'as' => '.productos'], function() {
                 Route::get('index', ['uses' => 'adm\ProductoController@index', 'as' => '.index']);
                 Route::post('store', ['uses' => 'adm\ProductoController@store', 'as' => '.store']);

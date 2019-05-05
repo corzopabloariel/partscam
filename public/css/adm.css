@@ -18,6 +18,3 @@
 table tbody td {
     vertical-align: middle !important;
 }
-table tbody td button + button {
-    margin-left: 10px;
-}

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Categoria extends Model
 {
     protected $fillable = [
+        'did',
         'padre_id',
         'familia_id',
         'tipo',
