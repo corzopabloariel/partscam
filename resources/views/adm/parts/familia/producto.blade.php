@@ -7,7 +7,7 @@
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
             @endif
             <form class="position-relative" action="" method="post">
-                <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Nombre, Categoría y Código"/>
+                <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Código"/>
                 <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
             </form>
         </div>
@@ -39,13 +39,23 @@
     </div>
 </section>
 @push('scripts_distribuidor')
+<script src="//cdn.ckeditor.com/4.7.3/full/ckeditor.js"></script>
 <script>
     const src = "{{ asset('images/general/no-img.png') }}";
+    $(document).on("ready",function() {
+        $(".ckeditor").each(function () {
+            CKEDITOR.replace( $(this).attr("name") );
+        });
+    });
     window.familias = @json($familias);
     window.prod = @json($prod);console.log(window.prod)
     window.productoimages = new Pyrus("productoimages", null, src);
     window.pyrus = new Pyrus("productos", {familia_id: {TIPO:"OP",DATA: window.familias},relaciones: {TIPO:"OP",DATA: window.prod}}, src);
     window.productos = @json($productos);
+    formatter = new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+    });
     /** ------------------------------------- */
     imageAdd = function(data = null) {
         if(window.countImage === undefined) window.countImage = 0;
@@ -355,7 +365,7 @@
                             td = td.cantidad;
                             break;
                         case "precio":
-                            td = td.precio;
+                            td = formatter.format(td.precio);
                             break;
                         default:
                             td = td.nombre;
@@ -369,11 +379,12 @@
                 tr += `<td class="${c.CLASS}">${td}</td>`;
             });
             tr += `<td class="text-center">`;
-                tr += `<button onclick="edit(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
-                tr += `<button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
-                tr += `<hr/>`;
-                tr += `<button onclick="precio(this,${data.id})" class="btn btn-info" title="Cambiar PRECIO"><i class="fas fa-hand-holding-usd"></i></button>`;
-                tr += `<button onclick="stock(this,${data.id})" class="btn btn-success" title="Agregar/Cambiar STOCK"><i class="fas fa-box-open"></i></button>`;
+                tr += `<div class="d-flex flex-wrap h-100 w-100 justify-content-around align-items-center">`
+                    tr += `<button onclick="edit(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
+                    tr += `<button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
+                    tr += `<button onclick="precio(this,${data.id})" class="btn btn-info" title="Cambiar PRECIO"><i class="fas fa-hand-holding-usd"></i></button>`;
+                    tr += `<button onclick="stock(this,${data.id})" class="btn btn-success" title="Agregar/Cambiar STOCK"><i class="fas fa-box-open"></i></button>`;
+                tr += `</div>`;
             tr += `</td>`;
             table.find("tbody").append(`<tr data-id="${data.id}">${tr}</tr>`);
         });

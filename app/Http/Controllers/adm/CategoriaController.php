@@ -210,7 +210,7 @@ class CategoriaController extends Controller
             if (file_exists($filename))
                 unlink($filename);
         }
-        $Arr_data = Categoria::where("did",$data["did"])->pluck("id");
+        $Arr_data = Categoria::where("did",$data["did"])->where("tipo",$data["tipo"])->pluck("id");
         
         Categoria::destroy($Arr_data);
         return 1;

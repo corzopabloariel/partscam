@@ -388,6 +388,7 @@ const ENTIDADES = {
             orden: {TIPO:"TP_STRING",MAXLENGTH:10,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase text-center",WIDTH:"150px"},
             codigo: {TIPO:"TP_STRING",MAXLENGTH:20,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase",WIDTH:"150px",NOMBRE:"código"},
             nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
+            aplicacion: {TIPO:"TP_TEXT",EDITOR:1,FIELDSET:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"aplicación"},
             stock: {TIPO:"TP_ENTERO",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
             precio: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",CLASS:"text-right"},
             mercadolibre: {TIPO:"TP_STRING",MAXLENGTH: 150,VISIBILIDAD:"TP_VISIBLE_FORM"},
@@ -414,6 +415,9 @@ const ENTIDADES = {
             {
                 familia_id: '<div class="col-12 col-md-6">/familia_id/</div>',
                 categoria_id: '<div class="col-12 col-md-6">/categoria_id/</div>',
+            },
+            {
+                aplicacion: '<div class="col-12 col-md-9">/aplicacion/</div>',
             },
             {
                 relaciones: '<div class="col-12 col-md-6">/relaciones/</div>',

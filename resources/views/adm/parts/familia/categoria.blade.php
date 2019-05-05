@@ -223,6 +223,25 @@
         };
         promiseFunction();
     };
+    eraseModal = function(t, id) {
+        $(t).attr("disabled",true);
+        let promise = new Promise(function (resolve, reject) {
+            let url = `{{ url('/adm/familias/${window.pyrus.entidad}/subcategorias/delete/${id}') }}`;
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", url, true );
+            
+            xmlHttp.send( null );
+            resolve(xmlHttp.responseText);
+        });
+
+        promiseFunction = () => {
+            promise
+                .then(function(msg) {
+                    $("#wrapper-tablaModal table").find(`tr[data-id="${id}"]`).remove();
+                })
+        };
+        promiseFunction();
+    };
     /** ------------------------------------- */
     remove = function(t) {
         add($("#btnADD"));
@@ -398,13 +417,53 @@
     /** ------------------------------------- */
     submitModal = function(t) {
         let formElement = document.getElementById("formModal");
-
+        let elementForm = new FormData(formElement);
+        $("#formModal *").attr("disabled", true);
         var xmlHttp = new XMLHttpRequest();
+        xmlHttp.responseType = 'json';
         xmlHttp.open( "POST", t.action );
         xmlHttp.onload = function() {
-            alert(xmlHttp.response);
+            console.log(xmlHttp.response);
+            $("#formModal *").removeAttr("disabled");
+            let table = $("#wrapper-tablaModal table");
+            date = new Date();
+
+            if(table.find(`tbody tr[data-id="${xmlHttp.response.id}"]`).length) {
+                let tr = table.find(`tbody tr[data-id="${xmlHttp.response.id}"]`);
+                img = `{{ asset('${xmlHttp.response.image}') }}?t=${date.getTime()}`;
+
+                tr.find("td:first-child").text(xmlHttp.response.orden);
+                tr.find("td:nth-child(2) img").attr("src",img);
+                tr.find("td:nth-child(3)").text(xmlHttp.response.nombre);
+            } else {
+                let columnas = window.pyrus.columnas();
+                tr = "";
+                if(!table.find("tbody").length) 
+                    table.append("<tbody></tbody>");
+                columnas.forEach(function(c) {
+                    td = xmlHttp.response[c.COLUMN] === null ? "" : xmlHttp.response[c.COLUMN];
+                    if(typeof td == 'object')
+                        td = td.nombre;
+                    if(window.pyrus.especificacion[c.COLUMN].TIPO == "TP_FILE") {
+                        date = new Date();
+                        img = `{{ asset('${td}') }}?t=${date.getTime()}`;
+                        td = `<img class="w-100" src="${img}" onerror="this.src='${src}'"/>`;
+                    }
+                    tr += `<td class="${c.CLASS}">${td}</td>`;
+                });
+                tr += `<td>`;
+                    tr += `<div class="d-flex flex-wrap h-100 w-100 justify-content-around align-items-center">`
+                        tr += `<button onclick="editModal(this,${xmlHttp.response.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
+                        tr += `<button onclick="eraseModal(this,${xmlHttp.response.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
+                        //tr += `<hr>`;
+                        tr += `<button onclick="hijos(this,${xmlHttp.response.id},${xmlHttp.response.tipo}, 1)" type="button" class="btn btn-primary"><i class="fas fa-table" title="Listar hijos"></i></button>`;
+                    tr += `</div>`;
+                tr += `</td>`;
+                table.find("tbody").append(`<tr data-id="${xmlHttp.response.id}">${tr}</tr>`);
+            }
+            addModal($("#btnADDmodal"));
         }
-        xmlHttp.send(new FormData(formElement));
+        xmlHttp.send(elementForm);
         return false;
     }
     hijos = function(t, id, tipo, conPadre = 0) {
@@ -478,9 +537,9 @@
                             tr += `<td class="${c.CLASS}">${td}</td>`;
                         });
                         tr += `<td>`;
-                            tr += `<div class="d-flex h-100 w-100 justify-content-around align-items-center">`
+                            tr += `<div class="d-flex flex-wrap h-100 w-100 justify-content-around align-items-center">`
                                 tr += `<button onclick="editModal(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
-                                tr += `<button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
+                                tr += `<button onclick="eraseModal(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
                                 //tr += `<hr>`;
                                 tr += `<button onclick="hijos(this,${data.id},${data.tipo}, 1)" type="button" class="btn btn-primary"><i class="fas fa-table" title="Listar hijos"></i></button>`;
                             tr += `</div>`;
@@ -523,7 +582,7 @@
                 tr += `<td class="${c.CLASS}">${td}</td>`;
             });
             tr += `<td>`;
-                tr += `<div class="d-flex h-100 w-100 justify-content-around align-items-center">`
+                tr += `<div class="d-flex flex-wrap h-100 w-100 justify-content-around align-items-center">`
                     tr += `<button onclick="edit(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
                     tr += `<button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
                     //tr += `<hr>`;
