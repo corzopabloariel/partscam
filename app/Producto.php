@@ -10,6 +10,7 @@ class Producto extends Model
         'codigo',
         'nombre',
         'mercadolibre',
+        'aplicacion',
         'familia_id',
         'categoria_id',
         'orden'

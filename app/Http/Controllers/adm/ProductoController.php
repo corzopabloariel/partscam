@@ -22,6 +22,29 @@ class ProductoController extends Controller
         else
             return self::rec_padre($data->padre, $tipo) . ", {$data["nombre"]}";
     }
+    public function rec_hijos($data) {
+        $data["hijos"] = $data->hijos;
+        
+        if(empty($data["hijos"]))
+            return $data;
+        else {
+            foreach($data["hijos"] AS $h)
+                $h["hijos"] = self::rec_hijos($h);
+            return $data["hijos"];
+        }
+    }
+    public function select2($data) {
+        
+        if(count($data["hijos"]) == 0) {
+            return ["id" => $data["id"], "text" => $data["nombre"]];
+        } else {
+            
+            for($i = 0; $i < count($data["hijos"]); $i++) {
+                $data["hijos"][$i]["nombre"] = "{$data["nombre"]}, {$data["hijos"][$i]["nombre"]}";
+                return self::select2($data["hijos"][$i]);
+            }
+        }
+    }
     /**
      * Display a listing of the resource.
      *
@@ -56,14 +79,27 @@ class ProductoController extends Controller
         return view('adm.distribuidor',compact('title','view'));
     }
 
-    public function familia_categoria($id)
+    public function familia_categoria($familia_id, $modelo_id)
     {
-        $familia = Familia::find($id);
-        $catTOTAL = $familia->categorias;
-        foreach($catTOTAL AS $c)
-            $c["nombre"] = self::rec_padre($c);
-        
-        return $catTOTAL->pluck('nombre', 'id');
+        $familia = Familia::find($familia_id);
+        if(empty($modelo_id)) {
+            $modelos = $familia->categorias->where("tipo",1);
+            
+            $select2[] = ["id" => "", "text" => ""];
+            foreach($modelos AS $m)
+                $select2[] = ["id" => $m["id"], "text" => $m["nombre"]];
+            return $select2;
+        } else {
+            $catTOTAL = $familia->categorias->where("padre_id",$modelo_id)->where("tipo",">",1)->groupBy("nombre");
+            $select2 = [];
+            foreach($catTOTAL AS $c) {
+                $c[0]["hijos"] = self::rec_hijos($c[0]);
+                $select2[] = ["id" => $c[0]["id"], "text" => $c[0]["nombre"]];
+                $select2[] = self::select2($c[0]);
+            }
+            dd($select2);
+            return $select2;
+        }
     }
 
     public function compras()
@@ -110,6 +146,7 @@ class ProductoController extends Controller
         $ARR_data["nombre"] = $datosRequest["nombre"];
         $ARR_data["categoria_id"] = $categoria_id;
         $ARR_data["mercadolibre"] = $datosRequest["mercadolibre"];
+        $ARR_data["aplicacion"] = $datosRequest["aplicacion"];
         $ARR_data["orden"] = $datosRequest["orden"];
         $ARR_data["familia_id"] = $datosRequest["familia_id"];
         //dd($ARR_data);

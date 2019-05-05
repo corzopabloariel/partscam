@@ -141,7 +141,7 @@
                     continue;
                 }
                 if(window.pyrus.especificacion[x].EDITOR !== undefined) {
-                    CKEDITOR.instances[`${x}_es`].setData(data[x]);
+                    CKEDITOR.instances[`${x}`].setData(data[x]);
                     continue;
                 }
                 if(window.pyrus.especificacion[x].TIPO == "TP_FILE") {
@@ -213,15 +213,22 @@
         $("#padre_id").attr("disabled",true);
     };
     /** ------------------------------------- */
-    changeFamilia = function(t) {
+    changeFamilia = function(t,tipo) {
         id = $(t).val();
         if(id === null || id == "") {
             $("#categoria_id").find("option.new").remove();
             $("#categoria_id").attr("disabled",true);
         } else {
             $(t).attr("disabled",true);
+            let familiaID = 0, modeloID = 0; 
+            if(tipo == 0) {
+                familiaID = id;
+            } else {
+                familiaID = $("#familia_id").val();
+                modeloID = id;
+            }
             let promise = new Promise(function (resolve, reject) {
-                let url = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/familia_categoria/${id}') }}`;
+                let url = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/familia_categoria/${familiaID}/${modeloID}') }}`;
                 var xmlHttp = new XMLHttpRequest();
                 xmlHttp.responseType = 'json';
                 xmlHttp.open( "GET", url, true );
@@ -235,16 +242,43 @@
                 promise
                     .then(function(data) {
                         $(t).removeAttr("disabled");
-                        $("#categoria_id").find("option.new").remove();
-                        $("#categoria_id").attr("disabled",true);
-                        if(data === null || data === undefined) return false;
-                        if(Object.keys(data).length > 0) { 
-                            $("#categoria_id").removeAttr("disabled");
-                            for(let x in data)
-                                $("#categoria_id").append(`<option class="new" value="${x}">${data[x]}</option>`);
-                            if(window.categoriaID !== undefined) {
-                                if(window.categoriaID != 0)
-                                    $("#categoria_id").val(window.categoriaID).trigger("change");
+                        if(tipo == 0) {
+                            $("#modelo_id").find("option.new").remove();
+                            $("#modelo_id").attr("disabled",true);
+                            if(data === null || data === undefined) return false;
+                            if(Object.keys(data).length > 0) { 
+                                $("#modelo_id").removeAttr("disabled");
+                                $("#modelo_id").select2({
+                                    theme: "bootstrap",
+                                    tags: "true",
+                                    placeholder: "Seleccione: MODELO",
+                                    data: data,
+                                    width: "resolve"
+                                });
+                                
+                                if(window.categoriaID !== undefined) {
+                                    if(window.categoriaID != 0)
+                                        $("#categoria_id").val(window.categoriaID).trigger("change");
+                                }
+                            }
+                        } else {
+                            $("#categoria_id").find("option.new").remove();
+                            $("#categoria_id").attr("disabled",true);
+                            if(data === null || data === undefined) return false;
+                            if(Object.keys(data).length > 0) { 
+                                $("#categoria_id").removeAttr("disabled");
+                                $("#categoria_id").select2({
+                                    theme: "bootstrap",
+                                    tags: "true",
+                                    placeholder: "Seleccione: MODELO",
+                                    data: data,
+                                    width: "resolve"
+                                });
+                                
+                                if(window.categoriaID !== undefined) {
+                                    if(window.categoriaID != 0)
+                                        $("#categoria_id").val(window.categoriaID).trigger("change");
+                                }
                             }
                         }
                     })
@@ -342,6 +376,12 @@
                 tags: "true",
                 allowClear: true,
                 placeholder: "Seleccione: CATEGORÍA",
+            });
+            $("#modelo_id").select2({
+                theme: "bootstrap",
+                tags: "true",
+                placeholder: "Seleccione: MODELO",
+                width: "resolve"
             });
         }
         let columnas = window.pyrus.columnas();

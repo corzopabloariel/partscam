@@ -486,6 +486,7 @@
         promiseFunction = () => {
             promise
                 .then(function(data) {
+                    console.log(data)
                     $(t).removeAttr("disabled");
                     let columnas = window.pyrus.columnas();
                     let subcategorias = new Pyrus("subcategorias", null, src);
