@@ -15,6 +15,9 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link href="{{ asset('css/select2.css') }}" rel="stylesheet">
         <link href="https://select2.github.io/select2-bootstrap-theme/css/select2-bootstrap.css" rel="stylesheet">
+        <link href="{{ asset('css/alertifyjs/alertify.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/alertifyjs/themes/bootstrap.min.css') }}" rel="stylesheet">
+
         <link href="{{ asset('css/css.css') }}" rel="stylesheet">
         <link href="{{ asset('css/adm.css') }}" rel="stylesheet">
         <link href="{{ asset('css/nav.css') }}" rel="stylesheet">
@@ -79,10 +82,15 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="{{ asset('js/select2.full.js') }}"></script>
         <script src="{{ asset('js/jquery.maskMoney.js') }}"></script>
+        <script src="{{ asset('js/alertify.min.js') }}"></script>
         <script src="{{ asset('js/declaration.js') }}"></script>
         <script src="{{ asset('js/pyrus.min.js') }}"></script>
         <script>
-            window.url = "{{ url()->current() }}";console.log(window.url)
+            window.url = "{{ url()->current() }}";console.log(window.url);
+            alertify.defaults.transition = "slide";
+            alertify.defaults.theme.ok = "btn btn-primary";
+            alertify.defaults.theme.cancel = "btn btn-danger";
+            alertify.defaults.theme.input = "form-control";
         </script>
         @stack('scripts')
         {{--<script src="{{ asset('js/adm.js') }}"></script>--}}

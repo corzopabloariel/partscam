@@ -7,7 +7,8 @@
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
             @endif
             <form class="position-relative" action="" method="post">
-                <input style="width: 350px;" type="text" name="" class="form-control" placeholder="Buscador: Código"/>
+                <input style="width: 350px;" type="text" name="buscar" class="form-control" placeholder="Buscador: Código"/>
+                @csrf
                 <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
             </form>
         </div>
@@ -127,9 +128,18 @@
                     window.categoriaID = data[x];
                     continue;
                 }
+                if(x == "modelo_id") {
+                    window.modeloID = data[x].id;
+                    continue;
+                }
                 if(x == "precio") {
-                    if(data[x] !== null)
-                    $(`[name="${x}"]`).val(data[x].precio);
+                    if(data[x] !== null) {
+                        p = data[x].precio.toFixed(2).toString();
+                        console.log(p)
+                        p = p.replace(".",",");
+                        $(`[name="${x}"]`).val(p);
+                        $(`[name="${x}"]`).focus();
+                    }
                     continue;
                 }
                 if(x == "stock") {
@@ -249,16 +259,15 @@
                             if(Object.keys(data).length > 0) { 
                                 $("#modelo_id").removeAttr("disabled");
                                 $("#modelo_id").select2({
-                                    theme: "bootstrap",
                                     tags: "true",
                                     placeholder: "Seleccione: MODELO",
                                     data: data,
                                     width: "resolve"
                                 });
                                 
-                                if(window.categoriaID !== undefined) {
-                                    if(window.categoriaID != 0)
-                                        $("#categoria_id").val(window.categoriaID).trigger("change");
+                                if(window.modeloID !== undefined) {
+                                    if(window.modeloID != 0)
+                                        $("#modelo_id").val(window.modeloID).trigger("change");
                                 }
                             }
                         } else {
@@ -268,9 +277,8 @@
                             if(Object.keys(data).length > 0) { 
                                 $("#categoria_id").removeAttr("disabled");
                                 $("#categoria_id").select2({
-                                    theme: "bootstrap",
                                     tags: "true",
-                                    placeholder: "Seleccione: MODELO",
+                                    placeholder: "Seleccione: CATEGORÍA",
                                     data: data,
                                     width: "resolve"
                                 });
@@ -359,26 +367,27 @@
         console.log("CONSTRUYENDO FORMULARIO Y TABLA");
         /** */
         $("#form .container-form").html(window.pyrus.formulario());
+        $("#precio").maskMoney({thousands:'.', decimal:',', allowZero:true, prefix: '$ '});
         if($("#form .container-form .select__2").length) {
             
             $("#form .container-form #relaciones.select__2").select2({
                 theme: "bootstrap",
                 tags: "true",
+                width: "resolve"
             });
             $("#form .container-form #familia_id.select__2").select2({
-                theme: "bootstrap",
                 tags: "true",
                 allowClear: true,
                 placeholder: "Seleccione: FAMILIA",
+                width: "resolve"
             });
             $("#form .container-form #categoria_id.select__2").select2({
-                theme: "bootstrap",
                 tags: "true",
                 allowClear: true,
                 placeholder: "Seleccione: CATEGORÍA",
+                width: "resolve"
             });
             $("#modelo_id").select2({
-                theme: "bootstrap",
                 tags: "true",
                 placeholder: "Seleccione: MODELO",
                 width: "resolve"

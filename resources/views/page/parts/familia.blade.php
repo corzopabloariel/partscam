@@ -7,10 +7,10 @@
     <div class="container py-5">
         <div class="row">
             <div class="col-md-4">
-                <button class="btn btn-primary text-uppercase hidden visible-xs mb-2" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                <button class="btn btn-primary text-uppercase d-block d-sm-none mb-2" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                     Productos
                 </button>
-                <div class="collapse dont-collapse-sm" id="collapseExample">
+                <div class="sidebar collapse dont-collapse-sm" id="collapseExample">
                     <div class="sidebar">
                         @foreach($datos["menu"] AS $id => $dato)
                             <h3 class="title mb-1 nombre text-left @if($id == $datos['familia']['id']) active @endif">
@@ -40,13 +40,30 @@
                     </div>
                 </div>
                 <div class="row" id="ordenamiento">
-                    @foreach($datos["menu"][$datos["familia"]["id"]]["hijos"] AS $k => $v)
-                        <div class="col-md-4 my-2 d-flex align-self-stretch">
-                            <a href="{{ URL::to('productos/categoria/'. $k) }}" class="border p-3 d-block categoria d-flex align-items-center w-100">
-                                {{$v["titulo"]}}
-                            </a>
-                        </div>
-                    @endforeach
+                
+                    @if($datos["familia"]["id"] == 5)
+                        @foreach($datos["productosSIN"] AS $p)
+                        @php
+                        $img = null;
+                        @endphp
+                        <a href="{{ URL::to('productos/producto/'. $p['id']) }}" class="position-relative col-lg-4 col-md-6 col-12 mb-4">
+                            <div class="img position-relative">
+                                <div></div>
+                                <i class="fas fa-plus"></i>
+                                <img src="{{ asset($img) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" class="w-100" />
+                            </div>
+                            <p class="text-center mt-1 mb-0">{{ $p['nombre'] }}</p>
+                        </a>
+                        @endforeach
+                    @else
+                        @foreach($datos["menu"][$datos["familia"]["id"]]["hijos"] AS $k => $v)
+                            <div class="col-md-4 my-2 d-flex align-self-stretch">
+                                <a href="{{ URL::to('productos/categoria/'. $k) }}" class="border p-3 d-block categoria d-flex align-items-center w-100">
+                                    {{$v["titulo"]}}
+                                </a>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </div>

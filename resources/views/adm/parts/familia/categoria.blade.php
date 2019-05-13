@@ -205,42 +205,60 @@
     };
     /** ------------------------------------- */
     erase = function(t, id) {
-        $(t).attr("disabled",true);
-        let promise = new Promise(function (resolve, reject) {
-            let url = `{{ url('/adm/familias/${window.pyrus.entidad}/delete/${id}') }}`;
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", url, true );
-            
-            xmlHttp.send( null );
-            resolve(xmlHttp.responseText);
-        });
+        alertify.confirm("ATENCIÓN","¿Eliminar registro?",
+            function(){
+                $(t).attr("disabled",true);
+                let promise = new Promise(function (resolve, reject) {
+                    let url = `{{ url('/adm/familias/${window.pyrus.entidad}/delete/${id}') }}`;
+                    var xmlHttp = new XMLHttpRequest();
+                    xmlHttp.open( "GET", url, true );
+                    
+                    xmlHttp.send( null );
+                    resolve(xmlHttp.responseText);
+                });
 
-        promiseFunction = () => {
-            promise
-                .then(function(msg) {
-                    $("#tabla").find(`tr[data-id="${id}"]`).remove();
-                })
-        };
-        promiseFunction();
+                promiseFunction = () => {
+                    promise
+                        .then(function(msg) {
+                            $("#tabla").find(`tr[data-id="${id}"]`).remove();
+                        })
+                };
+                promiseFunction();
+            },
+            function() {
+                $(t).removeAttr("disabled");
+            }
+        ).set('labels', {ok:'Confirmar', cancel:'Cancelar'});
     };
     eraseModal = function(t, id) {
-        $(t).attr("disabled",true);
-        let promise = new Promise(function (resolve, reject) {
-            let url = `{{ url('/adm/familias/${window.pyrus.entidad}/subcategorias/delete/${id}') }}`;
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", url, true );
-            
-            xmlHttp.send( null );
-            resolve(xmlHttp.responseText);
-        });
+        alertify.confirm("ATENCIÓN","¿Eliminar registro?",
+            function(){
+                $(t).attr("disabled",true);
+                let promise = new Promise(function (resolve, reject) {
+                    let url = `{{ url('/adm/familias/${window.pyrus.entidad}/subcategorias/delete/${id}') }}`;
+                    var xmlHttp = new XMLHttpRequest();
 
-        promiseFunction = () => {
-            promise
-                .then(function(msg) {
-                    $("#wrapper-tablaModal table").find(`tr[data-id="${id}"]`).remove();
-                })
-        };
-        promiseFunction();
+                    xmlHttp.responseType = 'json';
+                    xmlHttp.open( "GET", url, true );
+                    xmlHttp.onload = function() {
+                        resolve(xmlHttp.response);
+                    }
+                    xmlHttp.send( null );
+                });
+
+                promiseFunction = () => {
+                    promise
+                        .then(function(msg) {
+                            if(msg.estado == "ok")
+                                $("#wrapper-tablaModal table").find(`tr[data-id="${id}"]`).remove();
+                        })
+                };
+                promiseFunction();
+            },
+            function() {
+                $(t).removeAttr("disabled");
+            }
+        ).set('labels', {ok:'Confirmar', cancel:'Cancelar'});
     };
     /** ------------------------------------- */
     remove = function(t) {

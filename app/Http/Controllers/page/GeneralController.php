@@ -133,14 +133,20 @@ class GeneralController extends Controller
         $datos["familias"] = self::familiaMenu();
         $datos["marcas"] = Marca::orderBy('orden')->get();
 
-        $datos["familia"] = Familia::where("id","!=",5)->find($id);
-        $familias = Familia::where("id","!=",5)->get();
+        $datos["familia"] = Familia::find($id);
+        if($id == 5) {
+            $datos["productosSIN"] = Producto::where("familia_id",$id)->orderBy("nombre")->simplePaginate(15);
+        }
+        $familias = Familia::get();
         $datos["menu"] = [];
         foreach($familias AS $f) {
             $datos["menu"][$f["id"]] = [];
             $datos["menu"][$f["id"]]["nivel"] = 0;
             $datos["menu"][$f["id"]]["titulo"] = $f["nombre"];
-            $datos["menu"][$f["id"]]["hijos"] = self::categoriasRec($f->categorias->where('padre_id',0),0);
+            if($f["id"] == 5)
+                $datos["menu"][$f["id"]]["hijos"] = [];
+            else
+                $datos["menu"][$f["id"]]["hijos"] = self::categoriasRec($f->categorias->where('padre_id',0),0);
         }
         return view('page.distribuidor',compact('title','view','datos'));
     }
@@ -165,7 +171,7 @@ class GeneralController extends Controller
         $idsCategorias = array_reverse ($idsCategorias);
         
         $datos["idsCategorias"] = $idsCategorias;
-        $familias = Familia::where("id","!=",5)->get();
+        $familias = Familia::get();
         $datos["menu"] = [];
         foreach($familias AS $f) {
             $datos["menu"][$f["id"]] = [];
@@ -176,7 +182,10 @@ class GeneralController extends Controller
             $datos["menu"][$f["id"]]["nivel"] = 0;
             $datos["menu"][$f["id"]]["titulo"] = $f["nombre"];
             $datos["menu"][$f["id"]]["image"] = $f["image"];
-            $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),0,$idsCategorias);
+            if($f["id"] == 5)
+                $datos["menu"][$f["id"]]["hijos"] = [];
+            else
+                $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),0,$idsCategorias);
         }
         return view('page.distribuidor',compact('title','view','datos'));
     }
@@ -205,7 +214,7 @@ class GeneralController extends Controller
         $idsCategorias = array_reverse ($idsCategorias);
         
         $datos["idsCategorias"] = $idsCategorias;
-        $familias = Familia::where("id","!=",5)->get();
+        $familias = Familia::get();
         $datos["menu"] = [];
         
         foreach($familias AS $f) {
@@ -217,7 +226,10 @@ class GeneralController extends Controller
             $datos["menu"][$f["id"]]["nivel"] = 0;
             $datos["menu"][$f["id"]]["titulo"] = $f["nombre"];
             $datos["menu"][$f["id"]]["image"] = $f["image"];
-            $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),0,$idsCategorias);
+            if($f["id"] == 5)
+                $datos["menu"][$f["id"]]["hijos"] = [];
+            else
+                $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),0,$idsCategorias);
         }
         
         return view('page.distribuidor',compact('title','view','datos'));

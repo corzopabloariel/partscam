@@ -165,8 +165,21 @@ class SubcategoriaController extends Controller
                 unlink($filename);
         }
         $Arr_data = Categoria::where("did",$data["did"])->where("tipo",$data["tipo"])->pluck("id");
-        
-        Categoria::destroy($Arr_data);
-        return 1;
+        try {
+            //code...
+            Categoria::destroy($Arr_data);
+            return ["estado" => "ok"];
+        } catch (\Throwable $th) {
+            foreach($Arr_data AS $c) {
+                $cat = Categoria::find($c);
+                $prod = $cat->productos;
+                foreach($prod AS $p) {
+                    $p->fill(["categoria_id" => null]);
+                    $p->save();
+                }
+            }
+            Categoria::destroy($Arr_data);
+            return ["estado" => "ok"];
+        }
     }
 }

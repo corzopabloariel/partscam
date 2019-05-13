@@ -33,11 +33,17 @@ class CategoriaController extends Controller
         $view = "adm.parts.familia.categoria";
         $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
         
-        $categorias = Categoria::where("tipo",2)->orderBy("tipo")->orderBy("orden")->groupBy("nombre")->simplePaginate(15);
+        $categorias = Categoria::where("tipo",2)
+                            ->orderBy("tipo")
+                            ->orderBy("familia_id")
+                            ->orderBy("orden")
+                                ->groupBy("familia_id")
+                                ->groupBy("nombre")
+                                    ->paginate(15);
         foreach($categorias AS $c) {
             $c["familia"] = $c->familia["nombre"];
         }
-        return view('adm.distribuidor',compact('title','view','familias','categorias','select2'));
+        return view('adm.distribuidor',compact('title','view','familias','categorias'));
     }
 
     /**
@@ -55,7 +61,7 @@ class CategoriaController extends Controller
     {
         $datosRequest = $request->all();
         $tipo = 2;
-        $family = Familia::get();
+        $family = Familia::find($datosRequest["familia_id"]);
         $image = null;
 
         $file = $request->file("image");
@@ -72,20 +78,18 @@ class CategoriaController extends Controller
         if(is_null($data)) {
             $aux = Categoria::where("familia_id","!=",5)->where("tipo",$tipo)->orderBy("did","DESC")->first();
             $did = $aux["did"] + 1;
-            foreach($family AS $f) {
-                $modelos = $f->modelos;
-                foreach($modelos AS $m) {
-                    $ARR_data = [];
-                    $ARR_data["did"] = $did;
-                    $ARR_data["image"] = $image;
-                    $ARR_data["familia_id"] = $f["id"];
-                    $ARR_data["padre_id"] = $m["id"];
-                    $ARR_data["nombre"] = $datosRequest["nombre"];
-                    $ARR_data["orden"] = $datosRequest["orden"];
-                    $ARR_data["tipo"] = $tipo;
-                    
-                    Categoria::create($ARR_data);
-                }
+            $modelos = $family->modelos;
+            foreach($modelos AS $m) {
+                $ARR_data = [];
+                $ARR_data["did"] = $did;
+                $ARR_data["image"] = $image;
+                $ARR_data["familia_id"] = $family["id"];
+                $ARR_data["padre_id"] = $m["id"];
+                $ARR_data["nombre"] = $datosRequest["nombre"];
+                $ARR_data["orden"] = $datosRequest["orden"];
+                $ARR_data["tipo"] = $tipo;
+                
+                Categoria::create($ARR_data);
             }
         } else {
             if(is_null($image))
@@ -97,32 +101,30 @@ class CategoriaController extends Controller
                         unlink($filename);
                 }
             }
-            foreach($family AS $f) {
-                $modelos = $f->modelos;
-                foreach($modelos AS $m) {
-                    $find = Categoria::
-                            where("tipo",$tipo)->
-                            where("familia_id",$f["id"])->
-                            where("padre_id",$m["id"])->
-                            where("did",$data["did"])->first();
-                    if(is_null($find)) {
-                        $aux = [];
-                        $aux["image"] = $image;
-                        $aux["did"] = $data["did"];
-                        $aux["familia_id"] = $f["id"];
-                        $aux["padre_id"] = $m["id"];
-                        $aux["nombre"] = $datosRequest["nombre"];
-                        $aux["orden"] = $datosRequest["orden"];
-                        $aux["tipo"] = $tipo;
-                        Categoria::create($aux);
-                    } else {
-                        $aux = [];
-                        $aux["image"] = $image;
-                        $aux["nombre"] = $datosRequest["nombre"];
-                        $aux["orden"] = $datosRequest["orden"];
-                        $find->fill($aux);
-                        $find->save();
-                    }
+            $modelos = $family->modelos;
+            foreach($modelos AS $m) {
+                $find = Categoria::
+                        where("tipo",$tipo)->
+                        where("familia_id",$family["id"])->
+                        where("padre_id",$m["id"])->
+                        where("did",$data["did"])->first();
+                if(is_null($find)) {
+                    $aux = [];
+                    $aux["image"] = $image;
+                    $aux["did"] = $data["did"];
+                    $aux["familia_id"] = $family["id"];
+                    $aux["padre_id"] = $m["id"];
+                    $aux["nombre"] = $datosRequest["nombre"];
+                    $aux["orden"] = $datosRequest["orden"];
+                    $aux["tipo"] = $tipo;
+                    Categoria::create($aux);
+                } else {
+                    $aux = [];
+                    $aux["image"] = $image;
+                    $aux["nombre"] = $datosRequest["nombre"];
+                    $aux["orden"] = $datosRequest["orden"];
+                    $find->fill($aux);
+                    $find->save();
                 }
             }
         }
@@ -135,6 +137,10 @@ class CategoriaController extends Controller
     public function show($id, $tipo) {
         $data = Categoria::find($id);
         $data["hijos"] = $data->hijos->where("tipo", $tipo + 1)->groupBy("nombre");
+        
+        foreach($data["hijos"] AS $h) {
+            $h[0]["familia"] = Familia::find($h[0]->familia_id)["nombre"];
+        }
         $data["padre"] = $data->padre;
         return $data;
     }
@@ -206,9 +212,11 @@ class CategoriaController extends Controller
     {
         $data = self::edit($id);
         if(!is_null($data["image"])) {
-            $filename = public_path() . "/" . $data["image"];
-            if (file_exists($filename))
-                unlink($filename);
+            if(!empty($data["image"])) {
+                $filename = public_path() . "/" . $data["image"];
+                if (file_exists($filename))
+                    unlink($filename);
+            }
         }
         $Arr_data = Categoria::where("did",$data["did"])->where("tipo",$data["tipo"])->pluck("id");
         

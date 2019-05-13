@@ -19,11 +19,11 @@ class CreateProductoTable extends Migration
             $table->string('nombre',100)->nullable()->default(NULL);
             $table->string('mercadolibre',150)->nullable()->default(NULL);
             $table->string('orden',10)->nullable()->default(NULL);
-            $table->unsignedBigInteger('categoria_id')->default(0);
-            $table->unsignedBigInteger('familia_id')->default(0);
+            $table->unsignedBigInteger('categoria_id')->nullable()->default(NULL);
+            $table->unsignedBigInteger('familia_id')->nullable()->default(NULL);
 
-            $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('cascade');
-            $table->foreign('familia_id')->references('id')->on('familias')->onDelete('cascade');
+            $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('set null');
+            $table->foreign('familia_id')->references('id')->on('familias')->onDelete('set null');
             $table->timestamps();
         });
     }

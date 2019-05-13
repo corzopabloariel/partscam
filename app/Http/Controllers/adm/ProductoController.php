@@ -16,6 +16,12 @@ use App\Persona;
 use App\CondicionIva;
 class ProductoController extends Controller
 {
+    public function rec_modelo($data) {
+        if($data["tipo"] == 1) 
+            return $data;
+        else
+            return self::rec_modelo($data->padre);
+    }
     public function rec_padre($data, $tipo = 0) {
         if(empty($data->padre["padre_id"]))
             return ($tipo ? "{$data["nombre"]}---" : $data["nombre"]);
@@ -34,15 +40,14 @@ class ProductoController extends Controller
         }
     }
     public function select2($data) {
-        
         if(count($data["hijos"]) == 0) {
             return ["id" => $data["id"], "text" => $data["nombre"]];
         } else {
-            
+            $aux = [];
             for($i = 0; $i < count($data["hijos"]); $i++) {
-                $data["hijos"][$i]["nombre"] = "{$data["nombre"]}, {$data["hijos"][$i]["nombre"]}";
-                return self::select2($data["hijos"][$i]);
+                $aux[] = self::select2($data["hijos"][$i]);
             }
+            return $aux;
         }
     }
     /**
@@ -50,17 +55,20 @@ class ProductoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $title = "Productos";
         $view = "adm.parts.familia.producto";
         $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
-        $productos = Producto::orderBy("orden")->simplePaginate(15);
+        if(!empty($request->all()["buscar"]))
+            $productos = Producto::where("codigo","LIKE","{$request->all()["buscar"]}")->orderBy("orden")->simplePaginate(15);
+        else
+            $productos = Producto::orderBy("orden")->simplePaginate(15);
         $prod = Producto::orderBy('orden')->pluck('nombre', 'id');
         
         foreach($productos AS $p) {
             $c = Categoria::find($p["categoria_id"]);
-            
+            $p["familia"] = $p->familia["nombre"];
             if($c["id"] == 0)
                 $p["categoria"] = $c["nombre"];
             else
@@ -94,10 +102,12 @@ class ProductoController extends Controller
             $select2 = [];
             foreach($catTOTAL AS $c) {
                 $c[0]["hijos"] = self::rec_hijos($c[0]);
-                $select2[] = ["id" => $c[0]["id"], "text" => $c[0]["nombre"]];
-                $select2[] = self::select2($c[0]);
+                
+                if(count($c[0]["hijos"]) == 0)
+                    $select2[] = ["id" => $c[0]["id"], "text" => $c[0]["nombre"]];
+                else
+                    $select2[] = ["text" => $c[0]["nombre"], "children" => self::select2($c[0])];
             }
-            dd($select2);
             return $select2;
         }
     }
@@ -153,8 +163,10 @@ class ProductoController extends Controller
         $precio = 0;
         if(isset($datosRequest["precio"])) {
             $precio = $datosRequest["precio"];
+            $precio = str_replace("$","",$precio);
             $precio = str_replace(".","",$precio);
             $precio = str_replace(",",".",$precio);
+            $precio = trim($precio);
         }
         //dd($precio);
         $stock = 0;
@@ -185,6 +197,7 @@ class ProductoController extends Controller
             }
             $ARR_imagenes = $data["imagenes"];
             unset($data["productos"]);
+            unset($data["modelo_id"]);
             unset($data["imagenes"]);
             unset($data["precio"]);
             unset($data["stock"]);
@@ -281,7 +294,10 @@ class ProductoController extends Controller
     {
         $p = Producto::find($id);
         //$p["familia_id"] = Categoria::find($p["categoria_id"])["familia_id"];
-
+        if($p["familia_id"] == 5)
+            $p["modelo_id"] = ["id" => 69];
+        else
+            $p["modelo_id"] = self::rec_modelo($p->categoria);
         $p["imagenes"] = $p->imagenes;
         $p["precio"] = $p->precio;
         $p["stock"] = $p->stock;
@@ -299,8 +315,7 @@ class ProductoController extends Controller
     public function update(Request $request, $id)
     {
         $data = self::edit($id);
-        self::store($request, $data);
-        return back();
+        return self::store($request, $data);
     }
 
     public function updateModal(Request $request, $id) {

@@ -87,6 +87,8 @@
                                 @endfor
                             </div>
                         </div>
+                        @else
+                        <img class="d-block w-100" onError="this.src='{{ asset('images/general/no-img.png') }}'" src="" >
                         @endif
                     </div>
                     <div class="col-12 col-lg-6 detalles">
@@ -123,20 +125,19 @@
                                 <small class="d-flex align-items-center justify-content-end w-100" id="consultarTEXT" style="margin-top: 10px;"></small>
                             </div>
                             <div class="col-12 col-sm-6 col-lg-12 col-xl-6 align-items-start flex-column ">
-                                @if($datos["stock"]["cantidad"] > 0)
-                                <button onclick="addCarrito(this,{{$datos['producto']['id']}})" class="btn btn-sm btn-carrito btn-block text-uppercase" id="btnADD"><i class="fas fa-shopping-cart mr-2"></i><small>añadir a carrito</small></button>
-                                @else
-                                <button data-toggle="modal" data-target="#modalConsulta" onclick="consultar(this,{{$datos['producto']['id']}})" class="btn btn-warning mb-2 btn-block text-uppercase" id="btnCONSULTAR"><i class="fas fa-question-circle mr-2"></i>consultar</button>
-                                @endif
+                                {{-- @if($datos["stock"]["cantidad"] <= 0) disabled @endif --}}
+                                <button disabled onclick="addCarrito(this,{{$datos['producto']['id']}})" class="btn btn-sm btn-carrito btn-block text-uppercase" id="btnADD"><i class="fas fa-shopping-cart mr-2"></i><small>añadir a carrito</small></button>
+                                <button data-toggle="modal" data-target="#modalConsulta" onclick="consultar(this,{{$datos['producto']['id']}})" class="btn btn-warning mb-2 btn-sm btn-block text-uppercase" id="btnCONSULTAR"><small><i class="fas fa-question-circle mr-2"></i>consultar</small></button>
                             </div>
                             <div class="col-12 align-items-center flex-column">
                                 @if(!empty($datos["producto"]['mercadolibre']))
-                                    <a href="{{$datos['producto']['mercadolibre']}}" class="mt-2" target="blank"><img src="{{ asset('images/general/mercadolibre.jpg') }}" /></a>
+                                    <a href="{{$datos['producto']['mercadolibre']}}" class="mt-2" target="blank"><img src="{{ asset('public/images/general/mercadolibre.jpg') }}" /></a>
                                 @endif
                             </div>
                         </div>
                     </div>
                 </div>
+                @if(count($datos["productos"]) > 0)
                 <p class="title mt-5">Productos Relacionados</p>
                 <div class="wrapper-oferta wrapper">
                     <div class="row">
@@ -174,6 +175,7 @@
                         @endforeach
                     </div>
                 </div>
+                @endif
             </div>
         </div>
     </div>

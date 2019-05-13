@@ -70,7 +70,7 @@
                         </a>
                     </li>
                     <li>
-                        <a data-link="u" href="{{ route('familias.categorias.productos.index') }}">
+                        <a data-link="u" href="{{ route('productoIndex') }}">
                             <i class="fas fa-clipboard-list"></i>
                             <span class="nav-label">Todos los productos</span>
                         </a>

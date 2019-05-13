@@ -78,23 +78,30 @@
     };
     /** ------------------------------------- */
     erase = function(t, id) {
-        $(t).attr("disabled",true);
-        let promise = new Promise(function (resolve, reject) {
-            let url = `{{ url('/adm/${window.pyrus.entidad}/delete/${id}') }}`;
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", url, true );
-            
-            xmlHttp.send( null );
-            resolve(xmlHttp.responseText);
-        });
+        alertify.confirm("ATENCIÓN","¿Eliminar registro?",
+            function(){
+                $(t).attr("disabled",true);
+                let promise = new Promise(function (resolve, reject) {
+                    let url = `{{ url('/adm/${window.pyrus.entidad}/delete/${id}') }}`;
+                    var xmlHttp = new XMLHttpRequest();
+                    xmlHttp.open( "GET", url, true );
+                    
+                    xmlHttp.send( null );
+                    resolve(xmlHttp.responseText);
+                });
 
-        promiseFunction = () => {
-            promise
-                .then(function(msg) {
-                    $("#tabla").find(`tr[data-id="${id}"]`).remove();
-                })
-        };
-        promiseFunction();
+                promiseFunction = () => {
+                    promise
+                        .then(function(msg) {
+                            $("#tabla").find(`tr[data-id="${id}"]`).remove();
+                        })
+                };
+                promiseFunction();
+            },
+            function() {
+                $(t).removeAttr("disabled");
+            }
+        ).set('labels', {ok:'Confirmar', cancel:'Cancelar'});
     };
     /** ------------------------------------- */
     remove = function(t) {

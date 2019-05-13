@@ -246,7 +246,6 @@ footer .info li + li {
 }
 .carousel .texto p:first-child {
     font-size: 55px;
-    font-family: 'Exo 2', sans-serif;
     color: #FFF;
     font-weight: bold;
     line-height: 55px;
@@ -255,7 +254,6 @@ footer .info li + li {
 .carousel .texto p:last-child {
     color: #2DC5EE;
     font-size: 28px;
-    font-weight: 500;
     text-shadow: 0 0 2px #333;
 }
 /* ---------------------------------------------------
@@ -654,7 +652,14 @@ footer .info li + li {
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
-@media (max-width: 768px) {
+@media (min-width: 768px) {
+    .collapse.dont-collapse-sm {
+        display: block;
+        height: auto !important;
+        visibility: visible;
+    }
+}
+@media (max-width: 991px) {
     .hidden-tablet {
         display: none !important;
     } 

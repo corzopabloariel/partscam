@@ -47,6 +47,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
     Route::get('/', 'adm\AdmController@index');
     Route::get('logout', ['uses' => 'adm\AdmController@logout' , 'as' => 'adm.logout']);
 
+    Route::match(['get', 'post'], 'familias/categorias/productos/index',['uses' => 'adm\ProductoController@index'])->name('productoIndex');
+
     Route::get('compras', ['uses' => 'adm\ProductoController@compras' , 'as' => 'compras']);
     Route::get('transaccion/{id}', ['uses' => 'adm\ProductoController@transaccion' , 'as' => 'transaccion']);
     /**
@@ -108,7 +110,6 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
             });
 
             Route::group(['prefix' => 'productos', 'as' => '.productos'], function() {
-                Route::get('index', ['uses' => 'adm\ProductoController@index', 'as' => '.index']);
                 Route::post('store', ['uses' => 'adm\ProductoController@store', 'as' => '.store']);
                 Route::get('edit/{id}', ['uses' => 'adm\ProductoController@edit', 'as' => '.edit']);
                 Route::get('familia_categoria/{familia_id}/{modelo_id}', ['uses' => 'adm\ProductoController@familia_categoria', 'as' => '.familia_categoria']);
