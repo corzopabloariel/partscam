@@ -43,7 +43,10 @@
     <div class="container py-5">
         <div class="row">
             <div class="col-md-4">
-                <div class="sidebar">
+                <button class="btn btn-primary text-uppercase hidden visible-xs mb-2" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    Productos
+                </button>
+                <div class="sidebar collapse dont-collapse-sm" id="collapseExample">
                     @foreach($datos["menu"] AS $id => $dato)
                         <h3 class="title mb-1 nombre text-left @if($id == $datos['familia']['id']) active @endif">
                             <a href="{{ URL::to('productos/familia/'. $id) }}">{{$dato["titulo"]}}</a>
@@ -125,8 +128,8 @@
                                 <small class="d-flex align-items-center justify-content-end w-100" id="consultarTEXT" style="margin-top: 10px;"></small>
                             </div>
                             <div class="col-12 col-sm-6 col-lg-12 col-xl-6 align-items-start flex-column ">
-                                {{-- @if($datos["stock"]["cantidad"] <= 0) disabled @endif --}}
-                                <button disabled onclick="addCarrito(this,{{$datos['producto']['id']}})" class="btn btn-sm btn-carrito btn-block text-uppercase" id="btnADD"><i class="fas fa-shopping-cart mr-2"></i><small>añadir a carrito</small></button>
+                                {{--  --}}
+                                <button @if($datos['stock']['cantidad'] <= 0) disabled @endif onclick="addCarrito(this,{{$datos['producto']['id']}})" class="btn btn-sm btn-carrito btn-block text-uppercase" id="btnADD"><i class="fas fa-shopping-cart mr-2"></i><small>añadir a carrito</small></button>
                                 <button data-toggle="modal" data-target="#modalConsulta" onclick="consultar(this,{{$datos['producto']['id']}})" class="btn btn-warning mb-2 btn-sm btn-block text-uppercase" id="btnCONSULTAR"><small><i class="fas fa-question-circle mr-2"></i>consultar</small></button>
                             </div>
                             <div class="col-12 align-items-center flex-column">
@@ -200,8 +203,8 @@
     if($("#cantidad").length)
         $( "#cantidad" ).spinner();
     consultar = function(t, idProducto) {
-        if(window.consultarINT === undefined) window.consultarINT = 0;
-        window.consultarINT = parseInt($("#cantidad").val());
+        if(window.consultarINT === undefined) window.consultarINT = 1;
+        //window.consultarINT = parseInt($("#cantidad").val());
         $("#cantidadFORM").text((window.consultarINT == 1 ? "1 unidad" : `${window.consultarINT} unidades`));
         $("#productoIDinput").val(idProducto);
         $("#productoCantidad").val(window.consultarINT);
@@ -239,7 +242,7 @@
             }
             $("#carritoHeader").attr("href","{{ URL::to('carrito') }}");
         } else {
-            if(max > parseInt(cantidad.val()) + parseInt(window.session[idProducto])) {
+            if(max >= parseInt(cantidad.val()) + parseInt(window.session[idProducto])) {
                 window.session[idProducto] = parseInt(window.session[idProducto]) + parseInt(cantidad.val());
                 localStorage.carrito = JSON.stringify(window.session);
                 $("#carritoHeader").find("span").text(Object.keys(window.session).length);
@@ -247,14 +250,20 @@
                 alertify.success('Producto agregado');
             } else {
                 if(window.consultarINT === undefined) window.consultarINT = 0;
-                if(cantidad.val() > max)
-                    window.consultarINT = parseInt(cantidad.val()) - max;
-                else
+                
+                if(cantidad.val() + parseInt(window.session[idProducto]) > max) {
+                    window.consultarINT = parseInt(cantidad.val()) + parseInt(window.session[idProducto]) - max;
+                    window.session[idProducto] = parseInt(max);
+                    console.log(window.consultarINT)
+                    console.log(parseInt(cantidad.val()) + parseInt(window.session[idProducto]) - max)
+                } else {
+                    window.session[idProducto] = parseInt(cantidad.val());
                     window.consultarINT = parseInt(cantidad.val());
+                }
+                localStorage.carrito = JSON.stringify(window.session);
                 
                 $("#consultarTEXT").text(`Consulta por: ${window.consultarINT}`);
-                if(!$("#btnCONSULTAR").length)
-                    $("#btnADD").parent().append(`<button data-toggle="modal" data-target="#modalConsulta" onclick="consultar(this,${idProducto})" class="btn btn-sm btn-block btn-warning mb-2 text-uppercase" id="btnCONSULTAR"><small><i class="fas fa-question-circle mr-2"></i>consultar</small></button>`);
+                
                 alertify.notify('Producto supera el stock disponible', 'warning');
             }
         }

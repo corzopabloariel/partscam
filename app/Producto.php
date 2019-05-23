@@ -40,6 +40,10 @@ class Producto extends Model
     {
         return $this->belongsTo('App\Familia')->orderBy('orden');
     }
+    public function categoriaM()
+    {
+        return $this->hasOne('App\ProductoCategoria');
+    }
     /** RELACION */
     public function productos()
     {

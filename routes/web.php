@@ -51,6 +51,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
 
     Route::get('compras', ['uses' => 'adm\ProductoController@compras' , 'as' => 'compras']);
     Route::get('transaccion/{id}', ['uses' => 'adm\ProductoController@transaccion' , 'as' => 'transaccion']);
+    Route::get('transaccion/estado/{id}/{estado}', ['uses' => 'adm\ProductoController@transaccionEstado' , 'as' => 'transaccionEstado']);
     /**
      * CONTENIDO
      */
@@ -79,7 +80,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
         Route::get('edit/{id}', ['uses' => 'adm\FamiliaController@edit', 'as' => '.edit']);
         Route::get('delete/{id}', ['uses' => 'adm\FamiliaController@destroy', 'as' => '.destroy']);
         Route::post('update/{id}', ['uses' => 'adm\FamiliaController@update', 'as' => 'update']);
-        Route::get('sin', ['uses' => 'adm\FamiliaController@sin', 'as' => '.sin']);
+        //Route::get('sin', ['uses' => 'adm\FamiliaController@sin', 'as' => '.sin']);
+
+        Route::match(['get', 'post'], '/sin', ['uses' => 'adm\FamiliaController@sin', 'as' => '.sin']);
 
         Route::group(['prefix' => 'modelos', 'as' => '.modelos'], function() {
             Route::get('index', ['uses' => 'adm\ModelosController@index', 'as' => '.index']);

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Familia;
 use App\Categoria;
+use App\Producto;
 class CategoriaController extends Controller
 {
     public function rec_padre($data, $sin = null, $tipo = 0, $strong = 0) {
@@ -221,6 +222,12 @@ class CategoriaController extends Controller
         $Arr_data = Categoria::where("did",$data["did"])->where("tipo",$data["tipo"])->pluck("id");
         
         Categoria::destroy($Arr_data);
+
+        $prd = Producto::whereNull("categoria_id")->get();
+        foreach($prd as $p) {
+            $p->fill(["familia_id" => 5,"categoria_id" => 69]);
+            $p->save();
+        }
         return 1;
     }
 }

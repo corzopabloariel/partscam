@@ -5,6 +5,8 @@ namespace App\Http\Controllers\adm;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Categoria;
+use App\Producto;
+use App\Familia;
 class SubcategoriaController extends Controller
 {
     /**
@@ -39,7 +41,7 @@ class SubcategoriaController extends Controller
         $padre_id = $datosRequest["padre_id"];
         $tipo = $datosRequest["tipo"];
         $categoria = Categoria::find($padre_id);
-        $categorias = Categoria::where("did",$categoria["did"])->where("tipo",$categoria["tipo"])->get();
+        $categorias = Categoria::where("familia_id",$categoria["familia_id"])->where("did",$categoria["did"])->where("tipo",$categoria["tipo"])->get();
         $image = null;
 
         $file = $request->file("image");
@@ -70,6 +72,7 @@ class SubcategoriaController extends Controller
                 $ARR_data["tipo"] = $tipo + 1;
                 
                 $aux_r = Categoria::create($ARR_data);
+                $aux_r["familia"] = Familia::find($c["familia_id"])["nombre"];
             }
             return $aux_r;
         } else {
@@ -168,17 +171,20 @@ class SubcategoriaController extends Controller
         try {
             //code...
             Categoria::destroy($Arr_data);
+            $prd = Producto::whereNull("categoria_id")->get();
+            foreach($prd as $p) {
+                $p->fill(["familia_id" => 5,"categoria_id" => 69]);
+                $p->save();
+            }
             return ["estado" => "ok"];
         } catch (\Throwable $th) {
-            foreach($Arr_data AS $c) {
-                $cat = Categoria::find($c);
-                $prod = $cat->productos;
-                foreach($prod AS $p) {
-                    $p->fill(["categoria_id" => null]);
-                    $p->save();
-                }
-            }
             Categoria::destroy($Arr_data);
+            $prd = Producto::whereNull("categoria_id")->get();
+            foreach($prd as $p) {
+                $p->fill(["familia_id" => 5,"categoria_id" => 69]);
+                $p->save();
+            }
+            
             return ["estado" => "ok"];
         }
     }

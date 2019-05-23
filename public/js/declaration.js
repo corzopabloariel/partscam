@@ -397,7 +397,7 @@ const ENTIDADES = {
             precio: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",CLASS:"text-right"},
             mercadolibre: {TIPO:"TP_STRING",MAXLENGTH: 150,VISIBILIDAD:"TP_VISIBLE_FORM"},
             familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
-            modelo_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Modelo"},
+            modelo_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Modelo",MULTIPLE:1},
             categoria_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"},
             relaciones: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"productos relacionados",MULTIPLE:1},
             //familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"},
@@ -419,7 +419,9 @@ const ENTIDADES = {
             },
             {
                 familia_id: '<div class="col-12 col-md-6">/familia_id/</div>',
-                modelo_id: '<div class="col-12 col-md-6">/modelo_id/</div>',
+            },
+            {
+                modelo_id: '<div class="col-12">/modelo_id/</div>',
             },
             {
                 categoria_id: '<div class="col-12 col-md-6">/categoria_id/</div>',

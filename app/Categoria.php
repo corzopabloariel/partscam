@@ -33,4 +33,13 @@ class Categoria extends Model
     {
         return $this->hasMany('App\Categoria','padre_id','id')->orderBy('orden');
     }
+
+    public function padres( $data, &$Arr ) {
+        if(empty($data->padre))
+            $Arr[] = $data->id;
+        else {
+            $Arr[] = $data->id;
+            self::padres( $data->padre, $Arr );
+        }
+    }
 }

@@ -40,7 +40,6 @@
                     </div>
                 </div>
                 <div class="row" id="ordenamiento">
-                
                     @if($datos["familia"]["id"] == 5)
                         @foreach($datos["productosSIN"] AS $p)
                         @php
@@ -65,6 +64,12 @@
                         @endforeach
                     @endif
                 </div>
+                @if($datos["familia"]["id"] == 5)
+                <div class="row">
+                    <div class="col-12">{{ $datos["productosSIN"]->links() }}</div>
+                </div>
+                @else
+                @endif
             </div>
         </div>
     </div>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Familia;
 use App\Categoria;
+use App\Producto;
 class ModelosController extends Controller
 {
     /**
@@ -104,6 +105,11 @@ class ModelosController extends Controller
 
         foreach($datas AS $d)
             Categoria::destroy($d["id"]);
+        $prd = Producto::whereNull("categoria_id")->get();
+        foreach($prd as $p) {
+            $p->fill(["familia_id" => 5,"categoria_id" => 69]);
+            $p->save();
+        }
         return 1;
     }
 }

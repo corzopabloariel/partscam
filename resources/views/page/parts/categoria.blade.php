@@ -49,11 +49,11 @@
                         @if(isset($d['imagenes']))
                         @php
                         $img = null;
-                        $oferta = $d->oferta;
+                        $oferta = $d["producto"]->oferta;
                         if(isset($d['imagenes'][0]))
                             $img = $d['imagenes'][0]['image'];
                         @endphp
-                        <a href="{{ URL::to('productos/producto/'. $d['id']) }}" class="position-relative col-lg-4 col-md-6 col-12 mb-4">
+                        <a href="{{ URL::to('productos/producto/'. $d['producto']['id']) }}" class="position-relative col-lg-4 col-md-6 col-12 mb-4">
                             <div class="img position-relative">
                                 @if(!empty($oferta))
                                     <img class="position-absolute oferta" style="top: -8px; left: -8px; z-index: 11;" src="{{ asset('images/general/ofertas.fw.png') }}" />
@@ -62,14 +62,14 @@
                                 <i class="fas fa-plus"></i>
                                 <img src="{{ asset($img) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" class="w-100" />
                             </div>
-                            <p class="text-center mt-1 mb-0">{{ $d['nombre'] }}</p>
+                            <p class="text-center mt-1 mb-0">{{ $d["producto"]['nombre'] }}</p>
                         </a>
                         @else
-                        <a href="{{ URL::to('productos/categoria/'. $i) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" class="col-lg-4 col-md-6 col-12 mb-4">
+                        <a href="{{ URL::to('productos/categoria/'. $i) }}" class="col-lg-4 col-md-6 col-12 mb-4">
                             <div class="img">
                                 <div></div>
                                 <i class="fas fa-plus"></i>
-                                <img src="{{ asset($d['image']) }}" class="w-100" />
+                                <img src="{{ asset($d['image']) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" class="w-100" />
                             </div>
                             <p class="text-center mt-1 mb-0">{{ $d['titulo'] }}</p>
                         </a>

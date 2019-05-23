@@ -46,10 +46,10 @@
             @include('page.parts.general.header')
             <section>@yield('body')</section>
             @include('page.parts.general.footer')
-            <a href="https://wa.me/{{$datos['empresa']['telefono']['wha'][0]}}" class="position-fixed text-white rounded-circle bg-success d-flex justify-content-center align-items-center" style="right: 10px;bottom: 10px;z-index: 99;width: 50px;height: 50px;">
+            <a href="https://wa.me/{{$datos['empresa']['telefono']['wha'][0]}}" class="position-fixed text-white rounded-circle bg-success d-flex justify-content-center align-items-center" style="font-size: 20px; right: 10px;bottom: 10px;z-index: 99;width: 55px;height: 55px;">
                 <i class="fab fa-whatsapp"></i>
             </a>
-            <a href="tel:{{$datos['empresa']['telefono']['tel'][0]}}" class="position-fixed text-white rounded-circle bg-primary d-flex justify-content-center align-items-center" style="left: 10px;bottom: 10px;z-index: 99;width: 50px;height: 50px;">
+            <a href="tel:{{$datos['empresa']['telefono']['tel'][0]}}" class="position-fixed text-white rounded-circle bg-primary d-flex justify-content-center align-items-center" style="font-size: 20px;left: 10px;bottom: 10px;z-index: 99;width: 55px;height: 55px;">
                 <i class="fas fa-phone"></i>
             </a>
         </div>

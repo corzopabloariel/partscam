@@ -15,6 +15,7 @@ use App\Marca;
 use App\Familia;
 use App\Producto;
 use App\Productooferta;
+use App\ProductoCategoria;
 use App\Categoria;
 
 use App\CondicionIva;
@@ -135,7 +136,7 @@ class GeneralController extends Controller
 
         $datos["familia"] = Familia::find($id);
         if($id == 5) {
-            $datos["productosSIN"] = Producto::where("familia_id",$id)->orderBy("nombre")->simplePaginate(15);
+            $datos["productosSIN"] = Producto::where("familia_id",$id)->orderBy("nombre")->paginate(15);
         }
         $familias = Familia::get();
         $datos["menu"] = [];
@@ -148,6 +149,7 @@ class GeneralController extends Controller
             else
                 $datos["menu"][$f["id"]]["hijos"] = self::categoriasRec($f->categorias->where('padre_id',0),0);
         }
+        //dd($datos["menu"]);
         return view('page.distribuidor',compact('title','view','datos'));
     }
     /** */
@@ -200,7 +202,7 @@ class GeneralController extends Controller
         $datos["oferta"] = empty($datos["producto"]->oferta) ? null : number_format($datos["producto"]->oferta["precio"],2,",",".");
         $datos["precio"] = number_format($datos["producto"]->precio["precio"],2,",",".");
         $datos["stock"] = $datos["producto"]->stock;
-        $datos["categoria"] = $datos["producto"]->categoria;
+        $datos["categoria"] = $datos["producto"]->categoriaM->categoria;
         $datos["familia"] = $datos["producto"]->familia;
         $datos["productos"] = $datos["producto"]->productos;
         
@@ -249,9 +251,11 @@ class GeneralController extends Controller
                 $menu[$c["id"]]["nivel"] = $nivel;
                 $menu[$c["id"]]["titulo"] = $c["nombre"];
                 $menu[$c["id"]]["image"] = $c["image"];
-                $menu[$c["id"]]["productos"] = $c->productos;
-                foreach($menu[$c["id"]]["productos"] AS $i)
-                    $i["imagenes"] = $i->imagenes;
+                $menu[$c["id"]]["productos"] = ProductoCategoria::where("categoria_id",$c["id"])->paginate(15);
+                foreach($menu[$c["id"]]["productos"] AS $i) {
+                    $i["producto"] = $i->producto;
+                    $i["imagenes"] = $i["producto"]->imagenes;
+                }
                 $menu[$c["id"]]["hijos"] = [];
             }
             $menu[$c["id"]]["hijos"] = self::categoriasRec($c->hijos, $nivel, $activo);

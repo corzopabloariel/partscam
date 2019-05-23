@@ -7,7 +7,7 @@
             <button id="btnADD" onclick="add(this)" class="btn btn-primary text-uppercase" type="button">Agregar<i class="fas fa-plus ml-2"></i></button>
             @endif
             <form class="position-relative" action="" method="post">
-                <input style="width: 350px;" type="text" name="buscar" class="form-control" placeholder="Buscador: Código"/>
+                <input style="width: 350px;" value="{{ old('buscar') }}" type="text" name="buscar" class="form-control" placeholder="Buscador: Código"/>
                 @csrf
                 <i style="right:10px;top: calc(50% - 7px); z-index: 1;" class="fas fa-search position-absolute"></i>
             </form>
@@ -118,7 +118,7 @@
             console.log(data)
             $(`#relaciones option[value="${id}"]`).attr("disabled",true);
             for(let x in window.pyrus.especificacion) {
-                if(!$(`[name="${x}"]`).length) continue;
+                if(!$(`#${x}`).length) continue;
                 if(x == "relaciones") continue;
                 if(x == "familia_id") {
                     $(`[name="${x}"]`).val(data[x]).trigger("change");
@@ -225,9 +225,27 @@
     /** ------------------------------------- */
     changeFamilia = function(t,tipo) {
         id = $(t).val();
-        if(id === null || id == "") {
-            $("#categoria_id").find("option.new").remove();
+        flag = false;
+        console.log(id)
+        if(id === null || id == "")
+            flag = true;
+        if(typeof id == "object" && !flag) {
+            if( id.length == 0 )
+                flag = true;
+            else
+                id = id[0];
+        }
+        if(flag) {
+            $("#categoria_id").select2("destroy")
+            $("#categoria_id").html("");
             $("#categoria_id").attr("disabled",true);
+            
+            $("#form .container-form #categoria_id.select__2").select2({
+                tags: "true",
+                allowClear: true,
+                placeholder: "Seleccione: CATEGORÍA",
+                width: "resolve"
+            });
         } else {
             $(t).attr("disabled",true);
             let familiaID = 0, modeloID = 0; 
@@ -255,6 +273,7 @@
                         if(tipo == 0) {
                             $("#modelo_id").find("option.new").remove();
                             $("#modelo_id").attr("disabled",true);
+
                             if(data === null || data === undefined) return false;
                             if(Object.keys(data).length > 0) { 
                                 $("#modelo_id").removeAttr("disabled");
@@ -264,15 +283,29 @@
                                     data: data,
                                     width: "resolve"
                                 });
-                                
+                                console.log(window.modeloID)
                                 if(window.modeloID !== undefined) {
-                                    if(window.modeloID != 0)
-                                        $("#modelo_id").val(window.modeloID).trigger("change");
+                                    if(typeof window.modeloID == "object") {
+                                        if(Object.keys(window.modeloID).length > 0)
+                                            $("#modelo_id").val(window.modeloID).trigger("change");
+                                    } else {
+                                        if(window.modeloID != 0)
+                                            $("#modelo_id").val(window.modeloID).trigger("change");
+                                    }
                                 }
                             }
                         } else {
-                            $("#categoria_id").find("option.new").remove();
+                            $("#categoria_id").select2("destroy")
+                            $("#categoria_id").html("");
                             $("#categoria_id").attr("disabled",true);
+                            
+                            $("#form .container-form #categoria_id.select__2").select2({
+                                tags: "true",
+                                allowClear: true,
+                                placeholder: "Seleccione: CATEGORÍA",
+                                width: "resolve"
+                            });
+
                             if(data === null || data === undefined) return false;
                             if(Object.keys(data).length > 0) { 
                                 $("#categoria_id").removeAttr("disabled");
@@ -284,8 +317,8 @@
                                 });
                                 
                                 if(window.categoriaID !== undefined) {
-                                    if(window.categoriaID != 0)
-                                        $("#categoria_id").val(window.categoriaID).trigger("change");
+                                    if(parseInt(window.categoriaID.id) != 0)
+                                        $("#categoria_id").val(window.categoriaID.id).trigger("change");
                                 }
                             }
                         }
@@ -428,11 +461,11 @@
                 tr += `<td class="${c.CLASS}">${td}</td>`;
             });
             tr += `<td class="text-center">`;
-                tr += `<div class="d-flex flex-wrap h-100 w-100 justify-content-around align-items-center">`
-                    tr += `<button onclick="edit(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
-                    tr += `<button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
-                    tr += `<button onclick="precio(this,${data.id})" class="btn btn-info" title="Cambiar PRECIO"><i class="fas fa-hand-holding-usd"></i></button>`;
-                    tr += `<button onclick="stock(this,${data.id})" class="btn btn-success" title="Agregar/Cambiar STOCK"><i class="fas fa-box-open"></i></button>`;
+                tr += `<div class="">`
+                    tr += `<button onclick="edit(this,${data.id})" class="btn rounded-0 btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
+                    tr += `<button onclick="erase(this,${data.id})" class="btn rounded-0 btn-danger"><i class="fas fa-trash-alt"></i></button>`;
+                    tr += `<button onclick="precio(this,${data.id})" class="btn rounded-0 btn-info" title="Cambiar PRECIO"><i class="fas fa-hand-holding-usd"></i></button>`;
+                    tr += `<button onclick="stock(this,${data.id})" class="btn rounded-0 btn-success" title="Agregar/Cambiar STOCK"><i class="fas fa-box-open"></i></button>`;
                 tr += `</div>`;
             tr += `</td>`;
             table.find("tbody").append(`<tr data-id="${data.id}">${tr}</tr>`);

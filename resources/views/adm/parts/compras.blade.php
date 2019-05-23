@@ -20,12 +20,12 @@
             <div class="card-body">
                 <table class="table table-striped table-hover mb-0" id="tabla">
                     <thead class="thead-light">
-                        <th>Código</th>
-                        <th>Pago</th>
-                        <th>Envio</th>
-                        <th>Estado</th>
-                        <th>Total</th>
-                        <th>Ver</th>
+                        <th class="text-uppercase">Código</th>
+                        <th class="text-uppercase">Pago</th>
+                        <th class="text-uppercase">Envio</th>
+                        <th class="text-uppercase">Estado</th>
+                        <th class="text-uppercase">Total</th>
+                        <th class="text-uppercase text-center">Ver</th>
                     </thead>
                     <tbody>
                         @php
@@ -35,13 +35,21 @@
                         @endphp
                         @foreach($compras AS $c)
                         
-                        <tr>
+                        <tr data-id="{{ $c['id'] }}">
                             <td>{{ $c["codigo"] }}</td>
                             <td>{{ $Arr_tipopago[$c["tipopago"]] }}</td>
                             <td>{{ $Arr_shipping[$c["shipping"]] }}</td>
                             <td>{{ $Arr_estado[$c["estado"]] }}</td>
-                            <td>{{ $c["total"] }}</td>
-                            <td><button type="button" onclick="ver({{ $c['id'] }})" class="btn btn-sm btn-link"><i class="far fa-eye"></i></button></td>
+                            <td class="text-right">${{ number_format($c["total"] , 2 , "," , ".") }}</td>
+                            <td class="text-center">
+                                @if($c["tipopago"] != "MP")
+                                    @if($c["estado"] == 1)
+                                        <button type="button" title="Compra finalizada" onclick="estado({{ $c['id'] }}, 2)" class="btnSacar btn btn-sm btn-link text-success"><i class="fas fa-check-square"></i></button>
+                                        <button type="button" title="Compra cancelada" onclick="estado({{ $c['id'] }}, 0)" class="btnSacar btn btn-sm btn-link text-danger"><i class="fas fa-window-close"></i></button>
+                                    @endif
+                                @endif
+                                <button type="button" onclick="ver({{ $c['id'] }})" class="btn btn-sm btn-link"><i class="far fa-eye"></i></button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -55,6 +63,32 @@
     const Arr_estado = ["Cancelado","Pendiente","Completado"];
     const Arr_tipopago = {MP:"MercadoPago", TB:"Transferencia bancaría", PL:"Pago en el local"};
     const Arr_shipping = {LOCAL:"Retira en el Local",ACONVENIR:"A convenir"};
+    estado = function( id , estado ) {
+        alertify.confirm("ATENCIÓN",`¿Seguro de cambiar el estado a ${ estado == 2 ? "COMPLETADO" : "CANCELADO"}?`,
+            function() {
+                let promise = new Promise(function (resolve, reject) {
+                    let url = `{{ url('/adm/transaccion/estado/${id}/${estado}') }}`;
+                    var xmlHttp = new XMLHttpRequest();
+                    xmlHttp.open( "GET", url, true );
+                    xmlHttp.onload = function() {
+                        resolve(xmlHttp.response);
+                    }
+                    xmlHttp.send( null );
+                });
+
+                promiseFunction = () => {
+                    promise
+                        .then(function(data) {
+                            $(`tr[data-id="${id}"]`).find(".btnSacar").remove();
+                            $(`tr[data-id="${id}"]`).find("td:nth-child(4)").text(estado ? "Completado" : "Cancelado")
+                        })
+                };
+                promiseFunction();
+            },
+            function() {
+            }
+        ).set('labels', {ok:'Confirmar', cancel:'Cancelar'});
+    };
     formatter = new Intl.NumberFormat('es-AR', {
         style: 'currency',
         currency: 'ARS',

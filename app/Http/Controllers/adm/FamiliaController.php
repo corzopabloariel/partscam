@@ -29,12 +29,18 @@ class FamiliaController extends Controller
         return view('adm.distribuidor',compact('title','view','familias'));
     }
 
-    public function sin()
+    public function sin(Request $request)
     {
         $title = "Productos sin clasificación";
         $view = "adm.parts.familia.producto";
+        
         $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
-        $productos = Producto::where("familia_id",5)->orderBy("orden")->simplePaginate(15);
+        if(!empty($request->all()["buscar"]))
+            $productos = Producto::where("familia_id",5)->where("codigo","LIKE","{$request->all()["buscar"]}")->orderBy("orden")->paginate(15);
+        else
+            $productos = Producto::where("familia_id",5)->orderBy("orden")->paginate(15);
+        
+        //$productos = Producto::where("familia_id",5)->orderBy("orden")->simplePaginate(15);
         $prod = Producto::orderBy('orden')->pluck('nombre', 'id');
         $sin = 1;
         foreach($productos AS $p) {
@@ -48,7 +54,7 @@ class FamiliaController extends Controller
             $p["precio"] = $p->precio;
             $p["stock"] = $p->stock;
         }
-        return view('adm.distribuidor',compact('title','view','familias','productos','prod','sin'));
+        return view('adm.distribuidor',compact('title','view','familias','productos','prod','sin'))->withInput($request->all());
     }
 
     /**
@@ -134,6 +140,11 @@ class FamiliaController extends Controller
                 unlink($filename);
         }
         Familia::destroy($id);
+        $prd = Producto::whereNull("categoria_id")->get();
+        foreach($prd as $p) {
+            $p->fill(["familia_id" => 5,"categoria_id" => 69]);
+            $p->save();
+        }
         return 1;
     }
 }

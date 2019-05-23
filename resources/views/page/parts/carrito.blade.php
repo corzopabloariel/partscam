@@ -5,7 +5,7 @@
 @endpush
 <div class="wrapper-carrito py-5">
     <div class="container">
-        <form action="{{ route('order') }}" method="post">
+        <form action="{{ route('order') }}" method="post" onsubmit="event.preventDefault();">
             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
             <h3 class="title text-uppercase">compra online</h3>
             <div class="table-responsive">
@@ -279,7 +279,7 @@
             /* 1 */data.familia.nombre,
             /* 2 */aux[0],//1° de categoria
             /* 3 */aux[1],//categoria
-            /* 4 */data.nombre,//producto nombre
+            /* 4 */`<a href="{{ URL::to('productos/producto/${data.id}') }}" class="text-primary">${data.nombre}</a>`,//producto nombre
             /* 5 */data.oferta === null ? data.precio.precio : data.oferta.precio,//oferta !== undefined ? oferta. : producto.
             /* 6 */window.session[data.id],//input
             /* 7 */null
@@ -326,7 +326,7 @@
                 tr += `<td class="text-right">${formatter.format(e)}</td>`;
             else if(index == 7) {
                 tr += `<td class="recalcular text-right">`;
-                    tr += `<small class="d-block text-rigth">${cantidadPedida} x ${formatter.format(ARR[7])}</small class="d-block text-rigth">`;
+                    tr += `<small class="d-block text-rigth">${cantidadPedida} x ${formatter.format(ARR[5])}</small class="d-block text-rigth">`;
                     tr += `${formatter.format(e)}`;
                 tr += `</td>`;
             } else
