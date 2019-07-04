@@ -18,12 +18,31 @@
                     <button onclick="remove(this)" type="button" class="close position-absolute" aria-label="Close">
                         <span aria-hidden="true"><i class="fas fa-times"></i></span>
                     </button>
-                    <form id="form" novalidate class="pt-2" action="" method="post" enctype="multipart/form-data">
+                    <form onsubmit="event.preventDefault(); formSubmit(this);" id="form" novalidate class="pt-2" action="" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                        <div class="container-form"></div>
-                        <div class="mt-3">
-                            <button type="button" class="btn btn-dark text-uppercase d-block mx-auto" onclick="imageAdd(this)">Imagen<i class="fas fa-plus ml-2"></i></button>
-                            <div class="row container-form-image"></div>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="container-form"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                
+                                <div class="row d-flex justify-content-center">
+                                    <div class="col-12">
+                                        <label class="mb-0" for="modelo_id">MODELOS</label>
+                                        <select name="modelo_id[]" multiple class="select__2 w-100" style="width:100%;" id="modelo_id"></select>
+                                    </div>
+                                </div>
+                                <div class="row d-flex justify-content-center mt-3">
+                                    <div class="col-12">
+                                        <select onchange="changeFamilia(this,0)" name="familia_id" class="select__2 w-100" style="width:100%;" id="familia_id"></select>
+                                    </div>
+                                </div>
+                                <div class="mt-2" id="categoriasHTML"></div>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-dark text-uppercase d-block mx-auto" onclick="imageAdd(this)">Imagen<i class="fas fa-plus ml-2"></i></button>
+                                    <div class="row container-form-image"></div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -49,21 +68,53 @@
         });
     });
     window.familias = @json($familias);
-    window.prod = @json($prod);console.log(window.prod)
+    window.modelos = @json($modelos);
+    window.categorias = @json($categorias);
+    window.select2 = @json($select2);
     window.productoimages = new Pyrus("productoimages", null, src);
-    window.pyrus = new Pyrus("productos", {familia_id: {TIPO:"OP",DATA: window.familias},relaciones: {TIPO:"OP",DATA: window.prod}}, src);
+    window.productocategoria = new Pyrus("productoscategoria");
+    
+    window.pyrus = new Pyrus("productos", null, src);
     window.productos = @json($productos);
     formatter = new Intl.NumberFormat('es-AR', {
         style: 'currency',
         currency: 'ARS',
     });
+    
+    formSubmit = function(t) {
+        let idForm = t.id;
+        let url = t.action;
+        let promise = new Promise(function (resolve, reject) {
+            let formElement = document.getElementById(idForm);
+            let request = new XMLHttpRequest();
+            let formData = new FormData(formElement);
+            
+            formData.set("precio",$("#precio").maskMoney('unmasked')[0])
+            
+            request.responseType = 'json';
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "POST", url );
+            xmlHttp.onload = function() {
+                alertify.success(`Producto guardado`);
+                resolve(xmlHttp.response);
+            }
+            xmlHttp.send( formData );
+        });
+        promiseFunction = () => {
+            promise
+                .then(function(data) {
+                    //location.reload();
+                }
+        )};
+        promiseFunction();
+    }
     /** ------------------------------------- */
     imageAdd = function(data = null) {
         if(window.countImage === undefined) window.countImage = 0;
         window.countImage ++;
         let imgAUX = "{{ asset('images/general/no-img.png') }}";
         let html = "";
-        html += `<div class="col-12 col-md-4 my-2 position-relative">`;
+        html += `<div class="col-12 my-2 position-relative">`;
             html += `<i onclick="$(this).parent().remove()" class="fas fa-times-circle text-danger position-absolute" style="top: 5px; right: 20px; cursor: pointer; z-index:2;"></i>`;
             html += `<input type="hidden" name="imageURL[]" value="0" />`;
             html += `${window.productoimages.formulario(window.countImage,"image")}`;
@@ -100,7 +151,7 @@
         }
     };
     /** ------------------------------------- */
-    add = function(t, id = 0, data = null) {
+    function add(t, id = 0, data = null) {
         let btn = $(t);
         if(btn.is(":disabled"))
             btn.removeAttr("disabled");
@@ -115,7 +166,7 @@
         else
             action = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/store') }}`;
         if(data !== null) {
-            console.log(data)
+            console.log(data);
             $(`#relaciones option[value="${id}"]`).attr("disabled",true);
             for(let x in window.pyrus.especificacion) {
                 if(!$(`#${x}`).length) continue;
@@ -125,17 +176,16 @@
                     continue;
                 }
                 if(x == "categoria_id") {
-                    window.categoriaID = data[x];
+                    //window.categoriaID = data[x];
                     continue;
                 }
                 if(x == "modelo_id") {
-                    window.modeloID = data[x].id;
+                    //window.modeloID = data[x].id;
                     continue;
                 }
                 if(x == "precio") {
                     if(data[x] !== null) {
                         p = data[x].precio.toFixed(2).toString();
-                        console.log(p)
                         p = p.replace(".",",");
                         $(`[name="${x}"]`).val(p);
                         $(`[name="${x}"]`).focus();
@@ -146,7 +196,6 @@
                     if(data[x] !== null) {
                         if(data[x].cantidad !== null)
                             $(`[name="${x}"]`).val(data[x].cantidad);
-                        
                     }
                     continue;
                 }
@@ -169,12 +218,11 @@
             data.imagenes.forEach(function(i) {
                 imageAdd(i);
             });
-            
-            Arr = [];
-            data.productos.forEach(function(p) {
-                Arr.push(p.id);
-            });
-            $("#relaciones").val(Arr).trigger("change");
+            window.dataCategorias = data.categorias;
+            $("#orden").focus();
+            //window.categoriasARR = data.categoria_id;
+            //$("#relaciones").val(data.productos).trigger("change");
+            $("#modelo_id").val(data.modelos).trigger("change");
         } else 
             $(`#relaciones option:disabled`).removeAttr("disabled");
         elmnt = document.getElementById("form");
@@ -183,30 +231,38 @@
     };
     /** ------------------------------------- */
     erase = function(t, id) {
-        $(t).attr("disabled",true);
-        let promise = new Promise(function (resolve, reject) {
-            let url = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/delete/${id}') }}`;
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", url, true );
-            
-            xmlHttp.send( null );
-            resolve(xmlHttp.responseText);
-        });
+        
+        alertify.confirm("ATENCIÓN","¿Eliminar registro?",
+            function() {
+                $(t).attr("disabled",true);
+                let promise = new Promise(function (resolve, reject) {
+                    let url = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/delete/${id}') }}`;
+                    var xmlHttp = new XMLHttpRequest();
+                    xmlHttp.open( "GET", url, true );
+                    
+                    xmlHttp.send( null );
+                    resolve(xmlHttp.responseText);
+                });
 
-        promiseFunction = () => {
-            promise
-                .then(function(msg) {
-                    $("#tabla").find(`tr[data-id="${id}"]`).remove();
-                })
-        };
-        promiseFunction();
+                promiseFunction = () => {
+                    promise
+                        .then(function(msg) {
+                            $("#tabla").find(`tr[data-id="${id}"]`).remove();
+                        })
+                };
+                promiseFunction();
+            },
+            function() {
+                $(t).removeAttr("disabled");
+            }
+        ).set('labels', {ok:'Confirmar', cancel:'Cancelar'});
     };
     /** ------------------------------------- */
     remove = function(t) {
         add($("#btnADD"));
 
-        if(window.categoriaID !== undefined)
-            delete window.categoriaID;
+        if(window.dataCategorias !== undefined)
+            delete window.dataCategorias;
 
         for(let x in window.pyrus.especificacion) {
             if(window.pyrus.especificacion[x].EDITOR !== undefined) {
@@ -222,110 +278,124 @@
         $("#padre_id").find("option.new").remove();
         $("#padre_id").attr("disabled",true);
     };
+    changeCategoria = function(t) {
+        id = $(t).val();
+        addFlag = true;
+        if($(t).data("valor") === undefined)
+            $(t).data("valor",id)
+        else 
+            addFlag = false;
+        if(id == "") {
+            //$("#categoriasHTML").html("");
+            for( i = $(t).closest(".cat").index() + 1 ; i < window.categoriaArr.length ; i++)
+                $(`[data-cat="${window.categoriaArr[i]}"]`).remove();
+            
+            for( i = $(t).closest(".cat").index() + 1 ; i < window.categoriaArr.length ; i++)
+                window.categoriaArr.splice(i,1);
+            return false;
+        }
+        if(!addFlag) {
+            for( i = $(t).closest(".cat").index() + 1 ; i < window.categoriaArr.length ; i++)
+                $(`[data-cat="${window.categoriaArr[i]}"]`).remove();
+            
+            for( i = $(t).closest(".cat").index() + 1 ; i < window.categoriaArr.length ; i++)
+                window.categoriaArr.splice(i,1);
+        }
+        $(t).attr("disabled",true);
+        let promise = new Promise(function (resolve, reject) {
+            let url = `{{ url('/adm/familias/categorias/categoria/${id}') }}`;
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.responseType = 'json';
+            xmlHttp.open( "GET", url, true );
+            xmlHttp.onload = function() {
+                resolve(xmlHttp.response);
+            }
+            xmlHttp.send( null );
+        });
+
+        promiseFunction = () => {
+            promise
+                .then(function(data) {
+                    console.log(data);
+                    $(t).removeAttr("disabled");
+                    if(Object.keys(data).length > 1) {
+                        if(window.categoriaIndex === undefined)
+                            window.categoriaIndex = 0;
+                            window.categoriaIndex ++;
+                        window.categoriaArr.push(window.categoriaIndex);
+                        html = `<div class="mt-2 cat" data-cat="${window.categoriaIndex}">` +
+                                    `${window.productocategoria.formulario(window.categoriaIndex, "cat")}` +
+                                `</div>`;
+                        $("#categoriasHTML").append(html);
+                        $("#categoriasHTML").find(`#cat_categoria_id_${window.categoriaIndex}`).removeAttr("disabled");
+                        $("#categoriasHTML").find(`#cat_categoria_id_${window.categoriaIndex}`).select2({
+                            data: data,
+                            allowClear: true,
+                            placeholder: "Seleccione: CATEGORÍA",
+                            width: "resolve"
+                        });
+                        if(window.dataCategorias !== undefined) {
+                            a = window.dataCategorias.shift();
+                            $("#categoriasHTML").find(`#cat_categoria_id_${window.categoriaIndex}`).val(a).trigger("change");
+                        }
+                    }
+                })
+        };
+        promiseFunction();
+    }
     /** ------------------------------------- */
     changeFamilia = function(t,tipo) {
         id = $(t).val();
-        flag = false;
-        console.log(id)
-        if(id === null || id == "")
-            flag = true;
-        if(typeof id == "object" && !flag) {
-            if( id.length == 0 )
-                flag = true;
-            else
-                id = id[0];
+        if(id === null) return false;
+        if(id == "") {
+            $("#categoriasHTML").html("");
+            window.categoriaArr = [];
+            return false;
         }
-        if(flag) {
-            $("#categoria_id").select2("destroy")
-            $("#categoria_id").html("");
-            $("#categoria_id").attr("disabled",true);
-            
-            $("#form .container-form #categoria_id.select__2").select2({
-                tags: "true",
-                allowClear: true,
-                placeholder: "Seleccione: CATEGORÍA",
-                width: "resolve"
-            });
-        } else {
-            $(t).attr("disabled",true);
-            let familiaID = 0, modeloID = 0; 
-            if(tipo == 0) {
-                familiaID = id;
-            } else {
-                familiaID = $("#familia_id").val();
-                modeloID = id;
+        
+        $(t).attr("disabled",true);
+        let promise = new Promise(function (resolve, reject) {
+            let url = `{{ url('/adm/familias/categorias/familia/${id}') }}`;
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.responseType = 'json';
+            xmlHttp.open( "GET", url, true );
+            xmlHttp.onload = function() {
+                resolve(xmlHttp.response);
             }
-            let promise = new Promise(function (resolve, reject) {
-                let url = `{{ url('/adm/familias/categorias/${window.pyrus.entidad}/familia_categoria/${familiaID}/${modeloID}') }}`;
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.responseType = 'json';
-                xmlHttp.open( "GET", url, true );
-                xmlHttp.onload = function() {
-                    resolve(xmlHttp.response);
-                }
-                xmlHttp.send( null );
-            });
+            xmlHttp.send( null );
+        });
 
-            promiseFunction = () => {
-                promise
-                    .then(function(data) {
-                        $(t).removeAttr("disabled");
-                        if(tipo == 0) {
-                            $("#modelo_id").find("option.new").remove();
-                            $("#modelo_id").attr("disabled",true);
-
-                            if(data === null || data === undefined) return false;
-                            if(Object.keys(data).length > 0) { 
-                                $("#modelo_id").removeAttr("disabled");
-                                $("#modelo_id").select2({
-                                    tags: "true",
-                                    placeholder: "Seleccione: MODELO",
-                                    data: data,
-                                    width: "resolve"
-                                });
-                                console.log(window.modeloID)
-                                if(window.modeloID !== undefined) {
-                                    if(typeof window.modeloID == "object") {
-                                        if(Object.keys(window.modeloID).length > 0)
-                                            $("#modelo_id").val(window.modeloID).trigger("change");
-                                    } else {
-                                        if(window.modeloID != 0)
-                                            $("#modelo_id").val(window.modeloID).trigger("change");
-                                    }
-                                }
-                            }
-                        } else {
-                            $("#categoria_id").select2("destroy")
-                            $("#categoria_id").html("");
-                            $("#categoria_id").attr("disabled",true);
-                            
-                            $("#form .container-form #categoria_id.select__2").select2({
-                                tags: "true",
-                                allowClear: true,
-                                placeholder: "Seleccione: CATEGORÍA",
-                                width: "resolve"
-                            });
-
-                            if(data === null || data === undefined) return false;
-                            if(Object.keys(data).length > 0) { 
-                                $("#categoria_id").removeAttr("disabled");
-                                $("#categoria_id").select2({
-                                    tags: "true",
-                                    placeholder: "Seleccione: CATEGORÍA",
-                                    data: data,
-                                    width: "resolve"
-                                });
-                                
-                                if(window.categoriaID !== undefined) {
-                                    if(parseInt(window.categoriaID.id) != 0)
-                                        $("#categoria_id").val(window.categoriaID.id).trigger("change");
-                                }
-                            }
+        promiseFunction = () => {
+            promise
+                .then(function(data) {
+                    $(t).removeAttr("disabled");
+                    if(Object.keys(data).length > 1) {
+                        if(window.categoriaArr === undefined)
+                            window.categoriaArr = [];
+                        if(window.categoriaIndex === undefined)
+                            window.categoriaIndex = 0;
+                        window.categoriaIndex ++;
+                        window.categoriaArr.push(window.categoriaIndex);
+                        html = `<div class="mt-2 cat" data-cat="${window.categoriaIndex}">` +
+                                    `${window.productocategoria.formulario(window.categoriaIndex, "cat")}` +
+                                `</div>`;
+                        $("#categoriasHTML").append(html);
+                        $("#categoriasHTML").find(`#cat_categoria_id_${window.categoriaIndex}`).removeAttr("disabled");
+                        $("#categoriasHTML").find(`#cat_categoria_id_${window.categoriaIndex}`).select2({
+                            data: data,
+                            allowClear: true,
+                            placeholder: "Seleccione: CATEGORÍA",
+                            width: "resolve"
+                        });
+                        if(window.dataCategorias !== undefined) {
+                            a = window.dataCategorias.shift();
+                            $("#categoriasHTML").find(`#cat_categoria_id_${window.categoriaIndex}`).val(a).trigger("change");
                         }
-                    })
-            };
-            promiseFunction();
-        }
+                    }
+                })
+        };
+        promiseFunction();
+        
     };
     /** ------------------------------------- */
     edit = function(t, id, modal = null) {
@@ -402,28 +472,39 @@
         $("#form .container-form").html(window.pyrus.formulario());
         $("#precio").maskMoney({thousands:'.', decimal:',', allowZero:true, prefix: '$ '});
         if($("#form .container-form .select__2").length) {
-            
-            $("#form .container-form #relaciones.select__2").select2({
-                theme: "bootstrap",
-                tags: "true",
-                width: "resolve"
+            u = "{{ url('/adm/familias/categorias/productos/select') }}";
+            console.log(u)
+            $("#relaciones.select__2").select2({
+                width: "resolve",
+                language: "es",
+                ajax: {
+                    url: u,
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                        return {
+                           results: data
+                        };
+                    },
+                    cache: true
+                }
             });
-            $("#form .container-form #familia_id.select__2").select2({
-                tags: "true",
+            $("#familia_id.select__2").select2({
                 allowClear: true,
                 placeholder: "Seleccione: FAMILIA",
-                width: "resolve"
+                width: "resolve",
+                data: window.select2.familias
             });
-            $("#form .container-form #categoria_id.select__2").select2({
-                tags: "true",
+            $("#categoria_id.select__2").select2({
                 allowClear: true,
                 placeholder: "Seleccione: CATEGORÍA",
-                width: "resolve"
+                width: "resolve",
+                data: window.select2.categorias
             });
             $("#modelo_id").select2({
-                tags: "true",
                 placeholder: "Seleccione: MODELO",
-                width: "resolve"
+                width: "resolve",
+                data: window.select2.modelos
             });
         }
         let columnas = window.pyrus.columnas();
@@ -457,6 +538,16 @@
                     date = new Date();
                     img = `{{ asset('${td}') }}?t=${date.getTime()}`;
                     td = `<img class="w-100" src="${img}" onerror="this.src='${src}'"/>`;
+                }
+                if(window.pyrus.especificacion[c.COLUMN].TIPO == "TP_ENUM") {
+                    if(window.pyrus.especificacion[c.COLUMN].ENUM !== undefined)
+                        td = window.pyrus.especificacion[c.COLUMN].ENUM[td];
+                    else {
+                        if(window[c.COLUMN] !== undefined) {
+                            if(window[c.COLUMN][td] !== undefined)
+                                td = window[c.COLUMN][td];
+                        }
+                    }
                 }
                 tr += `<td class="${c.CLASS}">${td}</td>`;
             });

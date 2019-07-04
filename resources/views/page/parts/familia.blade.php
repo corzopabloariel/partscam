@@ -14,14 +14,52 @@
                     <div class="sidebar">
                         @foreach($datos["menu"] AS $id => $dato)
                             <h3 class="title mb-1 nombre text-left @if($id == $datos['familia']['id']) active @endif">
-                                <a href="{{ URL::to('productos/familia/'. $id) }}">{{$dato["titulo"]}}</a>
+                                <a href="{{ URL::to('productos/familia/'. $id) }}">{{$dato["nombre"]}}</a>
                             </h3>
-                            @if(count($dato["hijos"]) > 0)
-                                <ul style="" data-nivel="{{$dato['nivel']}}" data-id="{{$id}}" class="list-group">
-                                @foreach ($dato["hijos"] AS $did => $ddato)
-                                    @include('page.parts.general._menuItem', ['id' => $did,'dato' => $ddato])
-                                @endforeach
+                            @if(isset($datos["productos"]))
+                                <ul class="list-group">
+                                    @foreach ($dato["modelos"] AS $modelo_id => $modelo)
+                                    <li class="list-group-item @if($modelo['activo'] == 1) active-menu @endif">
+                                        <span class="d-block position-relative">
+                                            <a class="d-block" href="{{ URL::to('productos/familia/' . $id . '/modelo/' . $modelo_id . '/' . $modelo['tipo']) }}">{{$modelo["nombre"]}}</a><i class="fas fa-angle-down position-absolute"></i><i class="fas fa-angle-right position-absolute"></i>
+                                        </span>
+                                        @if(isset($modelo["categorias"]))
+                                        <ul class="list-group @if($modelo['activo'] == 1)  active-submenu @endif">
+                                            @foreach ($modelo["categorias"] AS $categoria_id => $categoria)
+                                            <li class="list-group-item @if($categoria['activo'] == 1) active-menu @endif">
+                                                <span class="d-block position-relative">
+                                                    <a class="d-block" href="{{ URL::to('productos/familia/' . $id . '/modelo/' . $modelo_id . '/categoria/' . $categoria_id . '/' . $categoria['tipo']) }}">{{$categoria["nombre"]}}</a><i class="fas fa-angle-down position-absolute"></i><i class="fas fa-angle-right position-absolute"></i>
+                                                </span>
+                                                @if(isset($categoria["subcategorias"]))
+                                                <ul class="list-group @if($categoria['activo'] == 1)  active-submenu @endif">
+                                                    @foreach($categoria["subcategorias"] AS $subcategoria_id => $subcategoria)
+                                                    <li class="list-group-item @if($subcategoria['activo'] == 1) active-menu @endif">
+                                                        <span class="d-block position-relative">
+                                                            <a class="d-block" href="{{ URL::to('productos/familia/' . $id . '/modelo/' . $modelo_id . '/categoria/' . $categoria_id . '/subcategoria/' . $subcategoria_id . '/' . $categoria['tipo']) }}">{{$subcategoria["nombre"]}}</a><i class="fas fa-angle-down position-absolute"></i><i class="fas fa-angle-right position-absolute"></i>
+                                                        </span>
+                                                    </li>
+                                                    @endforeach
+                                                </ul>
+                                                @endif
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                    </li>
+                                    @endforeach
                                 </ul>
+                            @else
+                                @if(count($dato["modelos"]) > 0)
+                                    <ul class="list-group">
+                                    @foreach ($dato["modelos"] AS $modelo_id => $modelo)
+                                    <li class="list-group-item @if($modelo['activo'] == 1) active-menu @endif">
+                                        <span class="d-block position-relative">
+                                            <a class="d-block" href="{{ URL::to('productos/familia/' . $id . '/modelo/' . $id . '/2') }}">{{$modelo["nombre"]}}</a><i class="fas fa-angle-down position-absolute"></i><i class="fas fa-angle-right position-absolute"></i>
+                                        </span>
+                                    </li>
+                                    @endforeach
+                                    </ul>
+                                @endif
                             @endif
                         @endforeach
                     </div>
@@ -40,13 +78,21 @@
                     </div>
                 </div>
                 <div class="row" id="ordenamiento">
-                    @if($datos["familia"]["id"] == 5)
-                        @foreach($datos["productosSIN"] AS $p)
+                    @if(isset($datos["productos"]))
+                        @foreach($datos["productos"] AS $p)
                         @php
+                        $imgs = $p->imagenes;
                         $img = null;
+                        if(count($imgs) > 0)
+                            $img = $imgs[0]['image'];
+                        $oferta = $p->oferta;
+                        
                         @endphp
                         <a href="{{ URL::to('productos/producto/'. $p['id']) }}" class="position-relative col-lg-4 col-md-6 col-12 mb-4">
                             <div class="img position-relative">
+                                @if(!empty($oferta))
+                                    <img class="position-absolute oferta" style="top: -8px; left: -8px; z-index: 11;" src="{{ asset('images/general/ofertas.fw.png') }}" />
+                                @endif
                                 <div></div>
                                 <i class="fas fa-plus"></i>
                                 <img src="{{ asset($img) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" class="w-100" />
@@ -55,21 +101,23 @@
                         </a>
                         @endforeach
                     @else
-                        @foreach($datos["menu"][$datos["familia"]["id"]]["hijos"] AS $k => $v)
-                            <div class="col-md-4 my-2 d-flex align-self-stretch">
-                                <a href="{{ URL::to('productos/categoria/'. $k) }}" class="border p-3 d-block categoria d-flex align-items-center w-100">
-                                    {{$v["titulo"]}}
-                                </a>
-                            </div>
+                    @if(isset($datos["modelos"]))
+                        @foreach($datos["modelos"] AS $i => $m)
+                        <div class="col-md-4 my-2 d-flex align-self-stretch">
+                            <a href="{{ URL::to('productos/familia/'. $datos['familia']['id'] . '/modelo/'. $i . '/2') }}" class="border p-3 d-block categoria d-flex align-items-center w-100">
+                                {{$m}}
+                            </a>
+                        </div>
                         @endforeach
                     @endif
-                </div>
-                @if($datos["familia"]["id"] == 5)
-                <div class="row">
-                    <div class="col-12">{{ $datos["productosSIN"]->links() }}</div>
-                </div>
-                @else
                 @endif
+                </div>
+                @isset($datos["productos"])
+                <div class="row">
+                    <div class="col-12">{{ $datos["productos"]->links() }}</div>
+                </div>
+                @endisset
+                
             </div>
         </div>
     </div>

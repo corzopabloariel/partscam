@@ -291,8 +291,7 @@ const ENTIDADES = {
         ATRIBUTOS: {
             orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"100px"},
             image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 400x393",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"151px"},
-            familia_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia",COMUN:1},
-            familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"Familia"},
+            familia_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Familia",COMUN:1},
             //padre: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"CATEGORÍA",WIDTH:"220px"},
             nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
             //padre_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"}
@@ -349,7 +348,6 @@ const ENTIDADES = {
         ATRIBUTOS: {
             orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
             nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
-            familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
         },
         FORM: [
             {
@@ -387,55 +385,58 @@ const ENTIDADES = {
             precio: {onblur:"calcular(this);"}
         }
     },
-    productos: {
+    productoscategoria: {
         ATRIBUTOS: {
-            orden: {TIPO:"TP_STRING",MAXLENGTH:10,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase text-center",WIDTH:"150px"},
-            codigo: {TIPO:"TP_STRING",MAXLENGTH:20,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase",WIDTH:"150px",NOMBRE:"código"},
-            nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
-            aplicacion: {TIPO:"TP_TEXT",EDITOR:1,FIELDSET:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"aplicación"},
-            stock: {TIPO:"TP_ENTERO",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE"},
-            precio: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",CLASS:"text-right"},
-            mercadolibre: {TIPO:"TP_STRING",MAXLENGTH: 150,VISIBILIDAD:"TP_VISIBLE_FORM"},
-            familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"Familia"},
-            modelo_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Modelo",MULTIPLE:1},
-            categoria_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",DISABLED:1,NOMBRE:"Categoría"},
-            relaciones: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"productos relacionados",MULTIPLE:1},
-            //familia: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE"},
-            categoria: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE_TABLE",NOMBRE:"categoría"}
+            categoria_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Categoría",DISABLED:1},
         },
         FORM: [
             {
-                orden: '<div class="col-5 col-md-3">/orden/</div>',
-                BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
-            },
-            {
-                codigo: '<div class="col-5 col-md-3">/codigo/</div>',
-                stock: '<div class="col-5 col-md-3">/stock/</div>',
-                precio: '<div class="d-flex col-3 col-md-3">/precio/</div>'
-            },
-            {
-                nombre: '<div class="col-12 col-md-6">/nombre/</div>',
-                mercadolibre: '<div class="col-12 col-md-6">/mercadolibre/</div>',
-            },
-            {
-                familia_id: '<div class="col-12 col-md-6">/familia_id/</div>',
-            },
-            {
-                modelo_id: '<div class="col-12">/modelo_id/</div>',
-            },
-            {
-                categoria_id: '<div class="col-12 col-md-6">/categoria_id/</div>',
-            },
-            {
-                aplicacion: '<div class="col-12 col-md-9">/aplicacion/</div>',
-            },
-            {
-                relaciones: '<div class="col-12 col-md-6">/relaciones/</div>',
+                categoria_id: '<div class="col-12">/categoria_id/</div>',
             },
         ],
         FUNCIONES: {
+            categoria_id: {onchange: "changeCategoria(this)"},
+        }
+    },
+    productos: {
+        ATRIBUTOS: {
+            orden: {TIPO:"TP_STRING",MAXLENGTH:10,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            codigo: {TIPO:"TP_STRING",MAXLENGTH:20,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase",WIDTH:"150px",NOMBRE:"código",LABEL:1},
+            nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE_FORM",LABEL:1},
+            aplicacion: {TIPO:"TP_TEXT",EDITOR:1,FIELDSET:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"aplicación"},
+            stock: {TIPO:"TP_ENTERO",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-right",LABEL:1},
+            precio: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",CLASS:"text-right",LABEL: 1},
+            mercadolibre: {TIPO:"TP_STRING",MAXLENGTH: 150,VISIBILIDAD:"TP_VISIBLE_FORM", LABEL:1},
+            familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Familia"},
+            modelo_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Modelo",MULTIPLE:1},
+            categoria_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Categoría",DISABLED:1},
+            relaciones: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"productos relacionados",MULTIPLE:1},
+        },
+        FORM: [
+            {
+                orden: '<div class="col-5 col-md-4">/orden/</div>',
+                BTN: '<div class="d-flex col-5 col-md-4">/BTN/</div>'
+            },
+            {
+                codigo: '<div class="col-12 col-md-4">/codigo/</div>',
+                stock: '<div class="col-12 col-md-4">/stock/</div>',
+                precio: '<div class="col-3 col-md-4">/precio/</div>'
+            },
+            {
+                nombre: '<div class="col-12">/nombre/</div>',
+            },
+            {
+                mercadolibre: '<div class="col-12">/mercadolibre/</div>',
+            },
+            {
+                aplicacion: '<div class="col-12">/aplicacion/</div>',
+            },
+            {
+                relaciones: '<div class="col-12">/relaciones/</div>',
+            }
+        ],
+        FUNCIONES: {
             familia_id: {onchange: "changeFamilia(this,0)"},
-            modelo_id: {onchange: "changeFamilia(this,1)"},
             precio: {onkeypress: "permite(event,'.,0123456789/');"},
             stock: {onkeypress: "permite(event,'0123456789')"}
         }

@@ -17,12 +17,12 @@ use App\Categoria;
 class CargaController extends Controller
 {
     public function index(Request $request) {
-        //set_time_limit(120);
+        set_time_limit(0);
 
         $archivo = $request->file("archivo");
         try {
             $path = public_path('cargas/');
-            Excel::import(new ProductosImport,request()->file('archivo'));            
+            Excel::import(new ProductosImport,$request->file('archivo'));            
         } catch (Exception $e) {
             return back()->withErrors(['mssg' => "Ocurrió un error"]);
         }

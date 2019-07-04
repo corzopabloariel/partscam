@@ -9,11 +9,11 @@
                 <div class="sidebar">
                     @foreach($datos["menu"] AS $id => $dato)
                         <h3 class="title mb-1 nombre text-left @if($id == $datos['familia']['id']) active @endif">
-                            <a href="{{ URL::to('productos/familia/'. $id) }}">{{$dato["titulo"]}}</a>
+                            <a href="{{ URL::to('productos/familia/'. $id) }}">{{$dato["nombre"]}}</a>
                         </h3>
-                        @if(count($dato["hijos"]) > 0)
+                        @if(count($dato["modelos"]) > 0)
                             <ul class="list-group @if($dato['activo']) active-submenu @endif">
-                            @foreach ($dato["hijos"] AS $did => $ddato)
+                            @foreach ($dato["modelos"] AS $did => $ddato)
                                 @include('page.parts.general._menuItem', ['id' => $did,'dato' => $ddato])
                             @endforeach
                             </ul>

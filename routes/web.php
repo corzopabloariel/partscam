@@ -23,7 +23,9 @@ Route::group(['prefix' => 'productos', 'as' => 'productos'], function() {
     Route::get('/', ['uses' => 'page\GeneralController@productos', 'as' => 'productos']);
     Route::get('ofertas', ['uses' => 'page\GeneralController@ofertas', 'as' => 'ofertas']);
     Route::get('familia/{id}', ['uses' => 'page\GeneralController@familia', 'as' => '.familia']);
-    Route::get('categoria/{id}', ['uses' => 'page\GeneralController@categoria', 'as' => '.categoria']);
+    Route::get('familia/{familia_id}/modelo/{modelo_id}/{tipo}', ['uses' => 'page\GeneralController@modelo', 'as' => '.modelo']);
+    Route::get('familia/{familia_id}/modelo/{modelo_id}/categoria/{categoria_id}/{tipo}', ['uses' => 'page\GeneralController@categoria', 'as' => '.categoria']);
+    //Route::get('categoria/{modelo_id}/{id}', ['uses' => 'page\GeneralController@categoria', 'as' => '.categoria']);
     Route::get('producto/{id}', ['uses' => 'page\GeneralController@producto', 'as' => '.producto']);
     Route::get('show/{id}', ['uses' => 'adm\ProductoController@show', 'as' => 'show']);
 });
@@ -102,7 +104,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
             Route::get('show/{id}/{tipo}', ['uses' => 'adm\CategoriaController@show', 'as' => '.show']);
             Route::get('delete/{id}', ['uses' => 'adm\CategoriaController@destroy', 'as' => '.destroy']);
             Route::post('update/{id}', ['uses' => 'adm\CategoriaController@update', 'as' => 'update']);
-            Route::get('familia_categoria/{id}/{tipo}', ['uses' => 'adm\CategoriaController@familia_categoria', 'as' => '.familia_categoria']);
+            Route::get('familia/{id}', ['uses' => 'adm\CategoriaController@familia', 'as' => '.familia']);
+            Route::get('categoria/{id}', ['uses' => 'adm\CategoriaController@categoria', 'as' => '.categoria']);
             
             Route::group(['prefix' => 'subcategorias', 'as' => '.subcategorias'], function() {
                 Route::get('index', ['uses' => 'adm\SubcategoriaController@index', 'as' => '.index']);
@@ -115,8 +118,10 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
             Route::group(['prefix' => 'productos', 'as' => '.productos'], function() {
                 Route::post('store', ['uses' => 'adm\ProductoController@store', 'as' => '.store']);
                 Route::get('edit/{id}', ['uses' => 'adm\ProductoController@edit', 'as' => '.edit']);
-                Route::get('familia_categoria/{familia_id}/{modelo_id}', ['uses' => 'adm\ProductoController@familia_categoria', 'as' => '.familia_categoria']);
+                Route::get('familia_categoria/{familia_id}/{tipo}', ['uses' => 'adm\ProductoController@familia_categoria', 'as' => '.familia_categoria']);
                 Route::get('delete/{id}', ['uses' => 'adm\ProductoController@destroy', 'as' => '.destroy']);
+                
+                Route::get('select', ['uses' => 'adm\ProductoController@select', 'as' => 'select']);
                 Route::post('update/{id}', ['uses' => 'adm\ProductoController@update', 'as' => 'update']);
                 Route::post('updateModal/{id}', ['uses' => 'adm\ProductoController@updateModal', 'as' => 'updateModal']);
             });

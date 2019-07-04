@@ -11,13 +11,9 @@ class Familia extends Model
         'nombre',
         'orden'
     ];
-    public function modelos() 
-    {
-        return $this->hasMany('App\Categoria')->where("tipo",1)->where("padre_id",0)->orderBy('orden');
-    }
     public function categorias() 
     {
-        return $this->hasMany('App\Categoria')->orderBy('tipo')->orderBy('orden');
+        return $this->hasMany('App\Categoria')->whereNull("padre_id")->orderBy('tipo')->orderBy('orden');
     }
     public function productos() 
     {

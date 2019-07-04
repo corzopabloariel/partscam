@@ -38,10 +38,11 @@ class SubcategoriaController extends Controller
     public function store(Request $request, $data = null)
     {
         $datosRequest = $request->all();
+        
         $padre_id = $datosRequest["padre_id"];
         $tipo = $datosRequest["tipo"];
         $categoria = Categoria::find($padre_id);
-        $categorias = Categoria::where("familia_id",$categoria["familia_id"])->where("did",$categoria["did"])->where("tipo",$categoria["tipo"])->get();
+        
         $image = null;
 
         $file = $request->file("image");
@@ -61,19 +62,18 @@ class SubcategoriaController extends Controller
             if(!empty($aux))
                 $did = $aux["did"] + 1;
             $aux_r = null;
-            foreach($categorias AS $c) {
-                $ARR_data = [];
-                $ARR_data["did"] = $did;
-                $ARR_data["image"] = $image;
-                $ARR_data["familia_id"] = $c["familia_id"];
-                $ARR_data["padre_id"] = $c["id"];
-                $ARR_data["nombre"] = $datosRequest["nombre"];
-                $ARR_data["orden"] = $datosRequest["orden"];
-                $ARR_data["tipo"] = $tipo + 1;
-                
-                $aux_r = Categoria::create($ARR_data);
-                $aux_r["familia"] = Familia::find($c["familia_id"])["nombre"];
-            }
+            
+            $ARR_data = [];
+            $ARR_data["did"] = $did;
+            $ARR_data["image"] = $image;
+            $ARR_data["familia_id"] = $datosRequest["familia_id"];
+            $ARR_data["padre_id"] = $padre_id;
+            $ARR_data["nombre"] = $datosRequest["nombre"];
+            $ARR_data["orden"] = $datosRequest["orden"];
+            $ARR_data["tipo"] = $tipo + 1;
+            
+            $aux_r = Categoria::create($ARR_data);
+            
             return $aux_r;
         } else {
             if(is_null($image))

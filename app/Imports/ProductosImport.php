@@ -33,7 +33,7 @@ class ProductosImport implements ToModel
             }
             $familia_id = $aux["id"];
         }
-        if(isset($row[5])) {
+        /*if(isset($row[5])) {
             $aux = Categoria::where("familia_id",$familia_id)->where("nombre",$row[5])->where("tipo",1)->first();
             if(empty($aux)) {
                 $aux = Categoria::create([
@@ -53,11 +53,12 @@ class ProductosImport implements ToModel
             } else {
                 $auxCat = explode($aux);
             }
-        }
+        }*/
 
         $nombre = str_replace('"',"'",$row[1]);
-        $dataProducto = Producto::where("nombre",$nombre)->where("familia_id",$familia_id)->where("categoria_id",$categoria_id)->first();
+        $dataProducto = Producto::where("nombre",$nombre)->where("familia_id",$familia_id)->first();
         if(empty($dataProducto)) {
+            
             $dataProducto = Producto::create([
                 'codigo'    => $row[0],
                 'nombre'    => $nombre,
@@ -65,11 +66,11 @@ class ProductosImport implements ToModel
                 'categoria_id'  => $categoria_id
             ]);
             
-            Productoprecio::create([
+            $aa = Productoprecio::create([
                 "precio" => (empty($row[3]) ? 0 : $row[3]),
                 "producto_id" => $dataProducto["id"]
             ]);
-            Productostock::create([
+            $bb = Productostock::create([
                 "cantidad" => (empty($row[2]) ? 0 : $row[2]),
                 "producto_id" => $dataProducto["id"]
             ]);
@@ -92,7 +93,6 @@ class ProductosImport implements ToModel
             ]);
             $dataStock->save();
         }
-
         return $dataProducto;
     }
 }

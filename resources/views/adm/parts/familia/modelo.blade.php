@@ -30,9 +30,8 @@
 <script>
     
     const src = "{{ asset('images/general/no-img.png') }}";
-    window.familias = @json($familias);
-    window.pyrus = new Pyrus("modelos", {familia_id: {TIPO:"OP",DATA: window.familias}}, src);
-    window.categorias = @json($categorias);
+    window.pyrus = new Pyrus("modelos", null, src);
+    window.elementos = @json($modelos);
     
     /** ------------------------------------- */
     readURL = function(input, target) {
@@ -142,7 +141,7 @@
     edit = function(t, id) {
         $(t).attr("disabled",true);
         let promise = new Promise(function (resolve, reject) {
-            let url = `{{ url('/adm/familias/categorias/edit/${id}') }}`;
+            let url = `{{ url('/adm/familias/modelos/edit/${id}') }}`;
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.responseType = 'json';
             xmlHttp.open( "GET", url, true );
@@ -183,7 +182,7 @@
         });
         table.find("thead").append(`<th class="text-uppercase text-center" style="width:150px">acción</th>`);
         
-        window.categorias.forEach(function(data) {
+        window.elementos.forEach(function(data) {
             let tr = "";
             if(!table.find("tbody").length) 
                 table.append("<tbody></tbody>");
@@ -198,7 +197,7 @@
                 }
                 tr += `<td class="${c.CLASS}">${td}</td>`;
             });
-            tr += `<td class="text-center"><button onclick="edit(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button><button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></td>`;
+            tr += `<td class="text-center"><button onclick="edit(this,${data.id})" class="btn btn-warning rounded-0"><i class="fas fa-pencil-alt"></i></button><button onclick="erase(this,${data.id})" class="btn btn-danger rounded-0"><i class="fas fa-trash-alt"></i></button></td>`;
             table.find("tbody").append(`<tr data-id="${data.id}">${tr}</tr>`);
         });
     }

@@ -48,7 +48,7 @@
     window.familias = @json($familias);
     
     window.pyrus = new Pyrus("categorias", {familia_id: {TIPO:"OP",DATA: window.familias}}, src);
-    window.categorias = @json($categorias);
+    window.elementos = @json($categorias);
     /** */
     /*$("#modelos").select2({
         theme: "bootstrap",
@@ -286,7 +286,7 @@
     };
     removeModal = function(t) {
         addModal($("#btnADDmodal"));
-        let subcategorias = new Pyrus("subcategorias", null, src);
+        let subcategorias = new Pyrus("subcategorias");
 
         if(window.padreID !== undefined)
             delete window.padreID;
@@ -467,14 +467,20 @@
                         img = `{{ asset('${td}') }}?t=${date.getTime()}`;
                         td = `<img class="w-100" src="${img}" onerror="this.src='${src}'"/>`;
                     }
+                    if(window.pyrus.especificacion[c.COLUMN].TIPO == "TP_ENUM") {
+                        if(window.pyrus.especificacion[c.COLUMN].ENUM !== undefined)
+                            td = window.pyrus.especificacion[c.COLUMN].ENUM[td];
+                        else
+                            td = window.familias[td];
+                    }
                     tr += `<td class="${c.CLASS}">${td}</td>`;
                 });
                 tr += `<td>`;
-                    tr += `<div class="d-flex flex-wrap h-100 w-100 justify-content-around align-items-center">`
-                        tr += `<button onclick="editModal(this,${xmlHttp.response.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
-                        tr += `<button onclick="eraseModal(this,${xmlHttp.response.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
+                    tr += `<div class="">`
+                        tr += `<button onclick="editModal(this,${xmlHttp.response.id})" class="btn rounded-0 btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
+                        tr += `<button onclick="eraseModal(this,${xmlHttp.response.id})" class="btn rounded-0 btn-danger"><i class="fas fa-trash-alt"></i></button>`;
                         //tr += `<hr>`;
-                        tr += `<button onclick="hijos(this,${xmlHttp.response.id},${xmlHttp.response.tipo}, 1)" type="button" class="btn btn-primary"><i class="fas fa-table" title="Listar hijos"></i></button>`;
+                        //tr += `<button onclick="hijos(this,${xmlHttp.response.id},${xmlHttp.response.tipo}, 1)" type="button" class="btn rounded-0 btn-primary"><i class="fas fa-table" title="Listar hijos"></i></button>`;
                     tr += `</div>`;
                 tr += `</td>`;
                 table.find("tbody").append(`<tr data-id="${xmlHttp.response.id}">${tr}</tr>`);
@@ -553,14 +559,20 @@
                                 img = `{{ asset('${td}') }}?t=${date.getTime()}`;
                                 td = `<img class="w-100" src="${img}" onerror="this.src='${src}'"/>`;
                             }
+                            if(window.pyrus.especificacion[c.COLUMN].TIPO == "TP_ENUM") {
+                                if(window.pyrus.especificacion[c.COLUMN].ENUM !== undefined)
+                                    td = window.pyrus.especificacion[c.COLUMN].ENUM[td];
+                                else
+                                    td = window.familias[td];
+                            }
                             tr += `<td class="${c.CLASS}">${td}</td>`;
                         });
                         tr += `<td>`;
-                            tr += `<div class="d-flex flex-wrap h-100 w-100 justify-content-around align-items-center">`
-                                tr += `<button onclick="editModal(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
-                                tr += `<button onclick="eraseModal(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
+                            tr += `<div class="">`
+                                tr += `<button onclick="editModal(this,${data.id})" class="btn rounded-0 btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
+                                tr += `<button onclick="eraseModal(this,${data.id})" class="btn rounded-0 btn-danger"><i class="fas fa-trash-alt"></i></button>`;
                                 //tr += `<hr>`;
-                                tr += `<button onclick="hijos(this,${data.id},${data.tipo}, 1)" type="button" class="btn btn-primary"><i class="fas fa-table" title="Listar hijos"></i></button>`;
+                                //tr += `<button onclick="hijos(this,${data.id},${data.tipo}, 1)" type="button" class="btn rounded-0 btn-primary"><i class="fas fa-table" title="Listar hijos"></i></button>`;
                             tr += `</div>`;
                         tr += `</td>`;
                         table.find("tbody").append(`<tr data-id="${data.id}">${tr}</tr>`);
@@ -585,30 +597,38 @@
         });
         table.find("thead").append(`<th class="text-uppercase text-center" style="width:150px">acción</th>`);
         
-        window.categorias.data.forEach(function(data) {
+        window.elementos.data.forEach(function(data) {
             let tr = "";
-            if(!table.find("tbody").length) 
-                table.append("<tbody></tbody>");
-            columnas.forEach(function(c) {
-                td = data[c.COLUMN] === null ? "" : data[c.COLUMN];
-                if(typeof td == 'object')
-                    td = td.nombre;
-                if(window.pyrus.especificacion[c.COLUMN].TIPO == "TP_FILE") {
-                    date = new Date();
-                    img = `{{ asset('${td}') }}?t=${date.getTime()}`;
-                    td = `<img class="w-100" src="${img}" onerror="this.src='${src}'"/>`;
-                }
-                tr += `<td class="${c.CLASS}">${td}</td>`;
-            });
-            tr += `<td>`;
-                tr += `<div class="d-flex flex-wrap h-100 w-100 justify-content-around align-items-center">`
-                    tr += `<button onclick="edit(this,${data.id})" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
-                    tr += `<button onclick="erase(this,${data.id})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>`;
-                    //tr += `<hr>`;
-                    tr += `<button onclick="hijos(this,${data.id},${data.tipo})" type="button" class="btn btn-primary"><i class="fas fa-table" title="Listar hijos"></i></button>`;
-                tr += `</div>`;
-            tr += `</td>`;
-            table.find("tbody").append(`<tr ${data.tipo == 3 ? 'class="table-info"' : ""} data-id="${data.id}">${tr}</tr>`);
+            if(data.familia_id != 5) {
+                if(!table.find("tbody").length)
+                    table.append("<tbody></tbody>");
+                columnas.forEach(function(c) {
+                    td = data[c.COLUMN] === null ? "" : data[c.COLUMN];
+                    if(typeof td == 'object')
+                        td = td.nombre;
+                    if(window.pyrus.especificacion[c.COLUMN].TIPO == "TP_FILE") {
+                        date = new Date();
+                        img = `{{ asset('${td}') }}?t=${date.getTime()}`;
+                        td = `<img class="w-100" src="${img}" onerror="this.src='${src}'"/>`;
+                    }
+                    if(window.pyrus.especificacion[c.COLUMN].TIPO == "TP_ENUM") {
+                        if(window.pyrus.especificacion[c.COLUMN].ENUM !== undefined)
+                            td = window.pyrus.especificacion[c.COLUMN].ENUM[td];
+                        else
+                            td = window.familias[td];
+                    }
+                    tr += `<td class="${c.CLASS}">${td}</td>`;
+                });
+                tr += `<td>`;
+                    tr += `<div class="">`
+                        tr += `<button onclick="edit(this,${data.id})" class="btn rounded-0 btn-warning"><i class="fas fa-pencil-alt"></i></button>`;
+                        tr += `<button onclick="erase(this,${data.id})" class="btn rounded-0 btn-danger"><i class="fas fa-trash-alt"></i></button>`;
+                        //tr += `<hr>`;
+                        tr += `<button onclick="hijos(this,${data.id},${data.tipo})" type="button" class="btn rounded-0 btn-primary"><i class="fas fa-table" title="Listar hijos"></i></button>`;
+                    tr += `</div>`;
+                tr += `</td>`;
+                table.find("tbody").append(`<tr ${data.tipo == 3 ? 'class="table-info"' : ""} data-id="${data.id}">${tr}</tr>`);
+            }
         });
     }
     /** */

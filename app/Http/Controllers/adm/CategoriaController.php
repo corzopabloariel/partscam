@@ -34,16 +34,10 @@ class CategoriaController extends Controller
         $view = "adm.parts.familia.categoria";
         $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
         
-        $categorias = Categoria::where("tipo",2)
-                            ->orderBy("tipo")
-                            ->orderBy("familia_id")
+        $categorias = Categoria::whereNull("padre_id")
                             ->orderBy("orden")
-                                ->groupBy("familia_id")
-                                ->groupBy("nombre")
-                                    ->paginate(15);
-        foreach($categorias AS $c) {
-            $c["familia"] = $c->familia["nombre"];
-        }
+                                ->paginate(15);
+        
         return view('adm.distribuidor',compact('title','view','familias','categorias'));
     }
 
@@ -60,9 +54,8 @@ class CategoriaController extends Controller
      */
     public function store(Request $request, $data = null)
     {
-        $datosRequest = $request->all();
-        $tipo = 2;
-        $family = Familia::find($datosRequest["familia_id"]);
+        $datosRequest = $request->all();dd($datosRequest);
+        $tipo = 1;
         $image = null;
 
         $file = $request->file("image");
@@ -84,7 +77,7 @@ class CategoriaController extends Controller
                 $ARR_data = [];
                 $ARR_data["did"] = $did;
                 $ARR_data["image"] = $image;
-                $ARR_data["familia_id"] = $family["id"];
+                $ARR_data["familia_id"] = $datosRequest["familia_id"];
                 $ARR_data["padre_id"] = $m["id"];
                 $ARR_data["nombre"] = $datosRequest["nombre"];
                 $ARR_data["orden"] = $datosRequest["orden"];
@@ -151,28 +144,33 @@ class CategoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function familia_categoria($id, $tipo)
+    public function familia($id)
     {
         /**
          * FAMILIA
          */
-        if($tipo == 1) {
-            $catTOTAL = Familia::find($id)->categorias->where("tipo",1);
-        } else {
-            $catTOTAL = self::edit($id);
-            
-                $catTOTAL = Familia::find($catTOTAL["familia_id"])->categorias->where("tipo",$catTOTAL["tipo"] + 1);
-            //dd($catTOTAL->pluck('nombre', 'id'));
-            foreach($catTOTAL AS $c)
-                $c["nombre"] = self::rec_padre($c);
-        }
+        $catTOTAL = Familia::find($id)->categorias->where("tipo",1);
         
         $categoria = $catTOTAL->pluck('nombre', 'id');
         $select2 = [];
-        $select2["results"] = [];
-        $select2["results"][] = ["id" => "", "text" => ""];
+        $select2[] = ["id" => "", "text" => ""];
         foreach($categoria AS $k => $v)
-            $select2["results"][] = ["id" => $k, "text" => $v];
+            $select2[] = ["id" => $k, "text" => $v];
+        
+        return $select2;
+    }
+    public function categoria($id)
+    {
+        /**
+         * FAMILIA
+         */
+        $catTOTAL = Categoria::find($id)->hijos;
+        
+        $categoria = $catTOTAL->pluck('nombre', 'id');
+        $select2 = [];
+        $select2[] = ["id" => "", "text" => ""];
+        foreach($categoria AS $k => $v)
+            $select2[] = ["id" => $k, "text" => $v];
         
         return $select2;
     }

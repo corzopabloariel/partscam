@@ -5,6 +5,7 @@ namespace App\Http\Controllers\adm;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Familia;
+use App\Modelo;
 use App\Categoria;
 use App\Producto;
 use App\Productoimages;
@@ -51,6 +52,16 @@ class ProductoController extends Controller
             return $aux;
         }
     }
+    public function select(Request $request) {
+        $dataRequest = $request->all();
+        $json = [];
+        if(isset($dataRequest["q"])) {
+            $productos = Producto::where("nombre","LIKE","%{$dataRequest["q"]}%")->orderBy('orden')->pluck('nombre', 'id');
+            foreach($productos AS $i => $v)
+                $json[] = [ 'id' => $i , 'text' => $v ];
+        }
+        echo json_encode($json);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -60,28 +71,42 @@ class ProductoController extends Controller
     {
         $title = "Productos";
         $view = "adm.parts.familia.producto";
+        $select2 = [];
+        $select2["familias"] = [];
+        $select2["familias"][] = ["id" => "", "text" => ""];
+        $select2["modelos"] = [];
+        $select2["modelos"][] = ["id" => "", "text" => ""];
+        $select2["categorias"] = [];
+        $select2["categorias"][] = ["id" => "", "text" => ""];
+        
+
         $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
+        $modelos = Modelo::orderBy('orden')->pluck('nombre', 'id');
+        $categorias = Categoria::whereNull("padre_id")->orderBy('orden')->pluck('nombre', 'id');
+
+        foreach($familias AS $i => $v)
+            $select2["familias"][] = ["id" => $i, "text" => $v];
+        foreach($modelos AS $i => $v)
+            $select2["modelos"][] = ["id" => $i, "text" => $v];
+        foreach($categorias AS $i => $v)
+            $select2["categorias"][] = ["id" => $i, "text" => $v];
+
         if(!empty($request->all()["buscar"]))
             $productos = Producto::where("codigo","LIKE","{$request->all()["buscar"]}")->orderBy("orden")->paginate(15);
         else
             $productos = Producto::orderBy("orden")->paginate(15);
-        $prod = Producto::orderBy('orden')->groupBy('nombre')->pluck('nombre', 'id');
         
         foreach($productos AS $p) {
-            if(empty($p["categoria_id"]))
-                $c = Categoria::find($p->categoriaM["categoria_id"]);
-            else
-                $c = Categoria::find($p["categoria_id"]);
-            $p["familia"] = $p->familia["nombre"];
-            if($c["id"] == 0)
-                $p["categoria"] = $c["nombre"];
-            else
-                $p["categoria"] = self::rec_padre($c);
+            $p["familia_id"] = "{$p->familia["nombre"]}";
+            $p["categoria_id"] = $p->categoria["nombre"];
+            $p["modelo_id"] = $p->modelosM();
+            //dd($p["modelo_id"]);
+            $p["codigo"] = "{$p["codigo"]}<br/>{$p["nombre"]}";
             $p["imagenes"] = $p->imagenes;
             $p["precio"] = $p->precio;
             $p["stock"] = $p->stock;
         }
-        return view('adm.distribuidor',compact('title','view','familias','productos','prod'));
+        return view('adm.distribuidor',compact('title','view','familias','modelos','categorias','productos','select2'));
     }
 
     public function carga() {
@@ -91,30 +116,20 @@ class ProductoController extends Controller
         return view('adm.distribuidor',compact('title','view'));
     }
 
-    public function familia_categoria($familia_id, $modelo_id)
+    public function familia_categoria($familia_id,$tipo)
     {
-        $familia = Familia::find($familia_id);
-        if(empty($modelo_id)) {
-            $modelos = $familia->categorias->where("tipo",1);
-            
-            $select2[] = ["id" => "", "text" => ""];
-            foreach($modelos AS $m)
-                $select2[] = ["id" => $m["id"], "text" => $m["nombre"]];
-            return $select2;
-        } else {
-            $catTOTAL = $familia->categorias->where("padre_id",$modelo_id)->where("tipo",">",1)->groupBy("nombre");
-            $select2 = [];
-            $select2[] = ["id" => "", "text" => ""];
-            foreach($catTOTAL AS $c) {
-                $c[0]["hijos"] = self::rec_hijos($c[0]);
-                
-                if(count($c[0]["hijos"]) == 0)
-                    $select2[] = ["id" => $c[0]["id"], "text" => $c[0]["nombre"]];
-                else
-                    $select2[] = ["text" => $c[0]["nombre"], "children" => self::select2($c[0])];
-            }
-            return $select2;
-        }
+        if($tipo != 1) {
+            $aux = Categoria::find($familia_id);
+            $categoria_id = $familia_id;
+            $familia_id = $aux["familia_id"];
+            $categorias = Categoria::where("familia_id",$familia_id)->where("padre_id",$categoria_id)->where("tipo",$tipo)->orderBy("tipo")->orderBy("orden")->get();
+        } else
+            $categorias = Categoria::where("familia_id",$familia_id)->where("tipo",$tipo)->orderBy("tipo")->orderBy("orden")->get();
+        $select2 = [];
+        $select2[] = ["id" => "", "text" => ""];
+        foreach($categorias AS $c)
+            $select2[] = ["id" => $c["id"], "text" => $c["nombre"]];
+        return $select2;
     }
 
     public function compras()
@@ -169,48 +184,33 @@ class ProductoController extends Controller
     {
         $ARR_imagenes = null;
         $datosRequest = $request->all();
-        $Arr = [];
-        $cat = Categoria::find($datosRequest["categoria_id"]);
-        $cat->padres( $cat , $Arr );
-        $Arr = array_reverse ( $Arr );//OBTENGO todos los padres de categorias
+        //dd($datosRequest);
         /**
          * el primer elemento corresponde al modelo
          * busco el item 1 del array, para sacar la CATEGORÍA
          */
-        unset($Arr[0]);//Quito el modelo - no sirve para la búsqueda
-        $categorias = Categoria::whereIn("padre_id",$datosRequest["modelo_id"])
-                        ->where("nombre","LIKE","%" . Categoria::find($Arr[1])["nombre"] . "%")
-                        ->where("familia_id",$datosRequest["familia_id"])->pluck("id");
-        unset($Arr[1]);
+        
         /**
          * Quito el siguiente nivel de jerarquía; si continuúa con elementos, busca en sub
          * Como resultado, obtengo ARRAY de categorias.
          */
-        if(!empty($Arr)) {
-            $categorias = Categoria::whereIn("padre_id",$categorias)
-                        ->where("nombre","LIKE","%" . Categoria::find($Arr[2])["nombre"] . "%")
-                        ->where("familia_id",$datosRequest["familia_id"])->pluck("id");
-        }
-        $categoria_id = 0;
-        if(isset($datosRequest["categoria_id"]))
-            $categoria_id = is_null($datosRequest["categoria_id"]) ? 0 : $datosRequest["categoria_id"];
+        $categoria_id = null;
+        if(isset($datosRequest["cat_categoria_id"]))
+            $categoria_id = empty($datosRequest["cat_categoria_id"]) ? null : $datosRequest["cat_categoria_id"][count($datosRequest["cat_categoria_id"]) - 1];
         $ARR_data = [];
         $ARR_data["codigo"] = $datosRequest["codigo"];
         $ARR_data["nombre"] = $datosRequest["nombre"];
-        $ARR_data["categoria_id"] = null;
+        $ARR_data["categoria_id"] = $categoria_id;
         $ARR_data["mercadolibre"] = $datosRequest["mercadolibre"];
         $ARR_data["aplicacion"] = $datosRequest["aplicacion"];
         $ARR_data["orden"] = $datosRequest["orden"];
         $ARR_data["familia_id"] = $datosRequest["familia_id"];
+        
         //dd($ARR_data);
         $precio = 0;
-        if(isset($datosRequest["precio"])) {
+        if(isset($datosRequest["precio"]))
             $precio = $datosRequest["precio"];
-            $precio = str_replace("$","",$precio);
-            $precio = str_replace(".","",$precio);
-            $precio = str_replace(",",".",$precio);
-            $precio = trim($precio);
-        }
+        
         //dd($precio);
         $stock = 0;
         if(isset($datosRequest["stock"]))
@@ -219,19 +219,13 @@ class ProductoController extends Controller
         if(is_null($data)) {
             $data = Producto::create($ARR_data);
             $data->productos()->sync($request->get('relaciones'));
-            foreach($categorias AS $c) 
-                ProductoCategoria::create(["producto_id" => $data["id"],"categoria_id" => $c]);
+            $data->modelos()->sync($request->get('modelo_id'));
+
+            if(isset($datosRequest["cat_categoria_id"]))
+                $data->categorias()->sync($request->get('cat_categoria_id'));
             Productoprecio::create(["producto_id" => $data["id"], "precio" => $precio]);
             Productostock::create(["producto_id" => $data["id"], "cantidad" => $stock]);
         } else {
-            $auxP = Productoprecio::where("producto_id",$data["id"])->first();
-            $auxS = Productostock::where("producto_id",$data["id"])->first();
-            $Arr = ProductoCategoria::where("producto_id",$data["id"])->get()->pluck("id");
-            ProductoCategoria::destroy($Arr);
-            //ELIMINO CATEGORIAS
-            foreach($categorias AS $c) 
-                ProductoCategoria::create(["producto_id" => $data["id"],"categoria_id" => $c]);
-            
             if(empty($auxP)) {
                 Productoprecio::create(["producto_id" => $data["id"], "precio" => $precio]);
             } else if(empty($auxP["precio"])) {
@@ -254,6 +248,9 @@ class ProductoController extends Controller
             $data->fill($ARR_data);
             $data->save();
             $data->productos()->sync($request->get('relaciones'));
+            $data->modelos()->sync($request->get('modelo_id'));
+            if(isset($datosRequest["cat_categoria_id"]))
+                $data->categorias()->sync($request->get('cat_categoria_id'));
         }
         /** */
         $imagenes = $request->file('image_image');
@@ -340,31 +337,18 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, $todo = 1)
     {
         $p = Producto::find($id);
-        //$p["familia_id"] = Categoria::find($p["categoria_id"])["familia_id"];
-        if($p["familia_id"] == 5)
-            $p["modelo_id"] = ["id" => 69];
-        else {
-            $p["categoria_id"] = ["id" => ProductoCategoria::where("producto_id",$id)->first()->categoria["id"] ];
-            $modelos = [];
-            $categorias = ProductoCategoria::where("producto_id",$id)->get()->pluck("categoria_id");
-            foreach($categorias AS $c) {
-                $cat = Categoria::find($c);
-                $Arr = [];
-                $cat->padres( $cat , $Arr );
-                $Arr = array_reverse ( $Arr );//OBTENGO todos los padres de categorias
-                
-                $modelos[] = $Arr[0];
-            }
-            $p["modelo_id"] = ["id" => $modelos];
-        
+        if($todo) {
+            $p["categorias"] = $p->categoriaMM->pluck("categoria_id");
+            $p["modelos"] = $p->modelosMM->pluck("modelo_id");
+            
+            $p["imagenes"] = $p->imagenes;
+            $p["precio"] = $p->precio;
+            $p["stock"] = $p->stock;
+            $p["productos"] = $p->productos;
         }
-        $p["imagenes"] = $p->imagenes;
-        $p["precio"] = $p->precio;
-        $p["stock"] = $p->stock;
-        $p["productos"] = $p->productos->pluck('nombre','id');
         return $p;
     }
 
@@ -377,8 +361,7 @@ class ProductoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = self::edit($id);
-        return self::store($request, $data);
+        return self::store($request, self::edit($id,0));
     }
 
     public function updateModal(Request $request, $id) {

@@ -13,10 +13,18 @@ class Empresa extends Model
         'telefono',//JSON - TEXT
         'domicilio',//JSON - TEXT
         'horario',
-        'image',//JSON - TEXT
         'metadatos',//JSON - TEXT
         'images',
         'pago',//JSON
         'validaciones'
+    ];
+    
+    protected $casts = [
+        "email" => "array",
+        "telefono"  => "array",
+        "domicilio" => "array",
+        "images"    => "array",
+        "metadatos" => "array",
+        "pago" => "array"
     ];
 }

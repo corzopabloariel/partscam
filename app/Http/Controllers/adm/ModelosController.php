@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Familia;
+use App\Modelo;
 use App\Categoria;
 use App\Producto;
 class ModelosController extends Controller
@@ -19,25 +20,13 @@ class ModelosController extends Controller
     {
         $title = "Modelos de productos";
         $view = "adm.parts.familia.modelo";
-        $familias = Familia::orderBy('orden')->pluck('nombre', 'id');
         /**
          * padre_id = 0 -> identificador de MODELO
          * != 0 -> CATEGORÍA / SUBCATEGORIA..etc
          */
-        $categorias = DB::select(
-            DB::raw('SELECT DISTINCT c.nombre, c.orden, c.id FROM categorias AS c WHERE c.padre_id = 0 AND c.tipo = 1 GROUP BY c.nombre ORDER BY c.orden asc'));
+        $modelos = Modelo::orderBy('orden')->get();
         
-        return view('adm.distribuidor',compact('title','view','familias','categorias'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return view('adm.distribuidor',compact('title','view','familias','modelos'));
     }
 
     /**
@@ -49,35 +38,22 @@ class ModelosController extends Controller
     public function store(Request $request, $data = null)
     {
         $datosRequest = $request->all();
-        $familias = Familia::get()->pluck('nombre', 'id');
-        if(is_null($data)) {
-            foreach($familias AS $i => $n) {
-                $ARR_data = [];
-                $ARR_data["image"] = null;
-                $ARR_data["familia_id"] = $i;
-                $ARR_data["padre_id"] = 0;
-                $ARR_data["nombre"] = $datosRequest["nombre"];
-                $ARR_data["orden"] = $datosRequest["orden"];
-                $ARR_data["tipo"] = 1;    
-                Categoria::create($ARR_data);
-            }
-        } else {
-            for($i = 0; $i < count($data) ; $i ++) {
-                $aux = Categoria::find($data[$i]["id"]);
-                $ARR_data = [];
-                $ARR_data["image"] = null;
-                $ARR_data["padre_id"] = 0;
-                $ARR_data["nombre"] = $datosRequest["nombre"];
-                $ARR_data["orden"] = $datosRequest["orden"];
-                $ARR_data["tipo"] = 1;
-                
-                $aux->fill($ARR_data);
-                $aux->save();
-            }
+        $ARR_data = [];
+        $ARR_data["nombre"] = $datosRequest["nombre"];
+        $ARR_data["orden"] = $datosRequest["orden"];
+        
+        if(is_null($data))
+            Modelo::create($ARR_data);
+        else {
+            $data->fill($ARR_data);
+            $data->save();
         }
         return back();
     }
 
+    public function edit($id) {
+        return Modelo::find($id);
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -87,9 +63,7 @@ class ModelosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = Categoria::find($id);
-        $datas = Categoria::where("nombre",$data["nombre"])->get();
-        return self::store($request, $datas);
+        return self::store($request, self::edit($id));
     }
 
     /**
@@ -100,16 +74,8 @@ class ModelosController extends Controller
      */
     public function destroy($id)
     {
-        $data = Categoria::find($id);
-        $datas = Categoria::where("nombre",$data["nombre"])->get();
-
-        foreach($datas AS $d)
-            Categoria::destroy($d["id"]);
-        $prd = Producto::whereNull("categoria_id")->get();
-        foreach($prd as $p) {
-            $p->fill(["familia_id" => 5,"categoria_id" => 69]);
-            $p->save();
-        }
+        Modelo::destroy($d["id"]);
+        
         return 1;
     }
 }

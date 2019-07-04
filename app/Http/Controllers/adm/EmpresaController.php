@@ -18,12 +18,6 @@ class EmpresaController extends Controller
         $view = "adm.parts.empresa.edit";
         $seccion = "empresa";
         $datos = Empresa::first();
-
-        $datos["email"] = json_decode($datos["email"], true);
-        $datos["telefono"] = json_decode($datos["telefono"], true);
-        $datos["domicilio"] = json_decode($datos["domicilio"], true);
-        $datos["images"] = json_decode($datos["images"], true);
-        $datos["pago"] = json_decode($datos["pago"], true);
         
         return view('adm.distribuidor',compact('title','view','datos','seccion'));
     }
@@ -44,7 +38,7 @@ class EmpresaController extends Controller
     public function update(Request $request)
     {
         $datos = Empresa::first();
-        $datos["images"] = json_decode($datos["images"], true);
+        //$datos["images"] = json_decode($datos["images"], true);
         $requestData = $request->all();
         
         $ARR_data = [];
@@ -113,11 +107,7 @@ class EmpresaController extends Controller
             $ARR_data["images"]["favicon"]["t"] = $favicon->getClientOriginalExtension();
             $ARR_data["images"]["favicon"]["i"] = "images/empresa/{$imageName}";
         }
-        $ARR_data["email"] = json_encode($ARR_data["email"]);
-        $ARR_data["telefono"] = json_encode($ARR_data["telefono"]);
-        $ARR_data["domicilio"] = json_encode($ARR_data["domicilio"]);
-        $ARR_data["images"] = json_encode($ARR_data["images"]);
-        $ARR_data["pago"] = json_encode($ARR_data["pago"]);
+        
         $datos->fill($ARR_data);
         $datos->save();
         return back();
