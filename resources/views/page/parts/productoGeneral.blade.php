@@ -49,16 +49,52 @@
                 <div class="sidebar collapse dont-collapse-sm" id="collapseExample">
                     @foreach($datos["menu"] AS $id => $dato)
                         <h3 class="title mb-1 nombre text-left @if($id == $datos['familia']['id']) active @endif">
-                            <a href="{{ URL::to('productos/familia/'. $id) }}">{{$dato["titulo"]}}</a>
+                            <a href="{{ URL::to('productos/familia/'. $id) }}">{{$dato["nombre"]}}</a>
                         </h3>
-                        @if(count($dato["hijos"]) > 0)
-                            <ul class="list-group @if($dato['activo']) active-submenu @endif">
-                            @foreach ($dato["hijos"] AS $did => $ddato)
-                                @include('page.parts.general._menuItem', ['id' => $did,'dato' => $ddato])
-                            @endforeach
+                            <ul class="list-group">
+                                @foreach ($dato["modelos"] AS $modelo_id => $modelo)
+                                <li class="list-group-item @if($modelo['activo'] == 1) active-menu @endif">
+                                    <span class="d-block position-relative">
+                                        <a class="d-block" href="{{ URL::to('productos/familia/' . $id . '/modelo/' . $modelo_id . '/' . $modelo['tipo']) }}">{{$modelo["nombre"]}}</a><i class="fas fa-angle-down position-absolute"></i><i class="fas fa-angle-right position-absolute"></i>
+                                    </span>
+                                    @if(isset($modelo["categorias"]))
+                                    <ul class="list-group @if($modelo['activo'] == 1)  active-submenu @endif">
+                                        @foreach ($modelo["categorias"] AS $categoria_id => $categoria)
+                                        <li class="list-group-item @if($categoria['activo'] == 1) active-menu @endif">
+                                            <span class="d-block position-relative">
+                                                <a class="d-block" href="{{ URL::to('productos/familia/' . $id . '/modelo/' . $modelo_id . '/categoria/' . $categoria_id . '/' . $categoria['tipo']) }}">{{$categoria["nombre"]}}</a><i class="fas fa-angle-down position-absolute"></i><i class="fas fa-angle-right position-absolute"></i>
+                                            </span>
+                                            @if(isset($categoria["subcategorias"]))
+                                            <ul class="list-group @if($categoria['activo'] == 1)  active-submenu @endif">
+                                                @foreach($categoria["subcategorias"] AS $subcategoria_id => $subcategoria)
+                                                <li class="list-group-item @if($subcategoria['activo'] == 1) active-menu @endif">
+                                                    <span class="d-block position-relative">
+                                                        <a class="d-block" href="{{ URL::to('productos/familia/' . $id . '/modelo/' . $modelo_id . '/categoria/' . $categoria_id . '/subcategoria/' . $subcategoria_id . '/' . $subcategoria['tipo']) }}">{{$subcategoria["nombre"]}}</a><i class="fas fa-angle-down position-absolute"></i><i class="fas fa-angle-right position-absolute"></i>
+                                                    </span>
+                                                    @if(isset($categoria["ssubcategorias"]))
+                                                    <ul class="list-group @if($subcategoria['activo'] == 1)  active-submenu @endif">
+                                                        @foreach($categoria["ssubcategorias"] AS $subcategoria_id => $subcategoria)
+                                                        <li class="list-group-item @if($ssubcategoria['activo'] == 1) active-menu @endif">
+                                                            <span class="d-block position-relative">
+                                                                <a class="d-block" href="{{ URL::to('productos/familia/' . $id . '/modelo/' . $modelo_id . '/categoria/' . $categoria_id . '/subcategoria/' . $subcategoria_id . '/ssubcategoria/' . $ssubcategoria['id'] . '/' . $ssubcategoria['tipo']) }}">{{$ssubcategoria["nombre"]}}</a><i class="fas fa-angle-down position-absolute"></i><i class="fas fa-angle-right position-absolute"></i>
+                                                            </span>
+                                                        </li>
+                                                        @endforeach
+                                                    </ul>
+                                                    @endif
+                                                </li>
+                                                @endforeach
+                                            </ul>
+                                            @endif
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                    @endif
+                                </li>
+                                @endforeach
                             </ul>
-                        @endif
-                    @endforeach
+                        @endforeach
+                    </ul>
                 </div>
             </div>
             <div class="col-md-8">

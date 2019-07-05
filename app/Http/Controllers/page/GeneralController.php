@@ -127,7 +127,7 @@ class GeneralController extends Controller
         return view('page.distribuidor',compact('title','view','datos'));
     }
     /** */
-    public function familia($id) {
+    public function familia($id, $order = "ASC") {
         $title = "PRODUCTOS";
         $view = "page.parts.familia";
         $datos = [];
@@ -136,12 +136,13 @@ class GeneralController extends Controller
         $datos["marcas"] = Marca::orderBy('orden')->get();
 
         $datos["familia"] = Familia::find($id);
-        
-        //$datos["productos"] = Producto::where("familia_id",$id)->orderBy("nombre")->paginate(15);
+        if($id == 5)
+            $datos["productosSIN"] = Producto::where("familia_id",$id)->orderBy("nombre",$order)->paginate(15);
         
         $familias = Familia::orderBy("orden")->pluck("nombre","id");
-        $datos["modelos"] = Modelo::orderBy("orden")->pluck("nombre","id");
+        $datos["modelos"] = Modelo::orderBy("nombre")->pluck("nombre","id");
         $datos["menu"] = [];
+        $datos["order"] = $order;
         
         foreach($familias AS $i => $f) {
             $datos["menu"][$i] = [];
@@ -150,17 +151,19 @@ class GeneralController extends Controller
                 $datos["menu"][$i]["activo"] = 1;
             $datos["menu"][$i]["nombre"] = $f;
             $datos["menu"][$i]["modelos"] = [];
-            foreach($datos["modelos"] AS $ii => $m) {
-                $datos["menu"][$i]["modelos"][$ii] = [];
-                $datos["menu"][$i]["modelos"][$ii]["nombre"] = $m;
-                $datos["menu"][$i]["modelos"][$ii]["activo"] = 0;
-                $datos["menu"][$i]["modelos"][$ii]["categorias"] = [];
+            if(strtoupper($f) != "SIN ESPECIFICAR") {
+                foreach($datos["modelos"] AS $ii => $m) {
+                    $datos["menu"][$i]["modelos"][$ii] = [];
+                    $datos["menu"][$i]["modelos"][$ii]["nombre"] = $m;
+                    $datos["menu"][$i]["modelos"][$ii]["activo"] = 0;
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"] = [];
+                }
             }
         }
-        //dd($datos["menu"]);
+        
         return view('page.distribuidor',compact('title','view','datos'));
     }
-    public function modelo($familia_id,$modelo_id,$tipo) {
+    public function modelo($familia_id,$modelo_id,$tipo, $order = "ASC") {
         $title = "PRODUCTOS";
         $view = "page.parts.familia";
         $datos = [];
@@ -170,17 +173,18 @@ class GeneralController extends Controller
 
         $datos["familia"] = Familia::find($familia_id);
         $datos["categorias"] = $datos["familia"]->categorias->where("tipo",$tipo);
-        //dd($datos["categorias"]);
+        $datos["order"] = $order;
+        $datos["modelo_id"] = $modelo_id;
         $categorias = $datos["categorias"]->pluck("nombre","id");
         
         $datos["productos"] = Producto::whereHas('modelosMM', function ($query) use ($modelo_id) {
             $query->where('modelo_id',$modelo_id);
-        })->where('familia_id',$familia_id)->orderBy("nombre")->paginate(15);
-        //dd($datos["productos"]);
+        })->where('familia_id',$familia_id)->orderBy("nombre",$order)->paginate(15);
+        
         //$datos["productos"] = Producto::where("familia_id",$id)->orderBy("nombre")->paginate(15);
         //$datos["categorias"] = $datos["categorias"]::paginate(15);
         $familias = Familia::orderBy("orden")->pluck("nombre","id");
-        $datos["modelos"] = Modelo::orderBy("orden")->pluck("nombre","id");
+        $datos["modelos"] = Modelo::orderBy("nombre")->pluck("nombre","id");
         $datos["menu"] = [];
         
         foreach($familias AS $i => $f) {
@@ -206,11 +210,11 @@ class GeneralController extends Controller
                 }
             }
         }
-        //dd($datos["menu"]);
+        
         return view('page.distribuidor',compact('title','view','datos'));
     }
     /** */
-    public function categoria($familia_id,$modelo_id,$categoria_id, $tipo) {
+    public function categoria($familia_id,$modelo_id,$categoria_id, $tipo, $order = "ASC") {
         $title = "PRODUCTOS";
         $view = "page.parts.familia";
         $datos = [];
@@ -221,15 +225,16 @@ class GeneralController extends Controller
         $datos["categorias"] = $datos["familia"]->categorias;
         
         $categorias = $datos["categorias"];
-        
+        $datos["order"] = $order;
         $aux = $datos["categoria"];
+        $datos["modelo_id"] = $modelo_id;
         $familias = Familia::pluck("nombre","id");
-        $datos["modelos"] = Modelo::orderBy("orden")->pluck("nombre","id");
+        $datos["modelos"] = Modelo::orderBy("nombre")->pluck("nombre","id");
         $datos["productos"] = Producto::whereHas('modelosMM', function ($query) use ($modelo_id) {
             $query->where('modelo_id',$modelo_id);
         })->whereHas('categoriaMM', function ($query) use ($categoria_id) {
             $query->where('categoria_id',$categoria_id);
-        })->where('familia_id',$familia_id)->orderBy("nombre")->paginate(15);
+        })->where('familia_id',$familia_id)->orderBy("nombre",$order)->paginate(15);
         $datos["menu"] = [];
         $datos["marcas"] = Marca::orderBy('orden')->get();
         
@@ -249,7 +254,7 @@ class GeneralController extends Controller
                 $datos["menu"][$i]["modelos"][$ii]["categorias"] = [];
                 foreach($categorias AS $c) {
                     $hijos = $c->hijos->where("tipo",$tipo);
-                    //dd($hijos);
+                    
                     $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]] = [];
                     $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["nombre"] = $c["nombre"];
                     $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["menu"] = "categoria";
@@ -270,10 +275,83 @@ class GeneralController extends Controller
                 }
             }
         }
-        //dd($datos["menu"]);
+        
         return view('page.distribuidor',compact('title','view','datos'));
     }
-    public function producto($id) {
+    /** */
+    public function scategoria($familia_id,$modelo_id,$categoria_id,$scategoria_id, $tipo, $order = "ASC") {
+        $title = "PRODUCTOS";
+        $view = "page.parts.familia";
+        $datos = [];
+        $datos["empresa"] = self::datos();
+        $datos["familias"] = self::familiaMenu();
+        $datos["familia"] = Familia::find($familia_id);
+        $datos["categoria"] = Categoria::find($categoria_id);
+        $datos["categorias"] = $datos["familia"]->categorias;
+        
+        $categorias = $datos["categorias"];
+        $datos["order"] = $order;
+        $aux = $datos["categoria"];
+        $familias = Familia::pluck("nombre","id");
+        $datos["modelo_id"] = $modelo_id;
+        $datos["modelos"] = Modelo::orderBy("nombre")->pluck("nombre","id");
+        $datos["productos"] = Producto::whereHas('modelosMM', function ($query) use ($modelo_id) {
+            $query->where('modelo_id',$modelo_id);
+        })->whereHas('categoriaMM', function ($query) use ($categoria_id) {
+            $query->where('categoria_id',$categoria_id);
+        })->where('familia_id',$familia_id)->orderBy("nombre",$order)->paginate(15);
+        $datos["menu"] = [];
+        $datos["marcas"] = Marca::orderBy('orden')->get();
+        
+        foreach($familias AS $i => $f) {
+            $datos["menu"][$i] = [];
+            $datos["menu"][$i]["activo"] = ($familia_id == $i) ? 1 : 0;
+            $datos["menu"][$i]["nombre"] = $f;
+            $datos["menu"][$i]["menu"] = "familia";
+            $datos["menu"][$i]["tipo"] = 0;
+            $datos["menu"][$i]["modelos"] = [];
+            foreach($datos["modelos"] AS $ii => $m) {
+                $datos["menu"][$i]["modelos"][$ii] = [];
+                $datos["menu"][$i]["modelos"][$ii]["activo"] = ($ii == $modelo_id) ? 1 : 0;
+                $datos["menu"][$i]["modelos"][$ii]["nombre"] = $m;
+                $datos["menu"][$i]["modelos"][$ii]["menu"] = "modelo";
+                $datos["menu"][$i]["modelos"][$ii]["tipo"] = 1;
+                $datos["menu"][$i]["modelos"][$ii]["categorias"] = [];
+                foreach($categorias AS $c) {
+                    $hijos = $c->hijos->where("tipo",$tipo - 1);
+                    
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]] = [];
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["nombre"] = $c["nombre"];
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["menu"] = "categoria";
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["tipo"] = 2;
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["activo"] = ($c["id"] == $categoria_id) ? 1 : 0;
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"] = [];
+
+                    if(count($hijos) > 0) {
+                        foreach($hijos AS $cc) {
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]] = [];
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["activo"] = ($cc["id"] == $scategoria_id) ? 1 : 0;
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["nombre"] = $cc["nombre"];
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["menu"] = "subcategoria";
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["tipo"] = 3;
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"] = [];
+                            $hijos = $cc->hijos->where("tipo",$tipo);
+                            foreach($hijos AS $ccc) {
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]] = [];
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]]["activo"] = 0;
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]]["nombre"] = $ccc["nombre"];
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]]["menu"] = "ssubcategoria";
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]]["tipo"] = 4;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return view('page.distribuidor',compact('title','view','datos'));
+    }
+    public function producto($id,$modelo_id) {
         $title = "PRODUCTOS";
         $view = "page.parts.productoGeneral";
         $datos = [];
@@ -284,38 +362,78 @@ class GeneralController extends Controller
         $datos["oferta"] = empty($datos["producto"]->oferta) ? null : number_format($datos["producto"]->oferta["precio"],2,",",".");
         $datos["precio"] = number_format($datos["producto"]->precio["precio"],2,",",".");
         $datos["stock"] = $datos["producto"]->stock;
-        $datos["categoria"] = $datos["producto"]->categoriaM->categoria;
+        $datos["categoria"] = [];//$datos["producto"]->categoriaM->categoria;
         $datos["familia"] = $datos["producto"]->familia;
         $datos["productos"] = $datos["producto"]->productos;
+        $datos["modelos"] = Modelo::orderBy("nombre")->pluck("nombre","id");
+        $datos["categorias"] = $datos["familia"]->categorias;
         
-        $aux = $datos["categoria"];
-        $idsCategorias = [];
-        do {
-            $idsCategorias[] = $aux["id"];
-            $aux = $aux->padre;
-        } while(!is_null($aux["padre_id"]));
-        $idsCategorias[] = $datos["familia"]["id"];
-        $idsCategorias = array_reverse ($idsCategorias);
+        $categorias = $datos["categorias"];
+        $idsCategorias = $datos["producto"]->categoriaMM->pluck("categoria_id");
         
-        $datos["idsCategorias"] = $idsCategorias;
-        $familias = Familia::get();
-        $datos["menu"] = [];
+        $familia_id = $datos["producto"]["familia_id"];
+        $categoria_id = "";
+        $scategoria_id = "";
+        $sscategoria_id = "";
         
-        foreach($familias AS $f) {
-            $datos["menu"][$f["id"]] = [];
-            $datos["menu"][$f["id"]]["activo"] = 0;
-
-            if($f["id"] == $idsCategorias[0])
-                $datos["menu"][$f["id"]]["activo"] = 1;
-            $datos["menu"][$f["id"]]["nivel"] = 0;
-            $datos["menu"][$f["id"]]["titulo"] = $f["nombre"];
-            $datos["menu"][$f["id"]]["image"] = $f["image"];
-            if($f["id"] == 5)
-                $datos["menu"][$f["id"]]["hijos"] = [];
-            else
-                $datos["menu"][$f["id"]]["hijos"]= self::categoriasRec($f->categorias->where('padre_id',0),0,$idsCategorias);
+        if(!empty($idsCategorias)) {
+            $categoria_id = $idsCategorias[0];
+            if(isset($idsCategorias[1]))
+                $scategoria_id = $idsCategorias[1];
+            if(isset($idsCategorias[2]))
+                $sscategoria_id = $idsCategorias[2];
         }
+        $datos["idsCategorias"] = $idsCategorias;
+        $familias = Familia::orderBy("orden")->pluck("nombre","id");
+        $datos["menu"] = [];
+        $tipo = 3;
         
+        foreach($familias AS $i => $f) {
+            $datos["menu"][$i] = [];
+            $datos["menu"][$i]["activo"] = ($familia_id == $i) ? 1 : 0;
+            $datos["menu"][$i]["nombre"] = $f;
+            $datos["menu"][$i]["menu"] = "familia";
+            $datos["menu"][$i]["tipo"] = 0;
+            $datos["menu"][$i]["modelos"] = [];
+            foreach($datos["modelos"] AS $ii => $m) {
+                $datos["menu"][$i]["modelos"][$ii] = [];
+                $datos["menu"][$i]["modelos"][$ii]["activo"] = ($ii == $modelo_id) ? 1 : 0;
+                $datos["menu"][$i]["modelos"][$ii]["nombre"] = $m;
+                $datos["menu"][$i]["modelos"][$ii]["menu"] = "modelo";
+                $datos["menu"][$i]["modelos"][$ii]["tipo"] = 1;
+                $datos["menu"][$i]["modelos"][$ii]["categorias"] = [];
+                foreach($categorias AS $c) {
+                    $hijos = $c->hijos->where("tipo",$tipo - 1);
+                    
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]] = [];
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["nombre"] = $c["nombre"];
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["menu"] = "categoria";
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["tipo"] = 2;
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["activo"] = ($c["id"] == $categoria_id) ? 1 : 0;
+                    $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"] = [];
+
+                    if(count($hijos) > 0) {
+                        foreach($hijos AS $cc) {
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]] = [];
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["activo"] = ($cc["id"] == $scategoria_id) ? 1 : 0;
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["nombre"] = $cc["nombre"];
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["menu"] = "subcategoria";
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["tipo"] = 3;
+                            $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"] = [];
+                            $hijos = $cc->hijos->where("tipo",$tipo);
+                            foreach($hijos AS $ccc) {
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]] = [];
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]]["activo"] = 0;
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]]["nombre"] = $ccc["nombre"];
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]]["menu"] = "ssubcategoria";
+                                $datos["menu"][$i]["modelos"][$ii]["categorias"][$c["id"]]["subcategorias"][$cc["id"]]["ssubcategorias"][$ccc["id"]]["tipo"] = 4;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //dd($datos["menu"]);
         return view('page.distribuidor',compact('title','view','datos'));
     }
     /** */
@@ -550,12 +668,12 @@ class GeneralController extends Controller
             
             return redirect()->to($preference['response']['init_point']);
         } catch (Exception $e){
-            dd($e->getMessage());
+            
         }
 
     }
     public function payment($tipo) {
-        dd($tipo);
+        
     }
     public function datos() {
         return Empresa::first();
