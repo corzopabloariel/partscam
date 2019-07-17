@@ -32,6 +32,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\Pedido;
 use App\Mail\PedidoCliente;
 
+use App\Servicio;
+
 class GeneralController extends Controller
 {
     public $idioma = "es";
@@ -42,6 +44,7 @@ class GeneralController extends Controller
         $datos = [];
         $datos["contenido"] = json_decode(Contenido::where('seccion','home')->first()["data"],true);
         $datos["contenido"]["CONTENIDO"]["texto"] = $datos["contenido"]["CONTENIDO"]["texto"][$this->idioma];
+        
         $datos["slider"] = Slider::where('seccion','home')->get();
         foreach($datos["slider"] AS $s)
             $s["texto"] = json_decode($s["texto"],true)[$this->idioma];
@@ -49,6 +52,8 @@ class GeneralController extends Controller
         $datos["empresa"] = self::datos();
         $datos["familias"] = self::familiaMenu();
         $datos["prodfamilias"] = Familia::where("id","!=",5)->orderBy('orden')->get();
+
+        $datos["servicios"] = Servicio::orderBy("orden")->get();
 
         $datos["ofertas"] = Productooferta::orderBy('orden')->limit(4)->get();
         foreach($datos["ofertas"] AS $o) {
@@ -107,11 +112,11 @@ class GeneralController extends Controller
             $image = null;
             if(count($o->producto->imagenes) > 0)
                 $image = $o->producto->imagenes[0]["image"];
+            $o["o"] = $o->producto;
             $o["precioAnterior"] = number_format($o->producto->precio["precio"],2,",",".");
             $o["precio"] = number_format($o["precio"],2,",",".");
             $o["producto"] = $o->producto["nombre"];
             $o["image"] = $image;
-
         }
         
         return view('page.distribuidor',compact('title','view','datos'));
@@ -355,6 +360,7 @@ class GeneralController extends Controller
         $title = "PRODUCTOS";
         $view = "page.parts.productoGeneral";
         $datos = [];
+        $datos["modelo_id"] = $modelo_id;
         $datos["empresa"] = self::datos();
         $datos["familias"] = self::familiaMenu();
         $datos["producto"] = Producto::find($id);
@@ -682,7 +688,8 @@ class GeneralController extends Controller
         $data = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre','id');
         $familias = [];
         foreach($data AS $i => $n) {
-            $dd = Familia::find($i)->categorias->where("padre_id",0)->pluck('nombre','id');
+            $dd = Modelo::orderBy("nombre")->pluck("nombre","id");
+            //$dd = Familia::find($i)->categorias->where("padre_id",0)->pluck('nombre','id');
             $familias[$i] = [];
             $familias[$i]["nombre"] = $n;
             $familias[$i]["sub"] = $dd;

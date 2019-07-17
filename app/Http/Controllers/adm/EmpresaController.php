@@ -67,12 +67,14 @@ class EmpresaController extends Controller
         $ARR_data["pago"]["tb"]["cbu"] = $requestData["cbu"];
         $ARR_data["pago"]["tb"]["emailpago"] = $requestData["emailpago"];
 
-        for($i = 0; $i < count($requestData["tipo_telefono"]); $i ++) {
-            if(empty($requestData["tipo_telefono"][$i]) || empty($requestData["telefono_telefono"][$i])) continue;
+        if(isset($requestData["telefono_tipo"])) {
+            for($i = 0; $i < count($requestData["telefono_tipo"]); $i ++) {
+                if(empty($requestData["telefono_tipo"][$i]) || empty($requestData["telefono_telefono"][$i])) continue;
 
-            if(!isset($ARR_data["telefono"][$requestData["tipo_telefono"][$i]]))
-                $ARR_data["telefono"][$requestData["tipo_telefono"][$i]] = [];
-            $ARR_data["telefono"][$requestData["tipo_telefono"][$i]][] = $requestData["telefono_telefono"][$i];
+                if(!isset($ARR_data["telefono"][$requestData["telefono_tipo"][$i]]))
+                    $ARR_data["telefono"][$requestData["telefono_tipo"][$i]] = [];
+                $ARR_data["telefono"][$requestData["telefono_tipo"][$i]][] = $requestData["telefono_telefono"][$i];
+            }
         }
         
         $logo = $request->file("logo");

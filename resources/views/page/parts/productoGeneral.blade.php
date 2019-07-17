@@ -43,7 +43,7 @@
     <div class="container py-5">
         <div class="row">
             <div class="col-md-4">
-                <button class="btn btn-primary text-uppercase hidden visible-xs mb-2" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                <button class="btn btn-primary text-uppercase d-block d-sm-none mb-2" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                     Productos
                 </button>
                 <div class="sidebar collapse dont-collapse-sm" id="collapseExample">
@@ -165,7 +165,7 @@
                             </div>
                             <div class="col-12 col-sm-6 col-lg-12 col-xl-6 align-items-start flex-column ">
                                 {{--  --}}
-                                <button @if($datos['stock']['cantidad'] <= 0) disabled @endif onclick="addCarrito(this,{{$datos['producto']['id']}})" class="btn btn-sm btn-carrito btn-block text-uppercase" id="btnADD"><i class="fas fa-shopping-cart mr-2"></i><small>añadir a carrito</small></button>
+                                <button @if($datos['stock']['cantidad'] <= 0) disabled @endif onclick="addCarrito(this,{{$datos['producto']['id']}},{{$datos['modelo_id']}})" class="btn btn-sm btn-carrito btn-block text-uppercase" id="btnADD"><i class="fas fa-shopping-cart mr-2"></i><small>añadir a carrito</small></button>
                                 <button data-toggle="modal" data-target="#modalConsulta" onclick="consultar(this,{{$datos['producto']['id']}})" class="btn btn-warning mb-2 btn-sm btn-block text-uppercase" id="btnCONSULTAR"><small><i class="fas fa-question-circle mr-2"></i>consultar</small></button>
                             </div>
                             <div class="col-12 align-items-center flex-column">
@@ -245,7 +245,7 @@
         $("#productoIDinput").val(idProducto);
         $("#productoCantidad").val(window.consultarINT);
     }
-    addCarrito = function(t,idProducto) {
+    addCarrito = function(t,idProducto,idModelo) {
         let cantidad = $("#cantidad");
         let max = cantidad.data("max");
         
@@ -254,8 +254,10 @@
         window.session = JSON.parse(localStorage.carrito);
 
         if(window.session[idProducto] === undefined) {
-            window.session[idProducto] = parseInt(cantidad.val());
-            console.log(max)
+            window.session[idProducto] = {};
+            window.session[idProducto]["cantidad"] = parseInt(cantidad.val());
+            window.session[idProducto]["modelo"] = [];
+            window.session[idProducto]["modelo"].push(idModelo);
             $("#carritoHeader").find("span").text(Object.keys(window.session).length);
             if(max > parseInt(cantidad.val())) {
                 localStorage.carrito = JSON.stringify(window.session);
@@ -270,7 +272,7 @@
                 else
                     window.consultarINT = parseInt(cantidad.val());
 
-                window.session[idProducto] = parseInt(max);
+                window.session[idProducto]["cantidad"] = parseInt(max);
                 localStorage.carrito = JSON.stringify(window.session);
                 $("#consultarTEXT").text(`Consulta por: ${window.consultarINT}`);
                 if(!$("#btnCONSULTAR").length)
@@ -278,8 +280,11 @@
             }
             $("#carritoHeader").attr("href","{{ URL::to('carrito') }}");
         } else {
-            if(max >= parseInt(cantidad.val()) + parseInt(window.session[idProducto])) {
-                window.session[idProducto] = parseInt(window.session[idProducto]) + parseInt(cantidad.val());
+            if(window.session[idProducto]["modelo"].indexOf(idModelo) < 0)
+                window.session[idProducto]["modelo"].push(idModelo);
+
+            if(max >= parseInt(cantidad.val()) + parseInt(window.session[idProducto]["cantidad"])) {
+                window.session[idProducto]["cantidad"] = parseInt(window.session[idProducto]["cantidad"]) + parseInt(cantidad.val());
                 localStorage.carrito = JSON.stringify(window.session);
                 $("#carritoHeader").find("span").text(Object.keys(window.session).length);
                 
@@ -287,13 +292,13 @@
             } else {
                 if(window.consultarINT === undefined) window.consultarINT = 0;
                 
-                if(cantidad.val() + parseInt(window.session[idProducto]) > max) {
-                    window.consultarINT = parseInt(cantidad.val()) + parseInt(window.session[idProducto]) - max;
-                    window.session[idProducto] = parseInt(max);
+                if(cantidad.val() + parseInt(window.session[idProducto]["cantidad"]) > max) {
+                    window.consultarINT = parseInt(cantidad.val()) + parseInt(window.session[idProducto]["cantidad"]) - max;
+                    window.session[idProducto]["cantidad"] = parseInt(max);
                     console.log(window.consultarINT)
-                    console.log(parseInt(cantidad.val()) + parseInt(window.session[idProducto]) - max)
+                    console.log(parseInt(cantidad.val()) + parseInt(window.session[idProducto]["cantidad"]) - max)
                 } else {
-                    window.session[idProducto] = parseInt(cantidad.val());
+                    window.session[idProducto]["cantidad"] = parseInt(cantidad.val());
                     window.consultarINT = parseInt(cantidad.val());
                 }
                 localStorage.carrito = JSON.stringify(window.session);

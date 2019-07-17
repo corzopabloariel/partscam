@@ -92,9 +92,9 @@ class ProductoController extends Controller
             $select2["categorias"][] = ["id" => $i, "text" => $v];
 
         if(!empty($request->all()["buscar"]))
-            $productos = Producto::where("codigo","LIKE","{$request->all()["buscar"]}")->orderBy("orden")->paginate(15);
+            $productos = Producto::where("familia_id","!=",5)->where("codigo","LIKE","{$request->all()["buscar"]}")->orderBy("orden")->paginate(15);
         else
-            $productos = Producto::orderBy("orden")->paginate(15);
+            $productos = Producto::where("familia_id","!=",5)->orderBy("orden")->paginate(15);
         
         foreach($productos AS $p) {
             $p["familia_id"] = "{$p->familia["nombre"]}";

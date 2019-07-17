@@ -8,8 +8,8 @@
                         <ul class="list-unstyled mb-0">
                             <li><a href="/">Home</a></li>
                             <li><a href="{{ route('empresa') }}">Empresa</a></li>
-                            <li><a href="{{ URL::to('productos') }}">Productos</a></li>
-                            <li><a href="{{ URL::to('productos/ofertas') }}">Ofertas</a></li>
+                            {{--<li><a href="{{ URL::to('productos') }}">Productos</a></li>
+                            <li><a href="{{ URL::to('productos/ofertas') }}">Ofertas</a></li>--}}
                             <li><a href="{{ route('contacto') }}">Contacto</a></li>
                         </ul>
                     </div>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Familia;
 use App\Producto;
+use App\Modelo;
 use App\Categoria;
 class FamiliaController extends Controller
 {
@@ -32,15 +33,25 @@ class FamiliaController extends Controller
     public function sin(Request $request)
     {
         $title = "Productos sin clasificación";
-        $view = "adm.parts.familia.producto";
+        $view = "adm.parts.familia.sin";
+        $select2 = [];
         
         $familias = Familia::where("id","!=",5)->orderBy('orden')->pluck('nombre', 'id');
         if(!empty($request->all()["buscar"]))
             $productos = Producto::where("familia_id",5)->where("codigo","LIKE","{$request->all()["buscar"]}")->orderBy("orden")->paginate(15);
         else
             $productos = Producto::where("familia_id",5)->orderBy("orden")->paginate(15);
-        
+        $modelos = Modelo::orderBy('orden')->pluck('nombre', 'id');
+        $categorias = Categoria::whereNull("padre_id")->orderBy('orden')->pluck('nombre', 'id');
         //$productos = Producto::where("familia_id",5)->orderBy("orden")->simplePaginate(15);
+        
+        foreach($familias AS $i => $v)
+            $select2["familias"][] = ["id" => $i, "text" => $v];
+        foreach($modelos AS $i => $v)
+            $select2["modelos"][] = ["id" => $i, "text" => $v];
+        foreach($categorias AS $i => $v)
+            $select2["categorias"][] = ["id" => $i, "text" => $v];
+
         $prod = Producto::orderBy('orden')->pluck('nombre', 'id');
         $sin = 1;
         foreach($productos AS $p) {
@@ -54,7 +65,7 @@ class FamiliaController extends Controller
             $p["precio"] = $p->precio;
             $p["stock"] = $p->stock;
         }
-        return view('adm.distribuidor',compact('title','view','familias','productos','prod','sin'))->withInput($request->all());
+        return view('adm.distribuidor',compact('title','view','familias','select2','modelos','productos','categorias','prod','sin'))->withInput($request->all());
     }
 
     /**

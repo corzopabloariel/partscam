@@ -24,13 +24,14 @@
                             <li>[B] Nombre</li>
                             <li>[C] Stock / Existencia</li>
                             <li>[D] Precio ($ x.xxx,xx)</li>
-                            <li><strike>[E] Familia</strike></li>
-                            <li><strike>[F] Modelo</strike></li>
-                            <li><strike>[G] categoría (en el caso de poseer subcategoría, concatenar nombres con ==.== )</strike></li>
+                            <li>[E] Familia (Mayúscula) <strong>*</strong></li>
+                            <li>[F] Modelo (en el caso de pertenecer a distintos modelos, concatenar nombres con ==.== ) <strong>*</strong></li>
+                            <li>[G] categoría (en el caso de poseer subcategoría, concatenar nombres con ==.== ) <strong>*</strong></li>
                         </ul>
                     </li>
                 </ol>
-                <p class="card-text">En el caso de no poseer algún campo, dejar vacío la celda.</p>
+                <p class="card-text mb-0"><small><strong>*</strong> Crear los registros previos.</small></p>
+                <p class="card-text"><small>En el caso de no poseer algún campo, dejar vacío la celda.</small></p>
                 <hr>
                 <form onsubmit="carga()" action="{{ url('/adm/familias/carga') }}" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
@@ -56,8 +57,6 @@
                 <ul class="mb-0">
                     <li><strong>NOMBRE</strong> Pasa a la siguiente fila</li>
                     <li><strong>FAMILIA</strong> Por defecto :: <span class="text-dark">SIN FAMILIA</span></li>
-                    <li><strong>MODELO</strong> Por defecto :: <span class="text-dark">SIN MODELO</li>
-                    <li><strong>CATEGORÍA</strong> Por defecto :: <span class="text-dark">SIN CATEGORÍA</span></li>
                     <li><strong>STOCK Y PRECIO</strong> Por defecto 0</li>
                 </ul>
             </div>

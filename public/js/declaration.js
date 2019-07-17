@@ -69,10 +69,6 @@ const ENTIDADES = {
         },
         FORM: [
             {
-                page: '<div class="col-7 col-md-6">/page/</div>',
-                BTN: '<div class="d-flex col-3 col-md-2">/BTN/</div>'
-            },
-            {
                 texto: '<div class="col-12 col-md-9">/texto/</div>',
                 image: '<div class="col-12 col-md-3">/image/</div>',
             }
@@ -81,6 +77,89 @@ const ENTIDADES = {
             image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
         }
     },
+    home_repuestos: {
+        ATRIBUTOS: {
+            images: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 453x350",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"450px"},
+            frases: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"frase"}
+        },
+        
+        FORM: [
+            {
+                images: '<div class="col-12 col-md-6">/images/</div>',
+                frases: '<div class="col-12 col-md-6">/frases/</div>'
+            }
+        ],
+        FUNCIONES: {
+            images: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    /** SERVICIOS */
+    servicios: {
+        ATRIBUTOS: {
+            orden: {TIPO:"TP_STRING",MAXLENGTH:3,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 85x85",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"85px"},
+            titulo: {TIPO:"TP_STRING",MAXLENGTH:70,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"título"},
+            subtitulo: {TIPO:"TP_STRING",MAXLENGTH:70,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"subtítulo"},
+            detalle: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE_FORM",FIELDSET:1,NOMBRE:"detalle"}
+        },
+        
+        FORM: [
+            {
+                orden: '<div class="col-5 col-md-3">/orden/</div>',
+                BTN: '<div class="d-flex col-3 col-md-3">/BTN/</div>'
+            },
+            {
+                image: '<div class="col-12 col-md-6">/image/</div>',
+            },
+            {
+                titulo: '<div class="col-12 col-md-6">/titulo/</div>',
+                subtitulo: '<div class="col-12 col-md-6">/subtitulo/</div>'
+            },
+            {
+                detalle: '<div class="col-12">/detalle/</div>'
+            }
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    home_iconos: {
+        ATRIBUTOS: {
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 47x47",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"47px"},
+            texto: {TIPO:"TP_TEXT",EDITOR:1,VISIBILIDAD:"TP_VISIBLE",FIELDSET:1,NOMBRE:"texto"}
+        },
+        
+        FORM: [
+            {
+                image: '<div class="col-12 col-md-6">/image/</div>',
+            },
+            {
+                texto: '<div class="col-12">/texto/</div>'
+            }
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+    home_repuesto: {
+        ATRIBUTOS: {
+            image: {TIPO:"TP_FILE",NECESARIO:1,VALID:"Archivo seleccionado",INVALID:"Seleccione archivo - 56x56",BROWSER:"Buscar",VISIBILIDAD:"TP_VISIBLE",ACCEPT:"image/*",NOMBRE:"imagen",WIDTH:"56px"},
+            texto: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"texto",LABEL: 1}
+        },
+        
+        FORM: [
+            {
+                image: '<div class="col-12">/image/</div>',
+            },
+            {
+                texto: '<div class="col-12">/texto/</div>'
+            }
+        ],
+        FUNCIONES: {
+            image: {onchange:{F:"readURL(this,'/id/')",C:"id"}}
+        }
+    },
+
     empresa: {
         ATRIBUTOS: {
             page: {TIPO:"TP_ENUM",ENUM:{slider:"Slider",mercadopago:"Mercadopago"},NECESARIO:1,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase",NOMBRE:"secciones",MULTIPLE: 1},
@@ -109,7 +188,7 @@ const ENTIDADES = {
                 BTN: '<div class="d-flex col-3 col-md-2">/BTN/</div>'
             },
             {
-                page: '<div class="col-7 col-md-6">/page/</div>',
+                //page: '<div class="col-7 col-md-6">/page/</div>',
                 image: '<div class="col-12 col-md-4">/image/</div>',
             },
             {
@@ -164,7 +243,7 @@ const ENTIDADES = {
         },
         FORM: [
             {
-                page: '<div class="col-7 col-md-6">/page/</div>',
+                //page: '<div class="col-7 col-md-6">/page/</div>',
                 BTN: '<div class="d-flex col-3 col-md-2">/BTN/</div>'
             },
             {
@@ -408,6 +487,49 @@ const ENTIDADES = {
             precio: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",CLASS:"text-right",LABEL: 1},
             mercadolibre: {TIPO:"TP_STRING",MAXLENGTH: 150,VISIBILIDAD:"TP_VISIBLE_FORM", LABEL:1},
             familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Familia"},
+            modelo_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Modelo",MULTIPLE:1},
+            categoria_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Categoría",DISABLED:1},
+            relaciones: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"productos relacionados",MULTIPLE:1},
+        },
+        FORM: [
+            {
+                orden: '<div class="col-5 col-md-4">/orden/</div>',
+                BTN: '<div class="d-flex col-5 col-md-4">/BTN/</div>'
+            },
+            {
+                codigo: '<div class="col-12 col-md-4">/codigo/</div>',
+                stock: '<div class="col-12 col-md-4">/stock/</div>',
+                precio: '<div class="col-3 col-md-4">/precio/</div>'
+            },
+            {
+                nombre: '<div class="col-12">/nombre/</div>',
+            },
+            {
+                mercadolibre: '<div class="col-12">/mercadolibre/</div>',
+            },
+            {
+                aplicacion: '<div class="col-12">/aplicacion/</div>',
+            },
+            {
+                relaciones: '<div class="col-12">/relaciones/</div>',
+            }
+        ],
+        FUNCIONES: {
+            familia_id: {onchange: "changeFamilia(this,0)"},
+            precio: {onkeypress: "permite(event,'.,0123456789/');"},
+            stock: {onkeypress: "permite(event,'0123456789')"}
+        }
+    },
+    productoss: {
+        ATRIBUTOS: {
+            orden: {TIPO:"TP_STRING",MAXLENGTH:10,VISIBILIDAD:"TP_VISIBLE_FORM",CLASS:"text-uppercase text-center",WIDTH:"150px"},
+            codigo: {TIPO:"TP_STRING",MAXLENGTH:20,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-uppercase",WIDTH:"150px",NOMBRE:"código",LABEL:1},
+            nombre: {TIPO:"TP_STRING",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE_FORM",LABEL:1},
+            aplicacion: {TIPO:"TP_TEXT",EDITOR:1,FIELDSET:1,VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"aplicación"},
+            stock: {TIPO:"TP_ENTERO",MAXLENGTH: 100,VISIBILIDAD:"TP_VISIBLE",CLASS:"text-right",LABEL:1},
+            precio: {TIPO:"TP_STRING",VISIBILIDAD:"TP_VISIBLE",CLASS:"text-right",LABEL: 1},
+            mercadolibre: {TIPO:"TP_STRING",MAXLENGTH: 150,VISIBILIDAD:"TP_VISIBLE_FORM", LABEL:1},
+            familia_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_INVISIBLE",NOMBRE:"Familia"},
             modelo_id: {TIPO:"TP_ENUM",NECESARIO:1,VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Modelo",MULTIPLE:1},
             categoria_id: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE",NOMBRE:"Categoría",DISABLED:1},
             relaciones: {TIPO:"TP_ENUM",VISIBILIDAD:"TP_VISIBLE_FORM",NOMBRE:"productos relacionados",MULTIPLE:1},

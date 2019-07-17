@@ -32,23 +32,26 @@
     <div class="container">
         <div class="row justify-content-center">
             @foreach($datos["ofertas"] AS $o)
-                <div class="col-lg-3 col-sm-6 col-12">
-                    <a href="{{ URL::to('productos/producto/' . $o['producto_id']) }}" class="position-relative oferta title">
-                        <div class="img position-relative">
-                            <img class="position-absolute oferta" src="{{ asset('images/general/ofertas.fw.png') }}" />
-                            <div></div>
-                            <i class="fas fa-plus"></i>
-                            <img class="d-block w-100" src="{{ asset($o['image']) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" alt="{{ $o['producto'] }}" srcset=""/>
-                        </div>
-                        <div class="py-2 px-3 border">
-                            <p class="text-center w-75 mx-auto mb-0">{{ $o["producto"] }}</p>
-                            <div class="d-flex justify-content-between">
-                                <strike>$ {{ $o["precioAnterior"]}}</strike>
-                                <span>$ {{ $o["precio"] }}</span>
+                @foreach($o["o"]->modelosMM AS $m)
+                    <div class="col-lg-3 col-sm-6 col-12">
+                        <a href="{{ URL::to('productos/producto/' . $o['producto_id'] . '/' . $m['modelo_id']) }}" class="position-relative oferta title">
+                            <div class="img position-relative">
+                                <img class="position-absolute oferta" src="{{ asset('images/general/ofertas.fw.png') }}" />
+                                <div></div>
+                                <i class="fas fa-plus"></i>
+                                <img class="d-block w-100" src="{{ asset($o['image']) }}" onError="this.src='{{ asset('images/general/no-img.png') }}'" alt="{{ $o['producto'] }}" srcset=""/>
                             </div>
-                        </div>
-                    </a>
-                </div>
+                            <div class="py-2 px-3 border">
+                                <p class="text-center w-75 mx-auto mb-0">{{ $o["producto"] }}</p>
+                                <p class="text-center"><small>{{ $m->modelo["nombre"] }}</small></p>
+                                <div class="d-flex justify-content-between">
+                                    <strike>$ {{ $o["precioAnterior"]}}</strike>
+                                    <span>$ {{ $o["precio"] }}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
             @endforeach
         </div>
     </div>

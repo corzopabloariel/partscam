@@ -23,6 +23,12 @@
                             <span class="nav-label">Slider</span>
                         </a>
                     </li>
+                    <li>
+                        <a data-link="u" href="{{ route('servicios.index') }}">
+                            <i class="fas fa-clipboard-check" aria-hidden="true"></i>
+                            <span class="nav-label">Servicios</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li>

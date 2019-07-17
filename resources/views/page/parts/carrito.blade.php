@@ -264,12 +264,37 @@
     };
     /** ------------------------------------- */
     addRow = function(data) {
-        let aux = recursivaCategoria(data.categoria);//data.padre
         let stockReal = data.stock.cantidad;
         let cantidadPedida = 0;//Relacion REAL / PEDIDO
         let flagStock = false;
         let auxStock = 0;
-        aux = aux.split("--, ");
+        let categorias = "";
+        let modelos = "";
+
+        window.session[data.id].modelo.forEach( function(m) {
+            let url = `{{ url('/modelos/show/${m}') }}`;
+            var xmlHttp = new XMLHttpRequest();
+            //xmlHttp.responseType = 'json';
+            xmlHttp.open( "GET", url, false );
+            xmlHttp.onload = function() {
+                if(modelos != "") modelos += "<br/>";
+                modelos += xmlHttp.response;
+                console.log(xmlHttp)
+            }
+            xmlHttp.send( null );
+        });
+        data.categorias.forEach( function(c) {
+            let url = `{{ url('/categorias/show/${c}') }}`;
+            var xmlHttp = new XMLHttpRequest();
+            //xmlHttp.responseType = 'json';
+            xmlHttp.open( "GET", url, false );
+            xmlHttp.onload = function() {
+                console.log(xmlHttp)
+                if(categorias != "") categorias += "<br/>";
+                categorias += xmlHttp.response;
+            }
+            xmlHttp.send( null );
+        });
 
         if($("#btnPago").is(":disabled"))
             $("#btnPago").removeAttr("disabled");
@@ -277,11 +302,11 @@
         let ARR = [
             /* 0 */data.imagenes.length > 0 ? "{{ asset('/') }}" + data.imagenes[0].image : null,
             /* 1 */data.familia.nombre,
-            /* 2 */aux[0],//1° de categoria
-            /* 3 */aux[1],//categoria
+            /* 2 */modelos,//1° de categoria
+            /* 3 */categorias,//categoria
             /* 4 */`<a href="{{ URL::to('productos/producto/${data.id}') }}" class="text-primary">${data.nombre}</a>`,//producto nombre
             /* 5 */data.oferta === null ? data.precio.precio : data.oferta.precio,//oferta !== undefined ? oferta. : producto.
-            /* 6 */window.session[data.id],//input
+            /* 6 */window.session[data.id].cantidad,//input
             /* 7 */null
         ];
         if(stockReal < ARR[6]) {
@@ -312,6 +337,7 @@
             total += window.sumTotal.TOTAL * .09;
         $("#total").text(`${formatter.format(total)}`);
         tr = `<tr data-id="${data.id}">`;
+        console.log(ARR)
         ARR.forEach(function(e, index) {
             if(index == 0) {
                 tr += `<td><img class="w-100" src="${e}" onerror="this.src='${src}'"/></td>`;
@@ -361,6 +387,7 @@
         promiseFunction = () => {
             promise
                 .then(function(data) {
+                    console.log(data)
                     addRow(data);
                 })
         };

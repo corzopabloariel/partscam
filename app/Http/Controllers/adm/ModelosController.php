@@ -28,6 +28,9 @@ class ModelosController extends Controller
         
         return view('adm.distribuidor',compact('title','view','familias','modelos'));
     }
+    public function nombre($id) {
+        return Modelo::find($id)["nombre"];
+    }
 
     /**
      * Store a newly created resource in storage.

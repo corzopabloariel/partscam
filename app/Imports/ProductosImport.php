@@ -32,20 +32,28 @@ class ProductosImport implements ToModel
     {
         if(empty($row[1]))
             return null;
-
         $familia_id = 5;
-        
-        if(isset($row[4])) {
-            $aux = Familia::where("nombre","LIKE","%{$row[4]}%")->first();
-            if(empty($aux)) {//NO EXISTE
-                $aux = Familia::create([
-                    "nombre" => $row[4]
-                ]);
+        $codigo = trim($row[0]);
+        $nombre = trim($row[1]);
+        $stock = trim($row[2]);
+        $precio = trim($row[3]);
+        $familia = trim($row[4]);
+        $modelos = isset($row[5]) ? trim($row[5]) : null;
+        $categorias = isset($row[6]) ? trim($row[6]) : null;
+
+        if(isset($familia)) {
+            if(!empty($familia)) {
+                $aux = Familia::where("nombre","LIKE","%{$familia}%")->first();
+                if(!empty($aux)) {
+                    $familia_id = $aux["id"];
+                }
             }
-            $familia_id = $aux["id"];
         }
-        
-        $precio = (empty($row[3]) ? "$ 0,00" : $row[3]);
+        if(!is_numeric($stock))
+            $stock = null;
+        if(!is_numeric($precio))
+            $precio = null;
+        $precio = (empty($precio) ? "$ 0,00" : $precio);
         if(strpos($precio, "$") !== false)
             $precio = str_replace("$","",$precio);
         if(strpos($precio, ".") !== false && strpos($precio, ",") !== false)
@@ -53,31 +61,35 @@ class ProductosImport implements ToModel
         if(strpos($precio, ",") !== false)
             $precio = str_replace(",",".",$precio);
         $precio = trim($precio);
-        $modelos = $row[5];
-        $categorias = $row[6];
-        $nombre = str_replace('"',"'",$row[1]);
+        
+        $nombre = str_replace('"',"'",$nombre);
         $modelos = explode("==.==",$modelos);
+        
         $categorias = explode("==.==",$categorias);
         $Arr_modelos = $Arr_categorias = [];
         if(!empty($modelos)) {
             for($i = 0 ; $i < count($modelos) ; $i++) {
-                $aux = Modelo::where("nombre","LIKE","%{$modelos[$i]}%")->first();
+                $m = trim($modelos[$i]);
+                if(empty($m)) continue;
+                $aux = Modelo::where("nombre","LIKE","%{$m}%")->first();
                 if(!empty($aux))
                     $Arr_modelos[] = $aux["id"];
             }
         }
         if(!empty($categorias)) {
             for($i = 0 ; $i < count($categorias) ; $i++) {
-                $aux = Categoria::where("nombre","LIKE","%{$categorias[$id]}%")->first();
+                $c = trim($categorias[$i]);
+                if(empty($c)) continue;
+                $aux = Categoria::where("nombre","LIKE","%{$c}%")->first();
                 if(!empty($aux))
                     $Arr_categorias[] = $aux["id"];
             }
         }
-
-        $dataProducto = Producto::where("nombre","LIKE","%{$nombre}%")->where("familia_id",$familia_id)->first();
+        $dataProducto = Producto::where("codigo","=","{$codigo}")->first();
+        //dd($dataProducto);
         if(empty($dataProducto)) {
             $dataProducto = Producto::create([
-                'codigo'    => $row[0],
+                'codigo'    => $codigo,
                 'nombre'    => $nombre,
                 'familia_id'    => $familia_id
             ]);
@@ -86,14 +98,14 @@ class ProductosImport implements ToModel
                 "producto_id" => $dataProducto["id"]
             ]);
             $bb = Productostock::create([
-                "cantidad" => (empty($row[2]) ? 0 : $row[2]),
+                "cantidad" => (empty($stock) ? 0 : $stock),
                 "producto_id" => $dataProducto["id"]
             ]);
         } else {
             $dataProducto->fill([
-                'codigo'    => $row[0],
-                'familia_id'    => $familia_id,
-                'categoria_id'  => $categoria_id
+                'codigo'    => $codigo,
+                'nombre'    => $nombre,
+                'familia_id'    => $familia_id
             ]);
             $dataProducto->save();
 
@@ -101,11 +113,11 @@ class ProductosImport implements ToModel
             $dataStock = Productostock::where("producto_id",$dataProducto["id"])->first();
 
             $dataPrecio->fill([
-                "precio" => (empty($row[3]) ? 0 : $row[3])
+                "precio" => $precio
             ]);
             $dataPrecio->save();
             $dataStock->fill([
-                "cantidad" => (empty($row[2]) ? 0 : $row[2])
+                "cantidad" => (empty($stock) ? 0 : $stock),
             ]);
             $dataStock->save();
         }

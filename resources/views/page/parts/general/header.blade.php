@@ -64,13 +64,13 @@
                     <li class="hidden-tablet d-flex align-items-center">
                         <span class="text-truncate d-inline-block"><i class="far fa-clock"></i>{!! $datos['empresa']['horario'] !!}</span>
                     </li>
-                    <li class="hidden-tablet">
+                    {{--<li class="hidden-tablet">
                         <form method="post" action="{{ url('/buscador/header') }}" class="position-relative">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                             <input type="text" name="input" placeholder="Buscar..." id="">
                             <i class="fas fa-search position-absolute"></i>
                         </form>
-                    </li>
+                    </li>--}}
                 </ul>
                 <ul id="ulNavFixed" class="list-unstyled menu d-flex justify-content-end align-items-center">
                     <li class="logo">
@@ -79,7 +79,7 @@
                         </a>
                     </li>
                     <li class="hidden-tablet"><a href="{{ route('empresa') }}">empresa</a></li>
-                    <li class="hidden-tablet">
+                    {{--<li class="hidden-tablet">
                         <a href="{{ URL::to('productos') }}">productos</a>
                         <ul class="submenu list-unstyled">
                             @foreach($datos["familias"] AS $i => $f)
@@ -87,23 +87,23 @@
                                     <a href="{{ URL::to('productos/familia/' . $i) }}">{{ $f["nombre"] }}</a>
                                     <ul class="list-unstyled">
                                         @foreach($f["sub"] AS $ii => $ff)
-                                            <li><a href="{{ URL::to('productos/categoria/' . $ii) }}">{{ $ff }}</a></li>
+                                            <li><a href="{{ URL::to('productos/familia/' . $i . '/modelo/' . $ii . '/1') }}">{{ $ff }}</a></li>
                                         @endforeach
                                     </ul>
                                 </li>
                             @endforeach
                         </ul>
                     </li>
-                    <li class="hidden-tablet"><a href="{{ URL::to('productos/ofertas') }}">ofertas</a></li>
+                    <li class="hidden-tablet"><a href="{{ URL::to('productos/ofertas') }}">ofertas</a></li>--}}
                     <li class="hidden-tablet"><a href="{{ route('contacto') }}">contacto</a></li>
                     <li class="menuBTN">
                         <button class="navbar-toggler text-white rounded-0" style="background-color:#2CC5EB;" type="button" data-toggle="modal" data-target="#menuNav">
                             <i class="fas fa-bars"></i>
                         </button>
-                        <a id="carritoHeader" style="font-size: 13.5px;" class="btn btn-sm rounded-0 shadow-sm" href="">
+                        {{--<a id="carritoHeader" style="font-size: 13.5px;" class="btn btn-sm rounded-0 shadow-sm" href="">
                             <span class="">0</span>
                             <i class="fas fa-shopping-cart"></i>
-                        </a>
+                        </a>--}}
                     </li>
                 </ul>
             </div>

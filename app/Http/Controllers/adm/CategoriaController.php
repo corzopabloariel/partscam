@@ -125,6 +125,9 @@ class CategoriaController extends Controller
         
         return back();
     }
+    public function nombre($id) {
+        return Categoria::find($id)["nombre"];
+    }
     /**
      * 
      */

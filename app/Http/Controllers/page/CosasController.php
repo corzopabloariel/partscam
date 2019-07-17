@@ -43,11 +43,6 @@ class CosasController extends Controller
     public function datos() {
         $empresa = Empresa::first();
 
-        $empresa["email"] = json_decode($empresa["email"], true);
-        $empresa["telefono"] = json_decode($empresa["telefono"], true);
-        $empresa["domicilio"] = json_decode($empresa["domicilio"], true);
-        $empresa["images"] = json_decode($empresa["images"], true);
-        $empresa["pago"] = json_decode($empresa["pago"], true);
 
         return $empresa;
     }

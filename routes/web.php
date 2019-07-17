@@ -44,6 +44,9 @@ Route::get('payment-pending', 'page\PaymentController@pending')->name('payment.p
 
 Route::get('ipn', 'page\PaymentController@ipn')->name('ipn');
 
+Route::get('categorias/show/{id}', ['uses' => 'adm\CategoriaController@nombre', 'as' => 'categorias.show']);
+Route::get('modelos/show/{id}', ['uses' => 'adm\ModelosController@nombre', 'as' => 'modelos.show']);
+
 Auth::routes();
 
 Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
@@ -72,6 +75,16 @@ Route::group(['middleware' => 'auth', 'prefix' => 'adm'], function() {
         Route::get('edit/{id}', ['uses' => 'adm\SliderController@edit', 'as' => '.edit']);
         Route::get('delete/{id}', ['uses' => 'adm\SliderController@destroy', 'as' => '.destroy']);
         Route::post('update/{id}', ['uses' => 'adm\SliderController@update', 'as' => 'update']);
+    });
+    /**
+     * SERVICIOS
+     */
+    Route::group(['prefix' => 'servicios', 'as' => 'servicios'], function() {
+        Route::get('/', ['uses' => 'adm\ServicioController@index', 'as' => '.index']);
+        Route::post('store', ['uses' => 'adm\ServicioController@store', 'as' => '.store']);
+        Route::get('edit/{id}', ['uses' => 'adm\ServicioController@edit', 'as' => '.edit']);
+        Route::get('delete/{id}', ['uses' => 'adm\ServicioController@destroy', 'as' => '.destroy']);
+        Route::post('update/{id}', ['uses' => 'adm\ServicioController@update', 'as' => '.update']);
     });
     
     /**

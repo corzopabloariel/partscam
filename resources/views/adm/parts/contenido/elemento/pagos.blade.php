@@ -1,9 +1,3 @@
-<div class="alert alert-warning" role="alert">
-    <h4 class="alert-heading">Contenido {{strtoupper($seccion)}}</h4>
-    <p>Desde esta sección puede asignar qué elementos mostrar en la vista. Cada vista tiene características y elementos únicos. Seleccione estos en el selector SECCIONES.</p>
-    <hr>
-    <p class="mb-0"><strong>Elementos:</strong> slider</p>
-</div>
 <div id="wrapper-form" class="mt-2">
     <div class="card">
         <div class="card-body">
